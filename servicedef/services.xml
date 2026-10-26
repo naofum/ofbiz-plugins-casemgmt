@@ -1,0 +1,1295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://ofbiz.apache.org/dtds/services.xsd">
+    <description>Case Management Services</description>
+    <vendor>OFBiz</vendor>
+    <version>1.0</version>
+
+    <!-- Internal guard used by entity ECA rules. It must not require a login
+         because entity ECA actions run without a service auth context. -->
+    <service name="guardCaseWorkEffortWrite" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/workeffort/CaseWorkEffortServices.groovy"
+            invoke="guardCaseWorkEffortWrite" auth="false" use-transaction="false">
+        <description>Reject CASE work effort writes outside casemgmt services</description>
+    </service>
+
+    <!-- Deterministic condition services used by the Phase 2 flow tests. -->
+    <service name="casemgmtTestConditionTrue" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/test/CaseFlowTestServices.groovy"
+            invoke="conditionTrue" auth="false" use-transaction="false">
+        <description>Test condition service returning true</description>
+        <attribute name="conditionResult" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="casemgmtTestConditionFalse" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/test/CaseFlowTestServices.groovy"
+            invoke="conditionFalse" auth="false" use-transaction="false">
+        <description>Test condition service returning false</description>
+        <attribute name="conditionResult" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="casemgmtTestServiceComplete" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/test/CaseFlowTestServices.groovy"
+            invoke="serviceComplete" auth="false" use-transaction="false">
+        <description>Test service step returning complete</description>
+        <attribute name="outcomeEnumId" type="String" mode="OUT" optional="true"/>
+        <attribute name="testValue" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="casemgmtTestDecisionComplete" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/test/CaseFlowTestServices.groovy"
+            invoke="decisionComplete" auth="false" use-transaction="false">
+        <description>Test decision step returning complete</description>
+        <attribute name="testValue" type="String" mode="IN" optional="true"/>
+        <attribute name="outcomeEnumId" type="String" mode="OUT" optional="true"/>
+        <attribute name="receivedValue" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="casemgmtTestStartForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/test/CaseFlowTestServices.groovy"
+            invoke="startForm" auth="false" use-transaction="false">
+        <description>Test start form service linking a Party</description>
+        <attribute name="customerPartyId" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="businessEntityName" type="String" mode="OUT" optional="true"/>
+        <attribute name="businessKeys" type="Map" mode="OUT" optional="true"/>
+        <attribute name="customerPartyId" type="String" mode="OUT" optional="true"/>
+        <attribute name="description" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="casemgmtTestTaskForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/test/CaseFlowTestServices.groovy"
+            invoke="taskForm" auth="false" use-transaction="false">
+        <description>Test task form service recording a CaseEvent</description>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="caseTaskId" type="String" mode="IN" optional="false"/>
+        <attribute name="taskComment" type="String" mode="IN" optional="true"/>
+        <attribute name="outcomeEnumId" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="caseDebugLogMessage" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/debug/CaseDebugServices.groovy"
+            invoke="logMessage" auth="true" use-transaction="false">
+        <description>Log a caller-provided debug message</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="message" type="String" mode="IN" optional="false"/>
+        <attribute name="level" type="String" mode="IN" optional="true"/>
+        <attribute name="loggerName" type="String" mode="IN" optional="true"/>
+        <attribute name="logged" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="level" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="caseDebugLogServiceParameters" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/debug/CaseDebugServices.groovy"
+            invoke="logServiceParameters" auth="true" use-transaction="false">
+        <description>Log service input/output parameters and short-lived CaseVariable values</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_ADMIN"/></required-permissions>
+        <attribute name="serviceName" type="String" mode="IN" optional="true"/>
+        <attribute name="caseId" type="String" mode="IN" optional="true"/>
+        <attribute name="inputParameters" type="Map" mode="IN" optional="true"/>
+        <attribute name="outputParameters" type="Map" mode="IN" optional="true"/>
+        <attribute name="variables" type="Map" mode="IN" optional="true"/>
+        <attribute name="includeSensitive" type="String" mode="IN" optional="true"/>
+        <attribute name="level" type="String" mode="IN" optional="true"/>
+        <attribute name="loggerName" type="String" mode="IN" optional="true"/>
+        <attribute name="logged" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="level" type="String" mode="OUT" optional="true"/>
+        <attribute name="variables" type="Map" mode="OUT" optional="true"/>
+        <attribute name="variableCount" type="Integer" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="caseDebugInvokeService" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/debug/CaseDebugServices.groovy"
+            invoke="invokeServiceAndLog" auth="true">
+        <description>Invoke a service and log its parameters and short-lived CaseVariable values</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_ADMIN"/></required-permissions>
+        <attribute name="serviceName" type="String" mode="IN" optional="false"/>
+        <attribute name="serviceParameters" type="Map" mode="IN" optional="true"/>
+        <attribute name="caseId" type="String" mode="IN" optional="true"/>
+        <attribute name="includeSensitive" type="String" mode="IN" optional="true"/>
+        <attribute name="level" type="String" mode="IN" optional="true"/>
+        <attribute name="result" type="Map" mode="OUT" optional="true"/>
+        <attribute name="success" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="variables" type="Map" mode="OUT" optional="true"/>
+        <attribute name="variableCount" type="Integer" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="createCaseSlaInstances" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/sla/CaseSlaServices.groovy"
+            invoke="createCaseSlaInstances" auth="true">
+        <description>Create SLA instances for a case</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_UPDATE"/>
+        </required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="created" type="Integer" mode="OUT" optional="true"/>
+        <attribute name="slaId" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="monitorCaseSla" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/sla/CaseSlaServices.groovy"
+            invoke="monitorCaseSla" auth="false" use-transaction="true">
+        <description>Monitor open SLA instances and escalate breaches</description>
+        <attribute name="checked" type="Integer" mode="OUT" optional="true"/>
+        <attribute name="escalated" type="Integer" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="completeCaseSla" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/sla/CaseSlaServices.groovy"
+            invoke="completeCaseSla" auth="true">
+        <description>Complete all open SLA instances for a case</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_UPDATE"/>
+        </required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="completed" type="Integer" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getCasePermissions" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/access/CaseAccessServices.groovy"
+            invoke="getCasePermissions" auth="true" use-transaction="false">
+        <description>Get the current user's case permissions</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_VIEW"/>
+        </required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="permissions" type="Map" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="hasCasePermission" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/access/CaseAccessServices.groovy"
+            invoke="hasCasePermission" auth="true" use-transaction="false">
+        <description>Check a specific case permission</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_VIEW"/>
+        </required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="permissionEnumId" type="String" mode="IN" optional="false"/>
+        <attribute name="hasPermission" type="Boolean" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="createCaseTypeDraft" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="createCaseTypeDraft" auth="true">
+        <description>Create a case type draft</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/>
+        </required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="caseTypeName" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="primaryEntityName" type="String" mode="IN" optional="true"/>
+        <attribute name="extensionEntityName" type="String" mode="IN" optional="true"/>
+        <attribute name="extensionFormId" type="String" mode="IN" optional="true"/>
+        <attribute name="defaultSlaId" type="String" mode="IN" optional="true"/>
+        <attribute name="accessPolicyId" type="String" mode="IN" optional="true"/>
+        <attribute name="caseTypeId" type="String" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="updateCaseTypeDraft" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="updateCaseTypeDraft" auth="true">
+        <description>Update case type draft fields</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/>
+        </required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="caseTypeName" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="primaryEntityName" type="String" mode="IN" optional="true"/>
+        <attribute name="extensionEntityName" type="String" mode="IN" optional="true"/>
+        <attribute name="extensionFormId" type="String" mode="IN" optional="true"/>
+        <attribute name="defaultSlaId" type="String" mode="IN" optional="true"/>
+        <attribute name="accessPolicyId" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="cloneCaseTypeDefinition" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="cloneCaseTypeDefinition" auth="true">
+        <description>Clone the active case type definition into a draft</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/>
+        </required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="validateCaseTypeDefinition" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="validateCaseTypeDefinition" auth="true" use-transaction="false">
+        <description>Validate a case type definition</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/>
+        </required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="valid" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="errors" type="List" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="publishCaseTypeDefinition" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="publishCaseTypeDefinition" auth="true">
+        <description>Validate and publish a case type definition</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/>
+        </required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="retireCaseType" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="retireCaseType" auth="true">
+        <description>Retire a case type</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/>
+        </required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="deleteCaseTypeDraft" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="deleteCaseTypeDraft" auth="true">
+        <description>Delete a draft case type and its definition rows</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/>
+        </required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="getCaseTypeDefinitionDiff" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="getCaseTypeDefinitionDiff" auth="true">
+        <description>Compare two case type definition versions</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/>
+        </required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="fromVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="toVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="fromVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="toVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="hasChanges" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="changeCount" type="Integer" mode="OUT" optional="true"/>
+        <attribute name="stageChanges" type="List" mode="OUT" optional="true"/>
+        <attribute name="stepChanges" type="List" mode="OUT" optional="true"/>
+        <attribute name="transitionChanges" type="List" mode="OUT" optional="true"/>
+        <attribute name="fieldChanges" type="List" mode="OUT" optional="true"/>
+        <attribute name="serviceParamChanges" type="List" mode="OUT" optional="true"/>
+        <attribute name="serviceOutputChanges" type="List" mode="OUT" optional="true"/>
+        <attribute name="startFormChanges" type="List" mode="OUT" optional="true"/>
+        <attribute name="stepFormChanges" type="List" mode="OUT" optional="true"/>
+        <attribute name="waitChanges" type="List" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="deleteCaseStageDef" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="deleteCaseStageDef" auth="true">
+        <description>Delete a draft stage and its definition rows</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+    </service>
+
+    <service name="moveCaseStageDef" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="moveCaseStageDef" auth="true">
+        <description>Move a draft stage up or down</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="direction" type="String" mode="IN" optional="false"/>
+        <attribute name="moved" type="Boolean" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="deleteCaseStepDef" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="deleteCaseStepDef" auth="true">
+        <description>Delete a draft step and its definition rows</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+    </service>
+
+    <service name="moveCaseStepDef" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="moveCaseStepDef" auth="true">
+        <description>Move a draft step up or down within its stage</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="direction" type="String" mode="IN" optional="false"/>
+        <attribute name="moved" type="Boolean" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="deleteCaseStepTransition" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="deleteCaseStepTransition" auth="true">
+        <description>Delete a draft transition</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="outcomeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="transitionSeq" type="Long" mode="IN" optional="false"/>
+    </service>
+
+    <service name="moveCaseStepTransition" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="moveCaseStepTransition" auth="true">
+        <description>Move a draft transition up or down</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="outcomeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="transitionSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="direction" type="String" mode="IN" optional="false"/>
+        <attribute name="moved" type="Boolean" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="createCaseFieldMapping" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="createCaseFieldMapping" auth="true">
+        <description>Create a dynamic form field mapping</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="fieldSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="fieldName" type="String" mode="IN" optional="false"/>
+        <attribute name="entityName" type="String" mode="IN" optional="true"/>
+        <attribute name="entityFieldName" type="String" mode="IN" optional="true"/>
+        <attribute name="label" type="String" mode="IN" optional="true"/>
+        <attribute name="fieldTypeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="requiredIndicator" type="String" mode="IN" optional="true"/>
+        <attribute name="sequenceNum" type="Long" mode="IN" optional="true"/>
+        <attribute name="lookupEntityName" type="String" mode="IN" optional="true"/>
+        <attribute name="lookupFieldName" type="String" mode="IN" optional="true"/>
+        <attribute name="defaultValue" type="String" mode="IN" optional="true"/>
+        <attribute name="visibilityCondition" type="String" mode="IN" optional="true"/>
+        <attribute name="readOnlyCondition" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="fieldSeq" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="updateCaseFieldMapping" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="updateCaseFieldMapping" auth="true">
+        <description>Update a dynamic form field mapping</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="fieldSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="fieldName" type="String" mode="IN" optional="true"/>
+        <attribute name="entityName" type="String" mode="IN" optional="true"/>
+        <attribute name="entityFieldName" type="String" mode="IN" optional="true"/>
+        <attribute name="label" type="String" mode="IN" optional="true"/>
+        <attribute name="fieldTypeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="requiredIndicator" type="String" mode="IN" optional="true"/>
+        <attribute name="sequenceNum" type="Long" mode="IN" optional="true"/>
+        <attribute name="lookupEntityName" type="String" mode="IN" optional="true"/>
+        <attribute name="lookupFieldName" type="String" mode="IN" optional="true"/>
+        <attribute name="defaultValue" type="String" mode="IN" optional="true"/>
+        <attribute name="visibilityCondition" type="String" mode="IN" optional="true"/>
+        <attribute name="readOnlyCondition" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="deleteCaseFieldMapping" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="deleteCaseFieldMapping" auth="true">
+        <description>Delete a dynamic form field mapping</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="fieldSeq" type="Long" mode="IN" optional="false"/>
+    </service>
+
+    <service name="saveCaseFieldLabel" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFieldLabelServices.groovy"
+            invoke="saveCaseFieldLabel" auth="true">
+        <description>Create or update a locale-specific case field label</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="fieldSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="labelLocale" type="String" mode="IN" optional="false"/>
+        <attribute name="label" type="String" mode="IN" optional="false"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="caseTypeId" type="String" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="fieldSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="labelLocale" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="deleteCaseFieldLabel" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFieldLabelServices.groovy"
+            invoke="deleteCaseFieldLabel" auth="true">
+        <description>Delete a locale-specific case field label</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="fieldSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="labelLocale" type="String" mode="IN" optional="false"/>
+        <attribute name="caseTypeId" type="String" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="fieldSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="labelLocale" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="moveCaseFieldMapping" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="moveCaseFieldMapping" auth="true">
+        <description>Move a dynamic form field up or down</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="fieldSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="direction" type="String" mode="IN" optional="false"/>
+        <attribute name="moved" type="Boolean" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="createCaseStageDef" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="createCaseStageDef" auth="true">
+        <description>Create a case stage definition</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="stageName" type="String" mode="IN" optional="true"/>
+        <attribute name="stageTypeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="autoAdvance" type="String" mode="IN" optional="true"/>
+        <attribute name="entryServiceName" type="String" mode="IN" optional="true"/>
+        <attribute name="exitServiceName" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="updateCaseStageDef" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="updateCaseStageDef" auth="true">
+        <description>Update a case stage definition</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageName" type="String" mode="IN" optional="true"/>
+        <attribute name="stageTypeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="autoAdvance" type="String" mode="IN" optional="true"/>
+        <attribute name="entryServiceName" type="String" mode="IN" optional="true"/>
+        <attribute name="exitServiceName" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="createCaseStepDef" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="createCaseStepDef" auth="true">
+        <description>Create a case step definition</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="stepName" type="String" mode="IN" optional="true"/>
+        <attribute name="stepTypeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="serviceName" type="String" mode="IN" optional="true"/>
+        <attribute name="formId" type="String" mode="IN" optional="true"/>
+        <attribute name="subCaseTypeId" type="String" mode="IN" optional="true"/>
+        <attribute name="signalName" type="String" mode="IN" optional="true"/>
+        <attribute name="timeoutDuration" type="Long" mode="IN" optional="true"/>
+        <attribute name="timeoutOutcomeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="assignmentPolicyId" type="String" mode="IN" optional="true"/>
+        <attribute name="slaId" type="String" mode="IN" optional="true"/>
+        <attribute name="requiredIndicator" type="String" mode="IN" optional="true"/>
+        <attribute name="sequenceNum" type="Long" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="updateCaseStepDef" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="updateCaseStepDef" auth="true">
+        <description>Update a case step definition</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepName" type="String" mode="IN" optional="true"/>
+        <attribute name="stepTypeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="serviceName" type="String" mode="IN" optional="true"/>
+        <attribute name="formId" type="String" mode="IN" optional="true"/>
+        <attribute name="subCaseTypeId" type="String" mode="IN" optional="true"/>
+        <attribute name="assignmentPolicyId" type="String" mode="IN" optional="true"/>
+        <attribute name="slaId" type="String" mode="IN" optional="true"/>
+        <attribute name="requiredIndicator" type="String" mode="IN" optional="true"/>
+        <attribute name="sequenceNum" type="Long" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="createCaseStepServiceParam" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseStepMappingServices.groovy"
+            invoke="createCaseStepServiceParam" auth="true">
+        <description>Create a Service step input mapping</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="paramSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="paramName" type="String" mode="IN" optional="false"/>
+        <attribute name="sourceTypeEnumId" type="String" mode="IN" optional="false"/>
+        <attribute name="sourceValue" type="String" mode="IN" optional="true"/>
+        <attribute name="requiredIndicator" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="paramSeq" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="deleteCaseStepServiceParam" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseStepMappingServices.groovy"
+            invoke="deleteCaseStepServiceParam" auth="true">
+        <description>Delete a Service step input mapping</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="paramSeq" type="Long" mode="IN" optional="false"/>
+    </service>
+
+    <service name="createCaseStepServiceOutput" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseStepMappingServices.groovy"
+            invoke="createCaseStepServiceOutput" auth="true">
+        <description>Create a Service step output mapping</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="outputSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="outputName" type="String" mode="IN" optional="false"/>
+        <attribute name="variableName" type="String" mode="IN" optional="false"/>
+        <attribute name="valueTypeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="requiredIndicator" type="String" mode="IN" optional="true"/>
+        <attribute name="sensitiveIndicator" type="String" mode="IN" optional="true"/>
+        <attribute name="scopeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="ttlSeconds" type="Long" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="outputSeq" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="deleteCaseStepServiceOutput" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseStepMappingServices.groovy"
+            invoke="deleteCaseStepServiceOutput" auth="true">
+        <description>Delete a Service step output mapping</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="outputSeq" type="Long" mode="IN" optional="false"/>
+    </service>
+
+    <service name="createCaseStepTransition" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="createCaseStepTransition" auth="true">
+        <description>Create a case step transition</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="outcomeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="transitionSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="toStageSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="toStepSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="conditionServiceName" type="String" mode="IN" optional="true"/>
+        <attribute name="priority" type="Long" mode="IN" optional="true"/>
+        <attribute name="isDefault" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="updateCaseStepTransition" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="updateCaseStepTransition" auth="true">
+        <description>Update a case step transition</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="outcomeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="transitionSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="toStageSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="toStepSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="conditionServiceName" type="String" mode="IN" optional="true"/>
+        <attribute name="priority" type="Long" mode="IN" optional="true"/>
+        <attribute name="isDefault" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="getCaseMetrics" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/visibility/CaseVisibilityServices.groovy"
+            invoke="getCaseMetrics" auth="true" use-transaction="false">
+        <description>Get case cycle-time, SLA, throughput and backlog metrics</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="true"/>
+        <attribute name="statusId" type="String" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="String" mode="IN" optional="true"/>
+        <attribute name="queueId" type="String" mode="IN" optional="true"/>
+        <attribute name="assignedPartyId" type="String" mode="IN" optional="true"/>
+        <attribute name="fromDate" type="String" mode="IN" optional="true"/>
+        <attribute name="toDate" type="String" mode="IN" optional="true"/>
+        <attribute name="summary" type="Map" mode="OUT" optional="true"/>
+        <attribute name="byCaseType" type="List" mode="OUT" optional="true"/>
+        <attribute name="byStage" type="List" mode="OUT" optional="true"/>
+        <attribute name="slaByMilestone" type="List" mode="OUT" optional="true"/>
+        <attribute name="throughputDaily" type="List" mode="OUT" optional="true"/>
+        <attribute name="throughputWeekly" type="List" mode="OUT" optional="true"/>
+        <attribute name="throughputMonthly" type="List" mode="OUT" optional="true"/>
+        <attribute name="aging" type="List" mode="OUT" optional="true"/>
+        <attribute name="stack" type="Map" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="exportCaseMetrics" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/visibility/CaseVisibilityServices.groovy"
+            invoke="exportCaseMetrics" auth="true" use-transaction="false">
+        <description>Export case metrics as CSV</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="true"/>
+        <attribute name="statusId" type="String" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="String" mode="IN" optional="true"/>
+        <attribute name="queueId" type="String" mode="IN" optional="true"/>
+        <attribute name="assignedPartyId" type="String" mode="IN" optional="true"/>
+        <attribute name="fromDate" type="String" mode="IN" optional="true"/>
+        <attribute name="toDate" type="String" mode="IN" optional="true"/>
+        <attribute name="csv" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getCaseProcessMap" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/visibility/CaseVisibilityServices.groovy"
+            invoke="getCaseProcessMap" auth="true" use-transaction="false">
+        <description>Build a process map for a case</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="stages" type="List" mode="OUT" optional="true"/>
+        <attribute name="steps" type="List" mode="OUT" optional="true"/>
+        <attribute name="transitions" type="List" mode="OUT" optional="true"/>
+        <attribute name="sla" type="List" mode="OUT" optional="true"/>
+        <attribute name="mermaidDefinition" type="String" mode="OUT" optional="true"/>
+        <attribute name="currentStageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="currentStageVisitSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="currentStepSeq" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getCaseTypeProcessMap" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/visibility/CaseVisibilityServices.groovy"
+            invoke="getCaseTypeProcessMap" auth="true" use-transaction="false">
+        <description>Build a definition-only process map for case type authoring</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="resolvedDefinitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stages" type="List" mode="OUT" optional="true"/>
+        <attribute name="steps" type="List" mode="OUT" optional="true"/>
+        <attribute name="transitions" type="List" mode="OUT" optional="true"/>
+        <attribute name="mermaidDefinition" type="String" mode="OUT" optional="true"/>
+        <attribute name="stageMermaidDefinition" type="String" mode="OUT" optional="true"/>
+        <attribute name="stepMermaidDefinition" type="String" mode="OUT" optional="true"/>
+        <attribute name="transitionMermaidDefinition" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getCaseStack" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/visibility/CaseVisibilityServices.groovy"
+            invoke="getCaseStack" auth="true" use-transaction="false">
+        <description>Get case stack analysis</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="queueId" type="String" mode="IN" optional="true"/>
+        <attribute name="assignedPartyId" type="String" mode="IN" optional="true"/>
+        <attribute name="total" type="Integer" mode="OUT" optional="true"/>
+        <attribute name="byStage" type="List" mode="OUT" optional="true"/>
+        <attribute name="byQueue" type="List" mode="OUT" optional="true"/>
+        <attribute name="byAssignee" type="List" mode="OUT" optional="true"/>
+        <attribute name="bySla" type="List" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="simulateCaseFlow" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/visibility/CaseVisibilityServices.groovy"
+            invoke="simulateCaseFlow" auth="true" use-transaction="false">
+        <description>Simulate a case type flow without persistence</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="outcomeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="maxSteps" type="Integer" mode="IN" optional="true"/>
+        <attribute name="path" type="List" mode="OUT" optional="true"/>
+        <attribute name="resolved" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="warnings" type="List" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getCaseForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFormServices.groovy"
+            invoke="getCaseForm" auth="true" use-transaction="false">
+        <description>Get the dynamic form for a case stage/step</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="fields" type="List" mode="OUT" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="saveCaseForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFormServices.groovy"
+            invoke="saveCaseForm" auth="true">
+        <description>Save dynamic case form fields</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_UPDATE"/></required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="values" type="Map" mode="IN" optional="true"/>
+        <attribute name="saved" type="Integer" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="validateCaseForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFormServices.groovy"
+            invoke="validateCaseForm" auth="true" use-transaction="false">
+        <description>Validate dynamic case form fields</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="values" type="Map" mode="IN" optional="true"/>
+        <attribute name="valid" type="Boolean" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getCaseTypeStartForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFormMetadataServices.groovy"
+            invoke="getCaseTypeStartForm" auth="true" use-transaction="false">
+        <description>Get start form metadata for a case type version</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="caseTypeId" type="String" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="startForm" type="Map" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getCaseStepForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFormMetadataServices.groovy"
+            invoke="getCaseStepForm" auth="true" use-transaction="false">
+        <description>Get task form metadata for a case step</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepForm" type="Map" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getCaseTaskForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseTaskFormServices.groovy"
+            invoke="getCaseTaskForm" auth="true" use-transaction="false">
+        <description>Resolve the task form for a case task</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="caseTaskId" type="String" mode="IN" optional="false"/>
+        <attribute name="caseTask" type="Map" mode="OUT" optional="true"/>
+        <attribute name="case" type="Map" mode="OUT" optional="true"/>
+        <attribute name="caseId" type="String" mode="OUT" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepForm" type="Map" mode="OUT" optional="true"/>
+        <attribute name="fields" type="List" mode="OUT" optional="true"/>
+        <attribute name="formMode" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="saveCaseTypeStartForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFormMetadataServices.groovy"
+            invoke="saveCaseTypeStartForm" auth="true">
+        <description>Save start form metadata for a draft case type</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="formLocation" type="String" mode="IN" optional="false"/>
+        <attribute name="formName" type="String" mode="IN" optional="false"/>
+        <attribute name="formTarget" type="String" mode="IN" optional="true"/>
+        <attribute name="startServiceName" type="String" mode="IN" optional="true"/>
+        <attribute name="submitLabel" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="caseTypeId" type="String" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="deleteCaseTypeStartForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFormMetadataServices.groovy"
+            invoke="deleteCaseTypeStartForm" auth="true">
+        <description>Delete start form metadata from a draft case type</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="caseTypeId" type="String" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="saveCaseStepForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFormMetadataServices.groovy"
+            invoke="saveCaseStepForm" auth="true">
+        <description>Save task form metadata for a draft case step</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="formLocation" type="String" mode="IN" optional="false"/>
+        <attribute name="formName" type="String" mode="IN" optional="false"/>
+        <attribute name="formTarget" type="String" mode="IN" optional="true"/>
+        <attribute name="completeServiceName" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="caseTypeId" type="String" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="deleteCaseStepForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFormMetadataServices.groovy"
+            invoke="deleteCaseStepForm" auth="true">
+        <description>Delete task form metadata from a draft case step</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="caseTypeId" type="String" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getCaseStepWait" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/flow/CaseWaitServices.groovy"
+            invoke="getCaseStepWait" auth="true" use-transaction="false">
+        <description>Get wait settings for a case step</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_VIEW"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="caseTypeId" type="String" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepWait" type="Map" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="saveCaseStepWait" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/flow/CaseWaitServices.groovy"
+            invoke="saveCaseStepWait" auth="true">
+        <description>Save wait settings for a draft case step</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="signalName" type="String" mode="IN" optional="true"/>
+        <attribute name="timeoutDuration" type="Long" mode="IN" optional="true"/>
+        <attribute name="timeoutOutcomeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="caseTypeId" type="String" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="deleteCaseStepWait" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/flow/CaseWaitServices.groovy"
+            invoke="deleteCaseStepWait" auth="true">
+        <description>Delete wait settings from a draft case step</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="caseTypeId" type="String" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="processCaseWaitTimeouts" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/flow/CaseWaitServices.groovy"
+            invoke="processCaseWaitTimeouts" auth="false" use-transaction="false">
+        <description>Complete waiting case tasks whose configured timeout has elapsed</description>
+        <attribute name="checked" type="Integer" mode="OUT" optional="true"/>
+        <attribute name="completed" type="Integer" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="submitStartCase" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFormSubmitServices.groovy"
+            invoke="submitStartCase" auth="true">
+        <description>Run the start service, create a case and link its context</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_CREATE"/></required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="customerPartyId" type="String" mode="IN" optional="true"/>
+        <attribute name="ownerPartyId" type="String" mode="IN" optional="true"/>
+        <attribute name="priority" type="Double" mode="IN" optional="true"/>
+        <attribute name="channelEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="formValues" type="Map" mode="IN" optional="true"/>
+        <attribute name="caseId" type="String" mode="OUT" optional="true"/>
+        <attribute name="caseNumber" type="String" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="linkedContexts" type="Integer" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="submitCaseTaskForm" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/form/CaseFormSubmitServices.groovy"
+            invoke="submitCaseTaskForm" auth="true">
+        <description>Run the task form service and complete the task in one transaction</description>
+        <required-permissions join-type="AND"><check-permission permission="CASEMGMT_UPDATE"/></required-permissions>
+        <attribute name="caseTaskId" type="String" mode="IN" optional="false"/>
+        <attribute name="caseId" type="String" mode="IN" optional="true"/>
+        <attribute name="outcomeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="notes" type="String" mode="IN" optional="true"/>
+        <attribute name="formValues" type="Map" mode="IN" optional="true"/>
+        <attribute name="caseId" type="String" mode="OUT" optional="true"/>
+        <attribute name="statusId" type="String" mode="OUT" optional="true"/>
+        <attribute name="currentStageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="currentStageVisitSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="currentStepSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="advanced" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="exitCondition" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="resolved" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="formServiceName" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="createCase" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/cases/CasemgmtCaseServices.groovy"
+            invoke="createCase" auth="true">
+        <description>Create a case and its first stage tasks</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_CREATE"/>
+        </required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="customerPartyId" type="String" mode="IN" optional="true"/>
+        <attribute name="ownerPartyId" type="String" mode="IN" optional="true"/>
+        <attribute name="priority" type="Double" mode="IN" optional="true"/>
+        <attribute name="channelEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="caseId" type="String" mode="OUT" optional="true"/>
+        <attribute name="caseNumber" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="listCases" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/cases/CasemgmtCaseServices.groovy"
+            invoke="listCases" auth="true" use-transaction="false">
+        <description>List cases for the worklist</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_VIEW"/>
+        </required-permissions>
+        <attribute name="assignedToMe" type="String" mode="IN" optional="true"/>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="true"/>
+        <attribute name="statusId" type="String" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="String" mode="IN" optional="true"/>
+        <attribute name="queueId" type="String" mode="IN" optional="true"/>
+        <attribute name="assignedPartyId" type="String" mode="IN" optional="true"/>
+        <attribute name="slaStateEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="slaMilestoneName" type="String" mode="IN" optional="true"/>
+        <attribute name="ageBucket" type="String" mode="IN" optional="true"/>
+        <attribute name="closedWithin" type="String" mode="IN" optional="true"/>
+        <attribute name="closedPeriod" type="String" mode="IN" optional="true"/>
+        <attribute name="closedFromDate" type="String" mode="IN" optional="true"/>
+        <attribute name="closedToDate" type="String" mode="IN" optional="true"/>
+        <attribute name="fromDate" type="String" mode="IN" optional="true"/>
+        <attribute name="toDate" type="String" mode="IN" optional="true"/>
+        <attribute name="openOnly" type="String" mode="IN" optional="true"/>
+        <attribute name="cases" type="List" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getCase" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/cases/CasemgmtCaseServices.groovy"
+            invoke="getCase" auth="true">
+        <description>Get a case header, open tasks and history</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_VIEW"/>
+        </required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="case" type="Map" mode="OUT" optional="true"/>
+        <attribute name="caseHeader" type="Map" mode="OUT" optional="true"/>
+        <attribute name="tasks" type="List" mode="OUT" optional="true"/>
+        <attribute name="history" type="List" mode="OUT" optional="true"/>
+        <attribute name="permissions" type="Map" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="linkCaseContext" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/cases/CaseContextServices.groovy"
+            invoke="linkCaseContext" auth="true">
+        <description>Link a case to a single-key or composite-key business entity</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_UPDATE"/>
+        </required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="entityName" type="String" mode="IN" optional="false"/>
+        <attribute name="pkValue" type="String" mode="IN" optional="true"/>
+        <attribute name="businessKeys" type="Map" mode="IN" optional="true"/>
+        <attribute name="contextTypeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="roleTypeId" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="contextSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="businessKeys" type="Map" mode="OUT" optional="true"/>
+        <attribute name="linked" type="Boolean" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="unlinkCaseContext" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/cases/CaseContextServices.groovy"
+            invoke="unlinkCaseContext" auth="true">
+        <description>Unlink a CaseContext entry from a case</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_UPDATE"/>
+        </required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="contextSeq" type="Long" mode="IN" optional="false"/>
+        <attribute name="removed" type="Boolean" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getCaseContext" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/cases/CaseContextServices.groovy"
+            invoke="getCaseContext" auth="true" use-transaction="false">
+        <description>List business-entity links for a case</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_VIEW"/>
+        </required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="contexts" type="List" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="completeCaseTask" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/cases/CasemgmtCaseServices.groovy"
+            invoke="completeCaseTask" auth="true">
+        <description>Complete a case task and advance the case flow</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_UPDATE"/>
+        </required-permissions>
+        <attribute name="caseTaskId" type="String" mode="IN" optional="false"/>
+        <attribute name="caseId" type="String" mode="IN" optional="true"/>
+        <attribute name="outcomeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="notes" type="String" mode="IN" optional="true"/>
+        <attribute name="caseId" type="String" mode="OUT" optional="true"/>
+        <attribute name="statusId" type="String" mode="OUT" optional="true"/>
+        <attribute name="currentStageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="currentStageVisitSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="currentStepSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="advanced" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="exitCondition" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="resolved" type="Boolean" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="signalCaseTask" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/cases/CasemgmtCaseServices.groovy"
+            invoke="signalCaseTask" auth="true">
+        <description>Signal a waiting case task and advance the case flow</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_UPDATE"/>
+        </required-permissions>
+        <attribute name="caseTaskId" type="String" mode="IN" optional="false"/>
+        <attribute name="idempotencyKey" type="String" mode="IN" optional="false"/>
+        <attribute name="signalName" type="String" mode="IN" optional="true"/>
+        <attribute name="outcomeEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="payload" type="String" mode="IN" optional="true"/>
+        <attribute name="notes" type="String" mode="IN" optional="true"/>
+        <attribute name="caseId" type="String" mode="OUT" optional="true"/>
+        <attribute name="statusId" type="String" mode="OUT" optional="true"/>
+        <attribute name="currentStageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="currentStageVisitSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="currentStepSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="advanced" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="resolved" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="idempotent" type="Boolean" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="assignCaseTask" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/assignment/CaseAssignmentServices.groovy"
+            invoke="assignCaseTask" auth="true">
+        <description>Assign a case task using its assignment policy</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_UPDATE"/>
+        </required-permissions>
+        <attribute name="caseTaskId" type="String" mode="IN" optional="false"/>
+        <attribute name="assignmentPolicyId" type="String" mode="IN" optional="true"/>
+        <attribute name="assignedPartyId" type="String" mode="OUT" optional="true"/>
+        <attribute name="assignedQueueId" type="String" mode="OUT" optional="true"/>
+        <attribute name="statusId" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="claimCaseTask" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/assignment/CaseAssignmentServices.groovy"
+            invoke="claimCaseTask" auth="true">
+        <description>Claim a queued case task</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_UPDATE"/>
+        </required-permissions>
+        <attribute name="caseTaskId" type="String" mode="IN" optional="false"/>
+        <attribute name="assignedPartyId" type="String" mode="OUT" optional="true"/>
+        <attribute name="assignedQueueId" type="String" mode="OUT" optional="true"/>
+        <attribute name="statusId" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="reassignCaseTask" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/assignment/CaseAssignmentServices.groovy"
+            invoke="reassignCaseTask" auth="true">
+        <description>Reassign a case task</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_UPDATE"/>
+        </required-permissions>
+        <attribute name="caseTaskId" type="String" mode="IN" optional="false"/>
+        <attribute name="partyId" type="String" mode="IN" optional="false"/>
+        <attribute name="reason" type="String" mode="IN" optional="true"/>
+        <attribute name="assignedPartyId" type="String" mode="OUT" optional="true"/>
+        <attribute name="statusId" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="releaseCaseTask" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/assignment/CaseAssignmentServices.groovy"
+            invoke="releaseCaseTask" auth="true">
+        <description>Release a case task back to its queue</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_UPDATE"/>
+        </required-permissions>
+        <attribute name="caseTaskId" type="String" mode="IN" optional="false"/>
+        <attribute name="assignedQueueId" type="String" mode="OUT" optional="true"/>
+        <attribute name="statusId" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getQueueWorkload" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/assignment/CaseAssignmentServices.groovy"
+            invoke="getQueueWorkload" auth="true" use-transaction="false">
+        <description>Get queue member workload</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_VIEW"/>
+        </required-permissions>
+        <attribute name="queueId" type="String" mode="IN" optional="false"/>
+        <attribute name="members" type="List" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getAssignableParties" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/assignment/CaseAssignmentServices.groovy"
+            invoke="getAssignableParties" auth="true" use-transaction="false">
+        <description>Get parties assignable from a queue</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_VIEW"/>
+        </required-permissions>
+        <attribute name="queueId" type="String" mode="IN" optional="false"/>
+        <attribute name="members" type="List" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="closeCase" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/cases/CasemgmtCaseServices.groovy"
+            invoke="closeCase" auth="true">
+        <description>Close a case and cancel its open tasks</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_UPDATE"/>
+        </required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="resolutionId" type="String" mode="IN" optional="true"/>
+        <attribute name="statusId" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="explainCaseState" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/cases/CasemgmtCaseServices.groovy"
+            invoke="explainCaseState" auth="true">
+        <description>Explain the current case state and blocking conditions</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_VIEW"/>
+        </required-permissions>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="statusId" type="String" mode="OUT" optional="true"/>
+        <attribute name="stageName" type="String" mode="OUT" optional="true"/>
+        <attribute name="stepName" type="String" mode="OUT" optional="true"/>
+        <attribute name="currentStageSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="currentStageVisitSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="currentStepSeq" type="Long" mode="OUT" optional="true"/>
+        <attribute name="openTaskCount" type="Integer" mode="OUT" optional="true"/>
+        <attribute name="blockedReasons" type="List" mode="OUT" optional="true"/>
+        <attribute name="nextSteps" type="List" mode="OUT" optional="true"/>
+        <attribute name="nextActions" type="List" mode="OUT" optional="true"/>
+        <attribute name="slaState" type="String" mode="OUT" optional="true"/>
+        <attribute name="sla" type="List" mode="OUT" optional="true"/>
+        <attribute name="permissions" type="Map" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="casemgmtServiceRequestProvision" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/flow/CaseActionServices.groovy"
+            invoke="provisionServiceRequest" auth="false" use-transaction="false">
+        <description>Execute the approved service request step</description>
+        <attribute name="caseId" type="String" mode="IN" optional="false"/>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="true"/>
+        <attribute name="stageSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="stageVisitSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="stepSeq" type="Long" mode="IN" optional="true"/>
+        <attribute name="outcomeEnumId" type="String" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="validateCaseWorkEffortTree" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/workeffort/CaseWorkEffortServices.groovy"
+            invoke="validateCaseWorkEffortTree" auth="true">
+        <description>Validate the CASE/CASE_ASSIGNMENT work effort hierarchy</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_VIEW"/>
+        </required-permissions>
+        <attribute name="workEffortId" type="String" mode="IN" optional="false"/>
+        <attribute name="valid" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="errors" type="List" mode="OUT" optional="true"/>
+    </service>
+</services>

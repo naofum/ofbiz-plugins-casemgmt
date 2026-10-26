@@ -1,0 +1,979 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://ofbiz.apache.org/Widget-Screen"
+        xsi:schemaLocation="http://ofbiz.apache.org/Widget-Screen http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+    <screen name="main-decorator">
+        <section>
+            <actions>
+                <property-map resource="CasemgmtUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CasemgmtHumanresUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="layoutSettings.companyName" from-field="uiLabelMap.CasemgmtApplication" global="true"/>
+                <set field="activeApp" value="casemgmt" global="true"/>
+                <set field="applicationMenuName" value="CasemgmtAppBar" global="true"/>
+                <set field="applicationMenuLocation" value="component://casemgmt/widget/CasemgmtMenus.xml" global="true"/>
+                <set field="applicationTitle" from-field="uiLabelMap.CasemgmtApplication" global="true"/>
+            </actions>
+            <widgets>
+                <include-screen name="GlobalDecorator" location="component://common/widget/CommonScreens.xml"/>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="Main">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtMain"/>
+                <set field="headerItem" value="main"/>
+                <set field="assignedToMe" value="Y"/>
+                <set field="closedWithin" from-field="parameters.closedWithin" default-value="NONE"/>
+                <service service-name="listCases">
+                    <field-map field-name="assignedToMe" from-field="assignedToMe"/>
+                    <field-map field-name="closedWithin" from-field="closedWithin"/>
+                </service>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtMain}">
+                            <container style="button-bar">
+                                <link target="CreateCase" text="${uiLabelMap.CasemgmtCreateCase}" style="buttontext"/>
+                                <link target="CaseWorklist" text="${uiLabelMap.CasemgmtAllCases}" style="buttontext"/>
+                            </container>
+                            <container><label text="${requestAttributes._ERROR_MESSAGE_}"/></container>
+                            <include-form name="CaseList" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="CaseWorklist">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtCaseWorklist"/>
+                <set field="headerItem" value="caseWorklist"/>
+                <set field="worklistFilter" from-field="parameters"/>
+                <set field="closedWithin" from-field="parameters.closedWithin" default-value="NONE"/>
+                <service service-name="listCases">
+                    <field-map field-name="caseTypeId" from-field="parameters.caseTypeId"/>
+                    <field-map field-name="statusId" from-field="parameters.statusId"/>
+                    <field-map field-name="stageSeq" from-field="parameters.stageSeq"/>
+                    <field-map field-name="queueId" from-field="parameters.queueId"/>
+                    <field-map field-name="assignedPartyId" from-field="parameters.assignedPartyId"/>
+                    <field-map field-name="slaStateEnumId" from-field="parameters.slaStateEnumId"/>
+                    <field-map field-name="slaMilestoneName" from-field="parameters.slaMilestoneName"/>
+                    <field-map field-name="ageBucket" from-field="parameters.ageBucket"/>
+                    <field-map field-name="closedWithin" from-field="closedWithin"/>
+                    <field-map field-name="closedPeriod" from-field="parameters.closedPeriod"/>
+                    <field-map field-name="closedFromDate" from-field="parameters.closedFromDate"/>
+                    <field-map field-name="closedToDate" from-field="parameters.closedToDate"/>
+                    <field-map field-name="fromDate" from-field="parameters.fromDate"/>
+                    <field-map field-name="toDate" from-field="parameters.toDate"/>
+                    <field-map field-name="openOnly" from-field="parameters.openOnly"/>
+                </service>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtCaseWorklist}">
+                            <container style="button-bar">
+                                <link target="Main" text="${uiLabelMap.CasemgmtMain}" style="buttontext"/>
+                                <link target="CreateCase" text="${uiLabelMap.CasemgmtCreateCase}" style="buttontext"/>
+                                <link target="CaseWorklist" text="${uiLabelMap.CasemgmtAllCases}" style="buttontext"/>
+                            </container>
+                            <container><label text="${requestAttributes._ERROR_MESSAGE_}"/></container>
+                            <screenlet title="${uiLabelMap.CasemgmtCaseFilter}">
+                                <include-form name="CaseWorklistFilter" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            </screenlet>
+                            <include-form name="CaseList" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="CaseDetail">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtCaseDetail"/>
+                <set field="headerItem" value="main"/>
+                <set field="caseId" from-field="parameters.caseId" default-value="${requestAttributes.caseId}"/>
+                <service service-name="getCase"/>
+                <service service-name="explainCaseState"/>
+                <service service-name="getCaseProcessMap"/>
+                <set field="processStages" from-field="stages"/>
+                <set field="processSteps" from-field="steps"/>
+                <set field="processSla" from-field="sla"/>
+                <set field="processMermaid" from-field="mermaidDefinition"/>
+                <service service-name="getCaseForm"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtCaseDetail} ${caseHeader.caseNumber}">
+                            <container style="button-bar">
+                                <link target="CloseCase" text="${uiLabelMap.CasemgmtCloseCase}" style="buttontext">
+                                    <parameter param-name="caseId" from-field="caseId"/>
+                                </link>
+                            </container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtCaseNumber}: ${caseHeader.caseNumber}"/>
+                            </container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtCaseType}: ${caseHeader.caseTypeId}"/>
+                            </container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtStatus}: ${caseHeader.statusId}"/>
+                            </container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtStage}: ${caseHeader.currentStageSeq}"/>
+                            </container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtCustomer}: ${caseHeader.customerPartyId}"/>
+                            </container>
+
+                            <screenlet title="${uiLabelMap.CasemgmtForm}">
+                                <platform-specific>
+                                    <html><html-template location="component://casemgmt/template/casemgmt/CaseForm.ftl"/></html>
+                                </platform-specific>
+                            </screenlet>
+
+                            <screenlet title="${uiLabelMap.CasemgmtTasks}">
+                                <include-form name="CaseTaskList" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            </screenlet>
+
+                            <screenlet title="${uiLabelMap.CasemgmtCaseState}">
+                                <container>
+                                    <label text="${uiLabelMap.CasemgmtBlockedReasons}: ${blockedReasons}"/>
+                                </container>
+                                <container>
+                                    <label text="${uiLabelMap.CasemgmtNextSteps}: ${nextSteps}"/>
+                                </container>
+                            </screenlet>
+
+                            <screenlet title="${uiLabelMap.CasemgmtProcessMap}">
+                                <platform-specific>
+                                    <html><html-template location="component://casemgmt/template/casemgmt/CaseProcessMap.ftl"/></html>
+                                </platform-specific>
+                                <container id="case-process-tables">
+                                    <include-form name="CaseProcessMapStages" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                                    <include-form name="CaseProcessMapSteps" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                                    <include-form name="CaseSlaList" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                                </container>
+                            </screenlet>
+
+                            <screenlet title="${uiLabelMap.CasemgmtHistory}">
+                                <include-form name="CaseHistory" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            </screenlet>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="CaseTypeList">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtCaseTypes"/>
+                <set field="headerItem" value="caseTypes"/>
+                <entity-condition entity-name="CaseType" list="caseTypes">
+                    <order-by field-name="caseTypeId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtCaseTypes}">
+                            <include-form name="CaseTypeList" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+                        <screenlet title="${uiLabelMap.CasemgmtCreateCaseType}">
+                            <include-form name="CreateCaseType" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditCaseType">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtEditCaseType"/>
+                <set field="headerItem" value="caseTypes"/>
+                <set field="caseTypeId" from-field="parameters.caseTypeId" default-value="${requestAttributes.caseTypeId}"/>
+                <entity-one entity-name="CaseType" value-field="caseType"/>
+                <set field="definitionVersion" from-field="caseType.definitionVersion"/>
+                <service service-name="getCaseTypeStartForm">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="caseType.definitionVersion"/>
+                </service>
+                <set field="selectedStageSeq" value="${parameters.selectedStageSeq}" default-value="1"/>
+                <set field="selectedStepSeq" value="${parameters.selectedStepSeq}" default-value="1"/>
+                <entity-and entity-name="CaseStageDef" list="stages">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="caseType.definitionVersion"/>
+                    <order-by field-name="stageSeq"/>
+                </entity-and>
+                <entity-and entity-name="CaseStepDef" list="steps">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="caseType.definitionVersion"/>
+                    <field-map field-name="stageSeq" from-field="selectedStageSeq"/>
+                    <order-by field-name="stepSeq"/>
+                </entity-and>
+                <set field="stageSeq" from-field="selectedStageSeq"/>
+                <entity-one entity-name="CaseStageDef" value-field="selectedStage"/>
+                <set field="selectedStageName" from-field="selectedStage.stageName" default-value=""/>
+                <entity-and entity-name="CaseStepTransition" list="transitions">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="caseType.definitionVersion"/>
+                    <field-map field-name="stageSeq" from-field="selectedStageSeq"/>
+                    <field-map field-name="stepSeq" from-field="selectedStepSeq"/>
+                    <order-by field-name="outcomeEnumId"/>
+                    <order-by field-name="transitionSeq"/>
+                </entity-and>
+                <entity-and entity-name="CaseFieldMapping" list="fieldMappings">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="caseType.definitionVersion"/>
+                    <field-map field-name="stageSeq" from-field="selectedStageSeq"/>
+                    <field-map field-name="stepSeq" from-field="selectedStepSeq"/>
+                    <order-by field-name="sequenceNum"/>
+                </entity-and>
+                <service service-name="getCaseTypeProcessMap">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="caseType.definitionVersion"/>
+                </service>
+                <set field="processMermaid" from-field="mermaidDefinition"/>
+                <set field="stageMermaid" from-field="stageMermaidDefinition"/>
+                <set field="stepMermaid" from-field="stepMermaidDefinition"/>
+                <set field="transitionMermaid" from-field="transitionMermaidDefinition"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtEditCaseType} ${caseTypeId}">
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtStatus}: ${caseType.statusId}"/>
+                            </container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtDefinitionVersion}: ${caseType.definitionVersion}"/>
+                            </container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtActiveDefinitionVersion}: ${caseType.activeDefinitionVersion}"/>
+                            </container>
+                            <container>
+                                <label text="${requestAttributes._ERROR_MESSAGE_}"/>
+                            </container>
+                            <container style="button-bar">
+                                <link target="CloneCaseTypeDefinition" text="${uiLabelMap.CasemgmtClone}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                </link>
+                                <link target="ValidateCaseTypeDefinition" text="${uiLabelMap.CasemgmtValidate}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                    <parameter param-name="definitionVersion" from-field="definitionVersion"/>
+                                </link>
+                                <link target="PublishCaseTypeDefinition" text="${uiLabelMap.CasemgmtPublish}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                </link>
+                                <link target="CaseTypeDiff" text="${uiLabelMap.CasemgmtVersionDiff}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                    <parameter param-name="fromVersion" from-field="caseType.activeDefinitionVersion"/>
+                                    <parameter param-name="toVersion" from-field="caseType.definitionVersion"/>
+                                </link>
+                                <link target="DeleteCaseTypeDraft" text="${uiLabelMap.CasemgmtDeleteCaseType}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                </link>
+                            </container>
+
+                            <include-form name="EditCaseTypeDraft" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+
+                        <platform-specific>
+                            <html><html-template location="component://casemgmt/template/casemgmt/ValidationResult.ftl"/></html>
+                        </platform-specific>
+
+                        <screenlet title="${uiLabelMap.CasemgmtProcessMap}">
+                            <platform-specific>
+                                <html><html-template location="component://casemgmt/template/casemgmt/CaseTypeProcessMap.ftl"/></html>
+                            </platform-specific>
+                        </screenlet>
+
+                        <screenlet title="${uiLabelMap.CasemgmtStartForm}">
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtStartFormHint}"/>
+                            </container>
+                            <include-form name="EditCaseTypeStartForm" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <container style="button-bar">
+                                <link target="DeleteCaseTypeStartForm" text="${uiLabelMap.CasemgmtDelete}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                    <parameter param-name="definitionVersion" from-field="definitionVersion"/>
+                                    <parameter param-name="selectedStageSeq" from-field="selectedStageSeq"/>
+                                </link>
+                            </container>
+                        </screenlet>
+
+                        <screenlet title="${uiLabelMap.CasemgmtStages}">
+                            <container><label text="${uiLabelMap.CasemgmtSelectedStage}: ${selectedStageSeq} ${selectedStageName}"/></container>
+                            <include-form name="CaseStageList" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CreateCaseStage" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+
+                        <screenlet title="${uiLabelMap.CasemgmtSteps} - ${selectedStageSeq} ${selectedStageName}">
+                            <include-form name="CaseStepList" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CreateCaseStep" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <platform-specific>
+                                <html><html-template location="component://casemgmt/template/casemgmt/CaseStepTypeFields.ftl"/></html>
+                            </platform-specific>
+                        </screenlet>
+
+                        <screenlet title="${uiLabelMap.CasemgmtTransitions} - ${selectedStageSeq}/${selectedStepSeq}">
+                            <include-form name="CaseTransitionList" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CreateCaseTransition" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+
+                        <screenlet title="${uiLabelMap.CasemgmtFormFields} - ${selectedStageSeq}/${selectedStepSeq}">
+                            <include-form name="CaseFieldMappingList" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CreateCaseFieldMapping" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="CreateCase">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtCreateCase"/>
+                <set field="headerItem" value="main"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtCreateCase}">
+                            <container><label text="${requestAttributes._ERROR_MESSAGE_}"/></container>
+                            <include-form name="CreateCase" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="StartCase">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtCreateCase"/>
+                <set field="headerItem" value="main"/>
+                <set field="caseTypeId" from-field="parameters.caseTypeId"/>
+                <entity-one entity-name="CaseType" value-field="caseType"/>
+                <service service-name="getCaseTypeStartForm">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                </service>
+                <service service-name="getCaseTypeProcessMap">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="caseType.activeDefinitionVersion"/>
+                </service>
+                <set field="processMermaid" from-field="mermaidDefinition"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtCreateCase} ${caseTypeId}">
+                            <container><label text="${requestAttributes._ERROR_MESSAGE_}"/></container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtCaseType}: ${caseType.caseTypeName}"/>
+                            </container>
+                            <screenlet title="${uiLabelMap.CasemgmtProcessMap}">
+                                <platform-specific>
+                                    <html><html-template location="component://casemgmt/template/casemgmt/CaseTypeProcessMap.ftl"/></html>
+                                </platform-specific>
+                            </screenlet>
+                            <section>
+                                <condition><not><if-empty field="startForm.formName"/></not></condition>
+                                <widgets>
+                                    <include-form name="${startForm.formName}" location="${startForm.formLocation}"/>
+                                </widgets>
+                            </section>
+                            <section>
+                                <condition><if-empty field="startForm.formName"/></condition>
+                                <widgets>
+                                    <include-form name="StartCaseLegacy" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                                </widgets>
+                            </section>
+                            <container style="button-bar">
+                                <link target="CreateCase" text="${uiLabelMap.CasemgmtBack}" style="buttontext"/>
+                            </container>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="TaskForm">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtTaskForm"/>
+                <set field="headerItem" value="main"/>
+                <set field="caseTaskId" from-field="parameters.caseTaskId"/>
+                <service service-name="getCaseTaskForm">
+                    <field-map field-name="caseTaskId" from-field="caseTaskId"/>
+                </service>
+                <service service-name="getCaseProcessMap">
+                    <field-map field-name="caseId" from-field="caseId"/>
+                </service>
+                <set field="processMermaid" from-field="mermaidDefinition"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtTaskForm} ${caseTask.caseTaskId}">
+                            <container><label text="${requestAttributes._ERROR_MESSAGE_}"/></container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtStatus}: ${caseTask.statusId}"/>
+                            </container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtStage}: ${stageSeq} / ${uiLabelMap.CasemgmtStep}: ${stepSeq}"/>
+                            </container>
+                            <screenlet title="${uiLabelMap.CasemgmtProcessMap}">
+                                <platform-specific>
+                                    <html><html-template location="component://casemgmt/template/casemgmt/CaseProcessMap.ftl"/></html>
+                                </platform-specific>
+                            </screenlet>
+                            <section>
+                                <condition><not><if-empty field="stepForm.formName"/></not></condition>
+                                <widgets>
+                                    <include-form name="${stepForm.formName}" location="${stepForm.formLocation}"/>
+                                </widgets>
+                            </section>
+                            <section>
+                                <condition><if-compare field="formMode" operator="equals" value="DYNAMIC"/></condition>
+                                <widgets>
+                                    <platform-specific>
+                                        <html><html-template location="component://casemgmt/template/casemgmt/TaskFormDynamic.ftl"/></html>
+                                    </platform-specific>
+                                </widgets>
+                            </section>
+                            <section>
+                                <condition><if-compare field="formMode" operator="equals" value="SIMPLE"/></condition>
+                                <widgets>
+                                    <include-form name="TaskFormComplete" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                                </widgets>
+                            </section>
+                            <container style="button-bar">
+                                <link target="ViewCase" text="${uiLabelMap.CasemgmtBack}" style="buttontext">
+                                    <parameter param-name="caseId" from-field="caseId"/>
+                                </link>
+                            </container>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditCaseStage">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtEditStage"/>
+                <set field="headerItem" value="caseTypes"/>
+                <set field="caseTypeId" from-field="parameters.caseTypeId"/>
+                <set field="definitionVersion" from-field="parameters.definitionVersion"/>
+                <set field="stageSeq" from-field="parameters.stageSeq"/>
+                <entity-one entity-name="CaseStageDef" value-field="stage"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtEditStage} ${stage.stageName}">
+                            <include-form name="EditCaseStage" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <container style="button-bar">
+                                <link target="DeleteCaseStageDef" text="${uiLabelMap.CasemgmtDelete}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                    <parameter param-name="definitionVersion" from-field="definitionVersion"/>
+                                    <parameter param-name="stageSeq" from-field="stageSeq"/>
+                                    <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                                </link>
+                                <link target="EditCaseType" text="${uiLabelMap.CasemgmtBack}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                    <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                                </link>
+                            </container>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditCaseStep">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtEditStep"/>
+                <set field="headerItem" value="caseTypes"/>
+                <set field="caseTypeId" from-field="parameters.caseTypeId"/>
+                <set field="definitionVersion" from-field="parameters.definitionVersion"/>
+                <set field="stageSeq" from-field="parameters.stageSeq"/>
+                <set field="stepSeq" from-field="parameters.stepSeq"/>
+                <service service-name="getCaseStepForm">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="definitionVersion"/>
+                    <field-map field-name="stageSeq" from-field="stageSeq"/>
+                    <field-map field-name="stepSeq" from-field="stepSeq"/>
+                </service>
+                <entity-one entity-name="CaseStepDef" value-field="step"/>
+                <set field="stepTypeEnumId" from-field="step.stepTypeEnumId"/>
+                <service service-name="getCaseStepWait">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="definitionVersion"/>
+                    <field-map field-name="stageSeq" from-field="stageSeq"/>
+                    <field-map field-name="stepSeq" from-field="stepSeq"/>
+                </service>
+                <entity-and entity-name="CaseStepServiceParam" list="serviceParams">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="definitionVersion"/>
+                    <field-map field-name="stageSeq" from-field="stageSeq"/>
+                    <field-map field-name="stepSeq" from-field="stepSeq"/>
+                    <order-by field-name="paramSeq"/>
+                </entity-and>
+                <entity-and entity-name="CaseStepServiceOutput" list="serviceOutputs">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="definitionVersion"/>
+                    <field-map field-name="stageSeq" from-field="stageSeq"/>
+                    <field-map field-name="stepSeq" from-field="stepSeq"/>
+                    <order-by field-name="outputSeq"/>
+                </entity-and>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtEditStep} ${step.stepName}">
+                            <include-form name="EditCaseStep" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <platform-specific>
+                                <html><html-template location="component://casemgmt/template/casemgmt/CaseStepTypeFields.ftl"/></html>
+                            </platform-specific>
+                            <section>
+                                <condition>
+                                    <or>
+                                        <if-compare field="stepTypeEnumId" operator="equals" value="CASE_STEP_SERVICE"/>
+                                        <if-compare field="stepTypeEnumId" operator="equals" value="CASE_STEP_DECISION"/>
+                                    </or>
+                                </condition>
+                                <widgets>
+                                    <screenlet title="${uiLabelMap.CasemgmtServiceInputs}">
+                                        <include-form name="CaseServiceParamList" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                                        <include-form name="CreateCaseServiceParam" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                                    </screenlet>
+                                    <screenlet title="${uiLabelMap.CasemgmtServiceOutputs}">
+                                        <include-form name="CaseServiceOutputList" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                                        <include-form name="CreateCaseServiceOutput" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                                    </screenlet>
+                                </widgets>
+                            </section>
+                            <section>
+                                <condition><if-compare field="stepTypeEnumId" operator="equals" value="CASE_STEP_HUMAN_TASK"/></condition>
+                                <widgets>
+                                    <screenlet title="${uiLabelMap.CasemgmtTaskForm}">
+                                        <container>
+                                            <label text="${uiLabelMap.CasemgmtTaskFormHint}"/>
+                                        </container>
+                                        <include-form name="EditCaseStepForm" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                                        <container style="button-bar">
+                                            <link target="DeleteCaseStepForm" text="${uiLabelMap.CasemgmtDelete}" style="buttontext">
+                                                <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                                <parameter param-name="definitionVersion" from-field="definitionVersion"/>
+                                                <parameter param-name="stageSeq" from-field="stageSeq"/>
+                                                <parameter param-name="stepSeq" from-field="stepSeq"/>
+                                                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                                                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                                            </link>
+                                        </container>
+                                    </screenlet>
+                                </widgets>
+                            </section>
+                            <container style="button-bar">
+                                <link target="DeleteCaseStepDef" text="${uiLabelMap.CasemgmtDelete}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                    <parameter param-name="definitionVersion" from-field="definitionVersion"/>
+                                    <parameter param-name="stageSeq" from-field="stageSeq"/>
+                                    <parameter param-name="stepSeq" from-field="stepSeq"/>
+                                    <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                                    <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                                </link>
+                                <link target="EditCaseType" text="${uiLabelMap.CasemgmtBack}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                    <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                                    <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                                </link>
+                            </container>
+                        </screenlet>
+                        <section>
+                            <condition><if-compare field="stepTypeEnumId" operator="equals" value="CASE_STEP_WAIT"/></condition>
+                            <widgets>
+                                <screenlet title="${uiLabelMap.CasemgmtWaitSettings}">
+                                    <container>
+                                        <label text="${uiLabelMap.CasemgmtWaitSettingsHint}"/>
+                                    </container>
+                                    <include-form name="EditCaseStepWait" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                                    <container style="button-bar">
+                                        <link target="DeleteCaseStepWait" text="${uiLabelMap.CasemgmtDelete}" style="buttontext">
+                                            <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                            <parameter param-name="definitionVersion" from-field="definitionVersion"/>
+                                            <parameter param-name="stageSeq" from-field="stageSeq"/>
+                                            <parameter param-name="stepSeq" from-field="stepSeq"/>
+                                            <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                                            <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                                        </link>
+                                    </container>
+                                </screenlet>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditCaseTransition">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtEditTransition"/>
+                <set field="headerItem" value="caseTypes"/>
+                <set field="caseTypeId" from-field="parameters.caseTypeId"/>
+                <set field="definitionVersion" from-field="parameters.definitionVersion"/>
+                <set field="stageSeq" from-field="parameters.stageSeq"/>
+                <set field="stepSeq" from-field="parameters.stepSeq"/>
+                <set field="outcomeEnumId" from-field="parameters.outcomeEnumId"/>
+                <set field="transitionSeq" from-field="parameters.transitionSeq"/>
+                <entity-one entity-name="CaseStepTransition" value-field="transition"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtEditTransition} ${outcomeEnumId}">
+                            <container><label text="${uiLabelMap.CasemgmtTransitionSeq}: ${transitionSeq}"/></container>
+                            <include-form name="EditCaseTransition" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <container style="button-bar">
+                                <link target="DeleteCaseStepTransition" text="${uiLabelMap.CasemgmtDelete}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                    <parameter param-name="definitionVersion" from-field="definitionVersion"/>
+                                    <parameter param-name="stageSeq" from-field="stageSeq"/>
+                                    <parameter param-name="stepSeq" from-field="stepSeq"/>
+                                    <parameter param-name="outcomeEnumId" from-field="outcomeEnumId"/>
+                                    <parameter param-name="transitionSeq" from-field="transitionSeq"/>
+                                    <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                                    <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                                </link>
+                                <link target="EditCaseType" text="${uiLabelMap.CasemgmtBack}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                    <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                                    <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                                </link>
+                            </container>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditCaseFieldMapping">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtEditField"/>
+                <set field="headerItem" value="caseTypes"/>
+                <set field="caseTypeId" from-field="parameters.caseTypeId"/>
+                <set field="definitionVersion" from-field="parameters.definitionVersion"/>
+                <set field="stageSeq" from-field="parameters.stageSeq"/>
+                <set field="stepSeq" from-field="parameters.stepSeq"/>
+                <set field="fieldSeq" from-field="parameters.fieldSeq"/>
+                <entity-one entity-name="CaseFieldMapping" value-field="mapping"/>
+                <entity-and entity-name="CaseFieldLabel" list="fieldLabels">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="definitionVersion"/>
+                    <field-map field-name="stageSeq" from-field="stageSeq"/>
+                    <field-map field-name="stepSeq" from-field="stepSeq"/>
+                    <field-map field-name="fieldSeq" from-field="fieldSeq"/>
+                    <order-by field-name="locale"/>
+                </entity-and>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtEditField} ${mapping.fieldName}">
+                            <include-form name="EditCaseFieldMapping" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <container style="button-bar">
+                                <link target="DeleteCaseFieldMapping" text="${uiLabelMap.CasemgmtDelete}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                    <parameter param-name="definitionVersion" from-field="definitionVersion"/>
+                                    <parameter param-name="stageSeq" from-field="stageSeq"/>
+                                    <parameter param-name="stepSeq" from-field="stepSeq"/>
+                                    <parameter param-name="fieldSeq" from-field="fieldSeq"/>
+                                    <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                                    <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                                </link>
+                                <link target="EditCaseType" text="${uiLabelMap.CasemgmtBack}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                    <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                                    <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                                </link>
+                            </container>
+                        </screenlet>
+                        <screenlet title="${uiLabelMap.CasemgmtFieldLabels}">
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtFieldLabelHint}"/>
+                            </container>
+                            <include-form name="CaseFieldLabelList" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CreateCaseFieldLabel" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="CaseTypeDiff">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtVersionDiff"/>
+                <set field="headerItem" value="caseTypes"/>
+                <set field="caseTypeId" from-field="parameters.caseTypeId"/>
+                <entity-one entity-name="CaseType" value-field="caseType"/>
+                <set field="fromVersion" value="${parameters.fromVersion}" default-value="${caseType.activeDefinitionVersion}"/>
+                <set field="toVersion" value="${parameters.toVersion}" default-value="${caseType.definitionVersion}"/>
+                <service service-name="getCaseTypeDefinitionDiff">
+                    <field-map field-name="caseTypeId" from-field="caseTypeId"/>
+                    <field-map field-name="fromVersion" from-field="fromVersion"/>
+                    <field-map field-name="toVersion" from-field="toVersion"/>
+                </service>
+                <set field="stageChanges" from-field="stageChanges"/>
+                <set field="stepChanges" from-field="stepChanges"/>
+                <set field="transitionChanges" from-field="transitionChanges"/>
+                <set field="fieldChanges" from-field="fieldChanges"/>
+                <set field="serviceParamChanges" from-field="serviceParamChanges"/>
+                <set field="serviceOutputChanges" from-field="serviceOutputChanges"/>
+                <set field="startFormChanges" from-field="startFormChanges"/>
+                <set field="stepFormChanges" from-field="stepFormChanges"/>
+                <set field="waitChanges" from-field="waitChanges"/>
+                <set field="changeCount" from-field="changeCount"/>
+                <set field="hasChanges" from-field="hasChanges"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtVersionDiff} ${caseTypeId}">
+                            <include-form name="CaseTypeDiffFilter" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <container><label text="${uiLabelMap.CasemgmtChangeCount}: ${changeCount}"/></container>
+                            <include-form name="CaseDiffStages" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseDiffSteps" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseDiffTransitions" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseDiffFields" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseDiffServiceParams" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseDiffServiceOutputs" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseDiffStartForms" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseDiffStepForms" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseDiffWaits" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <container style="button-bar">
+                                <link target="EditCaseType" text="${uiLabelMap.CasemgmtBack}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                                </link>
+                            </container>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="CaseStack">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtCaseStack"/>
+                <set field="headerItem" value="caseStack"/>
+                <service service-name="getCaseStack"/>
+                <set field="stackTotal" from-field="total"/>
+                <set field="stackByStage" from-field="byStage"/>
+                <set field="stackByQueue" from-field="byQueue"/>
+                <set field="stackByAssignee" from-field="byAssignee"/>
+                <set field="stackBySla" from-field="bySla"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtCaseStack}">
+                            <container><label text="${uiLabelMap.CasemgmtTotal}: ${stackTotal}"/></container>
+                            <include-form name="CaseStackByStage" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseStackByQueue" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseStackByAssignee" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseStackBySla" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="CaseReports">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtReports"/>
+                <set field="headerItem" value="caseReports"/>
+                <set field="reportFilter" from-field="parameters"/>
+                <set field="reportCaseTypeId" value="${parameters.caseTypeId}" default-value=""/>
+                <set field="reportStatusId" value="${parameters.statusId}" default-value=""/>
+                <set field="reportStageSeq" value="${parameters.stageSeq}" default-value=""/>
+                <set field="reportQueueId" value="${parameters.queueId}" default-value=""/>
+                <set field="reportAssignedPartyId" value="${parameters.assignedPartyId}" default-value=""/>
+                <set field="reportFromDate" value="${parameters.fromDate}" default-value=""/>
+                <set field="reportToDate" value="${parameters.toDate}" default-value=""/>
+                <service service-name="getCaseMetrics">
+                    <field-map field-name="caseTypeId" from-field="reportCaseTypeId"/>
+                    <field-map field-name="statusId" from-field="reportStatusId"/>
+                    <field-map field-name="stageSeq" from-field="reportStageSeq"/>
+                    <field-map field-name="queueId" from-field="reportQueueId"/>
+                    <field-map field-name="assignedPartyId" from-field="reportAssignedPartyId"/>
+                    <field-map field-name="fromDate" from-field="reportFromDate"/>
+                    <field-map field-name="toDate" from-field="reportToDate"/>
+                </service>
+                <set field="reportSummary" from-field="summary"/>
+                <set field="reportByType" from-field="byCaseType"/>
+                <set field="reportByStage" from-field="byStage"/>
+                <set field="reportSlaByMilestone" from-field="slaByMilestone"/>
+                <set field="reportThroughputDaily" from-field="throughputDaily"/>
+                <set field="reportThroughputWeekly" from-field="throughputWeekly"/>
+                <set field="reportThroughputMonthly" from-field="throughputMonthly"/>
+                <set field="reportAging" from-field="aging"/>
+                <set field="stackTotal" from-field="stack.total"/>
+                <set field="stackByStage" from-field="stack.byStage"/>
+                <set field="stackByQueue" from-field="stack.byQueue"/>
+                <set field="stackByAssignee" from-field="stack.byAssignee"/>
+                <set field="stackBySla" from-field="stack.bySla"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtReports}">
+                            <include-form name="CaseReportFilter" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <container style="button-bar">
+                                <link target="ExportCaseMetrics" text="${uiLabelMap.CasemgmtExportCsv}" style="buttontext">
+                                    <parameter param-name="caseTypeId" from-field="reportCaseTypeId"/>
+                                    <parameter param-name="statusId" from-field="reportStatusId"/>
+                                    <parameter param-name="stageSeq" from-field="reportStageSeq"/>
+                                    <parameter param-name="queueId" from-field="reportQueueId"/>
+                                    <parameter param-name="assignedPartyId" from-field="reportAssignedPartyId"/>
+                                    <parameter param-name="fromDate" from-field="reportFromDate"/>
+                                    <parameter param-name="toDate" from-field="reportToDate"/>
+                                </link>
+                            </container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtTotal}: ${reportSummary.totalCases} / ${uiLabelMap.CasemgmtOpen}: ${reportSummary.openCases} / ${uiLabelMap.CasemgmtResolved}: ${reportSummary.resolvedCases} / ${uiLabelMap.CasemgmtClosed}: ${reportSummary.closedCases} / ${uiLabelMap.CasemgmtBacklog}: ${reportSummary.backlogCases}"/>
+                            </container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtAverageCycle}: ${reportSummary.averageCycleMinutes} ${uiLabelMap.CasemgmtMinutesShort} / ${uiLabelMap.CasemgmtAverageOpenAge}: ${reportSummary.averageOpenAgeMinutes} ${uiLabelMap.CasemgmtMinutesShort}"/>
+                            </container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtSlaCompliance}: ${reportSummary.slaCompliancePct}% (${reportSummary.slaOnTime}/${reportSummary.slaCompleted}) / ${uiLabelMap.CasemgmtOverdue}: ${reportSummary.slaOverdue} / ${uiLabelMap.CasemgmtEscalations}: ${reportSummary.escalationCount}"/>
+                            </container>
+                            <container>
+                                <label text="${uiLabelMap.CasemgmtReworkRate}: ${reportSummary.reworkRatePct}% / ${uiLabelMap.CasemgmtAutoAdvanceRate}: ${reportSummary.autoAdvanceRatePct}%"/>
+                            </container>
+                        </screenlet>
+
+                        <screenlet title="${uiLabelMap.CasemgmtCycleByType}">
+                            <include-form name="CaseReportByType" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+
+                        <screenlet title="${uiLabelMap.CasemgmtCycleByStage}">
+                            <include-form name="CaseReportByStage" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+
+                        <screenlet title="${uiLabelMap.CasemgmtSlaByMilestone}">
+                            <include-form name="CaseReportSlaMilestone" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+
+                        <screenlet title="${uiLabelMap.CasemgmtThroughput}">
+                            <container><label text="${uiLabelMap.CasemgmtDate}"/></container>
+                            <include-form name="CaseReportThroughputDaily" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <container><label text="${uiLabelMap.CasemgmtWeek}"/></container>
+                            <include-form name="CaseReportThroughputWeekly" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <container><label text="${uiLabelMap.CasemgmtMonth}"/></container>
+                            <include-form name="CaseReportThroughputMonthly" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+
+                        <screenlet title="${uiLabelMap.CasemgmtAging}">
+                            <include-form name="CaseReportAging" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+
+                        <screenlet title="${uiLabelMap.CasemgmtBacklog}">
+                            <container><label text="${uiLabelMap.CasemgmtTotal}: ${stackTotal}"/></container>
+                            <include-form name="CaseStackByStage" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseStackByQueue" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseStackByAssignee" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                            <include-form name="CaseStackBySla" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="CaseSimulator">
+        <section>
+            <actions>
+                <set field="titleProperty" value="CasemgmtSimulator"/>
+                <set field="headerItem" value="caseSimulator"/>
+                <set field="simCaseTypeId" from-field="parameters.caseTypeId" default-value="PILOT_INQUIRY"/>
+                <set field="simDefinitionVersion" from-field="parameters.definitionVersion"/>
+                <set field="simOutcome" from-field="parameters.outcomeEnumId" default-value="CASE_OUT_COMPLETE"/>
+                <set field="simMaxSteps" from-field="parameters.maxSteps" default-value="50"/>
+                <service service-name="simulateCaseFlow">
+                    <field-map field-name="caseTypeId" from-field="simCaseTypeId"/>
+                    <field-map field-name="definitionVersion" from-field="simDefinitionVersion"/>
+                    <field-map field-name="outcomeEnumId" from-field="simOutcome"/>
+                    <field-map field-name="maxSteps" from-field="simMaxSteps"/>
+                </service>
+                <set field="simulationPath" from-field="path"/>
+                <set field="simulationResolved" from-field="resolved"/>
+                <set field="simulationWarnings" from-field="warnings"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CasemgmtSimulator}">
+                            <include-form name="SimulateCaseFlow" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+                        <screenlet title="${uiLabelMap.CasemgmtSimulationResult}">
+                            <container><label text="${uiLabelMap.CasemgmtResolved}: ${simulationResolved}"/></container>
+                            <container><label text="${uiLabelMap.CasemgmtWarnings}: ${simulationWarnings}"/></container>
+                            <include-form name="SimulationPath" location="component://casemgmt/widget/CasemgmtForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+</screens>

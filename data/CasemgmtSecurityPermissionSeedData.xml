@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<entity-engine-xml>
+    <SecurityPermission permissionId="CASEMGMT_VIEW" description="View cases"/>
+    <SecurityPermission permissionId="CASEMGMT_CREATE" description="Create cases"/>
+    <SecurityPermission permissionId="CASEMGMT_UPDATE" description="Update cases and tasks"/>
+    <SecurityPermission permissionId="CASEMGMT_ADMIN" description="Administer case types and access"/>
+    <SecurityPermission permissionId="CASEMGMT_CASE_TYPE_EDIT" description="Create and edit case type definitions"/>
+
+    <SecurityGroup groupId="CASEMGMT_USER" groupName="Case Management User"
+            description="Case worker: view, create and update cases"/>
+    <SecurityGroup groupId="CASEMGMT_ADMIN" groupName="Case Management Admin"
+            description="Case management administrator"/>
+
+    <SecurityGroupPermission groupId="CASEMGMT_USER" permissionId="CASEMGMT_VIEW"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="CASEMGMT_USER" permissionId="CASEMGMT_CREATE"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="CASEMGMT_USER" permissionId="CASEMGMT_UPDATE"
+            fromDate="2026-10-24 00:00:00.000"/>
+
+    <SecurityGroupPermission groupId="CASEMGMT_ADMIN" permissionId="CASEMGMT_VIEW"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="CASEMGMT_ADMIN" permissionId="CASEMGMT_CREATE"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="CASEMGMT_ADMIN" permissionId="CASEMGMT_UPDATE"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="CASEMGMT_ADMIN" permissionId="CASEMGMT_ADMIN"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="CASEMGMT_ADMIN" permissionId="CASEMGMT_CASE_TYPE_EDIT"
+            fromDate="2026-10-24 00:00:00.000"/>
+
+    <!-- Full administrators (including the standard admin user) can use
+         the case management UI and services. -->
+    <SecurityGroupPermission groupId="FULLADMIN" permissionId="CASEMGMT_VIEW"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="FULLADMIN" permissionId="CASEMGMT_CREATE"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="FULLADMIN" permissionId="CASEMGMT_UPDATE"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="FULLADMIN" permissionId="CASEMGMT_ADMIN"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="FULLADMIN" permissionId="CASEMGMT_CASE_TYPE_EDIT"
+            fromDate="2026-10-24 00:00:00.000"/>
+
+    <!-- The system user is used by tests and internal jobs. -->
+    <SecurityGroupPermission groupId="SUPER" permissionId="CASEMGMT_VIEW"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="SUPER" permissionId="CASEMGMT_CREATE"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="SUPER" permissionId="CASEMGMT_UPDATE"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="SUPER" permissionId="CASEMGMT_ADMIN"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <SecurityGroupPermission groupId="SUPER" permissionId="CASEMGMT_CASE_TYPE_EDIT"
+            fromDate="2026-10-24 00:00:00.000"/>
+</entity-engine-xml>

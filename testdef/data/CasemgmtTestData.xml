@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<entity-engine-xml>
+    <Party partyId="TEST_CASEMGMT_CUST" partyTypeId="PERSON" statusId="PARTY_ENABLED"/>
+    <PartyRole partyId="TEST_CASEMGMT_CUST" roleTypeId="CUSTOMER"/>
+    <Party partyId="TEST_AGENT1" partyTypeId="PERSON" statusId="PARTY_ENABLED"/>
+    <Party partyId="TEST_AGENT2" partyTypeId="PERSON" statusId="PARTY_ENABLED"/>
+    <PartyRole partyId="TEST_AGENT1" roleTypeId="CAL_OWNER"/>
+    <PartyRole partyId="TEST_AGENT2" roleTypeId="CAL_OWNER"/>
+    <PartyRole partyId="system" roleTypeId="CAL_OWNER"/>
+    <UserLogin userLoginId="TEST_AGENT1_USER" partyId="TEST_AGENT1" enabled="Y"/>
+    <UserLogin userLoginId="TEST_AGENT2_USER" partyId="TEST_AGENT2" enabled="Y"/>
+    <UserLogin userLoginId="TEST_CUST_USER" partyId="TEST_CASEMGMT_CUST" enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="TEST_AGENT1_USER" groupId="CASEMGMT_USER"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <UserLoginSecurityGroup userLoginId="TEST_AGENT2_USER" groupId="CASEMGMT_USER"
+            fromDate="2026-10-24 00:00:00.000"/>
+    <UserLoginSecurityGroup userLoginId="TEST_CUST_USER" groupId="CASEMGMT_USER"
+            fromDate="2026-10-24 00:00:00.000"/>
+
+    <CaseQueue queueId="TEST_QUEUE" partyId="Company" queueName="Test Queue" activeIndicator="Y"/>
+    <CaseQueueMember queueId="TEST_QUEUE" partyId="TEST_AGENT1"
+            fromDate="2026-10-24 00:00:00.000" activeIndicator="Y" weight="1"/>
+    <CaseQueueMember queueId="TEST_QUEUE" partyId="TEST_AGENT2"
+            fromDate="2026-10-24 00:00:00.000" activeIndicator="Y" weight="1"/>
+    <CaseAssignmentPolicy assignmentPolicyId="TEST_POLICY_RR"
+            policyName="Test round robin" strategyEnumId="CASE_Q_ROUND_ROBIN"
+            queueId="TEST_QUEUE" maxOpenTasks="0"/>
+    <CaseAssignmentPolicy assignmentPolicyId="TEST_POLICY_LOAD"
+            policyName="Test least load" strategyEnumId="CASE_Q_LEAST_LOAD"
+            queueId="TEST_QUEUE" maxOpenTasks="0"/>
+    <CaseAssignmentPolicy assignmentPolicyId="TEST_POLICY_SPECIFIC"
+            policyName="Test specific party" strategyEnumId="CASE_Q_SPECIFIC"
+            specificPartyId="TEST_AGENT1" maxOpenTasks="0"/>
+    <CaseAssignmentPolicy assignmentPolicyId="TEST_POLICY_PICK"
+            policyName="Test queue pick" strategyEnumId="CASE_Q_PICK"
+            queueId="TEST_QUEUE" maxOpenTasks="0"/>
+    <CaseAssignmentPolicy assignmentPolicyId="TEST_POLICY_SKILL"
+            policyName="Test skill assignment" strategyEnumId="CASE_Q_SKILL"
+            queueId="TEST_QUEUE" requiredSkillTypeId="9000" maxOpenTasks="0"/>
+    <PartySkill partyId="TEST_AGENT1" skillTypeId="9000" skillLevel="5"/>
+
+    <CaseType caseTypeId="TEST_ASSIGN_RR" caseTypeName="Test round robin assignment"
+            description="Round-robin assignment test"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_ASSIGN_RR" definitionVersion="1" stageSeq="1"
+            stageName="Work" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Assignment stage"/>
+    <CaseStepDef caseTypeId="TEST_ASSIGN_RR" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="TEST_POLICY_RR" requiredIndicator="Y"
+            sequenceNum="1" description="Round-robin task"/>
+
+    <CaseType caseTypeId="TEST_ASSIGN_LOAD" caseTypeName="Test least load assignment"
+            description="Least-load assignment test"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_ASSIGN_LOAD" definitionVersion="1" stageSeq="1"
+            stageName="Work" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Assignment stage"/>
+    <CaseStepDef caseTypeId="TEST_ASSIGN_LOAD" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="TEST_POLICY_LOAD" requiredIndicator="Y"
+            sequenceNum="1" description="Least-load task"/>
+
+    <CaseType caseTypeId="TEST_ASSIGN_SPEC" caseTypeName="Test specific assignment"
+            description="Specific assignment test"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_ASSIGN_SPEC" definitionVersion="1" stageSeq="1"
+            stageName="Work" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Assignment stage"/>
+    <CaseStepDef caseTypeId="TEST_ASSIGN_SPEC" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="TEST_POLICY_SPECIFIC" requiredIndicator="Y"
+            sequenceNum="1" description="Specific task"/>
+
+    <CaseType caseTypeId="TEST_ASSIGN_PICK" caseTypeName="Test queue pick assignment"
+            description="Queue pick assignment test"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_ASSIGN_PICK" definitionVersion="1" stageSeq="1"
+            stageName="Work" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Assignment stage"/>
+    <CaseStepDef caseTypeId="TEST_ASSIGN_PICK" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="TEST_POLICY_PICK" requiredIndicator="Y"
+            sequenceNum="1" description="Queue pick task"/>
+
+    <CaseType caseTypeId="TEST_ASSIGN_SKILL" caseTypeName="Test skill assignment"
+            description="Skill-based assignment test"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_ASSIGN_SKILL" definitionVersion="1" stageSeq="1"
+            stageName="Work" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Assignment stage"/>
+    <CaseStepDef caseTypeId="TEST_ASSIGN_SKILL" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="TEST_POLICY_SKILL" requiredIndicator="Y"
+            sequenceNum="1" description="Skill task"/>
+
+    <!-- Phase 2 flow condition test case types. -->
+    <CaseType caseTypeId="TEST_EXIT_FALSE" caseTypeName="Test exit false"
+            description="Exit condition blocks stage advancement"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_EXIT_FALSE" definitionVersion="1" stageSeq="1"
+            stageName="Blocked" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            exitServiceName="casemgmtTestConditionFalse" description="Exit blocked"/>
+    <CaseStageDef caseTypeId="TEST_EXIT_FALSE" definitionVersion="1" stageSeq="2"
+            stageName="After" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Should not be reached"/>
+    <CaseStepDef caseTypeId="TEST_EXIT_FALSE" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Do work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Complete the task"/>
+    <CaseStepTransition caseTypeId="TEST_EXIT_FALSE" definitionVersion="1" transitionSeq="1"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="2" toStepSeq="1" priority="1" isDefault="Y"
+            description="Advance if the exit condition allows"/>
+
+    <CaseType caseTypeId="TEST_PRIORITY" caseTypeName="Test transition priority"
+            description="Higher priority transition wins"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_PRIORITY" definitionVersion="1" stageSeq="1"
+            stageName="Start" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Start"/>
+    <CaseStageDef caseTypeId="TEST_PRIORITY" definitionVersion="1" stageSeq="2"
+            stageName="High priority" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="High priority target"/>
+    <CaseStageDef caseTypeId="TEST_PRIORITY" definitionVersion="1" stageSeq="3"
+            stageName="Low priority" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Low priority target"/>
+    <CaseStepDef caseTypeId="TEST_PRIORITY" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Do work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Complete the task"/>
+    <CaseStepTransition caseTypeId="TEST_PRIORITY" definitionVersion="1" transitionSeq="1"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="3" toStepSeq="1" priority="1" isDefault="N"
+            conditionServiceName="casemgmtTestConditionTrue"
+            description="Low priority candidate"/>
+    <CaseStepTransition caseTypeId="TEST_PRIORITY" definitionVersion="1" transitionSeq="2"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="2" toStepSeq="1" priority="10" isDefault="N"
+            conditionServiceName="casemgmtTestConditionTrue"
+            description="High priority candidate"/>
+
+    <CaseType caseTypeId="TEST_REWORK" caseTypeName="Test rework"
+            description="Rework back to a previous stage"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_REWORK" definitionVersion="1" stageSeq="1"
+            stageName="Work" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Work stage"/>
+    <CaseStageDef caseTypeId="TEST_REWORK" definitionVersion="1" stageSeq="2"
+            stageName="Review" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Review stage"/>
+    <CaseStageDef caseTypeId="TEST_REWORK" definitionVersion="1" stageSeq="3"
+            stageName="Done" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Done stage"/>
+    <CaseStepDef caseTypeId="TEST_REWORK" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Do work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Do the work"/>
+    <CaseStepDef caseTypeId="TEST_REWORK" definitionVersion="1" stageSeq="2" stepSeq="1"
+            stepName="Review" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Review the work"/>
+    <CaseStepTransition caseTypeId="TEST_REWORK" definitionVersion="1" transitionSeq="1"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="2" toStepSeq="1" priority="1" isDefault="Y"
+            description="Work complete"/>
+    <CaseStepTransition caseTypeId="TEST_REWORK" definitionVersion="1" transitionSeq="1"
+            stageSeq="2" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="3" toStepSeq="1" priority="1" isDefault="Y"
+            description="Review complete"/>
+    <CaseStepTransition caseTypeId="TEST_REWORK" definitionVersion="1" transitionSeq="1"
+            stageSeq="2" stepSeq="1" outcomeEnumId="CASE_OUT_REJECT"
+            toStageSeq="1" toStepSeq="1" priority="10" isDefault="N"
+            description="Rework back to work"/>
+
+    <CaseType caseTypeId="TEST_AUTO" caseTypeName="Test service and decision steps"
+            description="Auto advance through service and decision steps"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_AUTO" definitionVersion="1" stageSeq="1"
+            stageName="Automation" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="Y"
+            description="Automated stage"/>
+    <CaseStageDef caseTypeId="TEST_AUTO" definitionVersion="1" stageSeq="2"
+            stageName="Human" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Human stage"/>
+    <CaseStepDef caseTypeId="TEST_AUTO" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Run service" stepTypeEnumId="CASE_STEP_SERVICE"
+            serviceName="casemgmtTestServiceComplete" requiredIndicator="Y"
+            sequenceNum="1" description="Run an automated service"/>
+    <CaseStepDef caseTypeId="TEST_AUTO" definitionVersion="1" stageSeq="1" stepSeq="2"
+            stepName="Run decision" stepTypeEnumId="CASE_STEP_DECISION"
+            serviceName="casemgmtTestDecisionComplete" requiredIndicator="Y"
+            sequenceNum="2" description="Run an automated decision"/>
+    <CaseStepDef caseTypeId="TEST_AUTO" definitionVersion="1" stageSeq="2" stepSeq="1"
+            stepName="Human work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Human task"/>
+    <CaseStepServiceOutput caseTypeId="TEST_AUTO" definitionVersion="1" stageSeq="1" stepSeq="1"
+            outputSeq="1" outputName="testValue" variableName="test.value"
+            valueTypeEnumId="CASE_VAR_STRING" requiredIndicator="Y" sensitiveIndicator="N"
+            scopeEnumId="CASE_VAR_SCOPE_CASE" description="Service output to variable"/>
+    <CaseStepServiceParam caseTypeId="TEST_AUTO" definitionVersion="1" stageSeq="1" stepSeq="2"
+            paramSeq="1" paramName="testValue" sourceTypeEnumId="CASE_SVC_SRC_VAR"
+            sourceValue="test.value" requiredIndicator="Y" description="Variable to decision input"/>
+    <CaseStepServiceOutput caseTypeId="TEST_AUTO" definitionVersion="1" stageSeq="1" stepSeq="2"
+            outputSeq="1" outputName="receivedValue" variableName="test.received"
+            valueTypeEnumId="CASE_VAR_STRING" requiredIndicator="Y" sensitiveIndicator="N"
+            scopeEnumId="CASE_VAR_SCOPE_CASE" description="Decision output to variable"/>
+    <CaseStepTransition caseTypeId="TEST_AUTO" definitionVersion="1" transitionSeq="1"
+            stageSeq="1" stepSeq="2" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="2" toStepSeq="1" priority="1" isDefault="Y"
+            description="Automation complete"/>
+
+    <CaseType caseTypeId="TEST_WAIT" caseTypeName="Test wait step"
+            description="Wait for an external signal"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_WAIT" definitionVersion="1" stageSeq="1"
+            stageName="Waiting" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Waiting stage"/>
+    <CaseStageDef caseTypeId="TEST_WAIT" definitionVersion="1" stageSeq="2"
+            stageName="After wait" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="After wait stage"/>
+    <CaseStepDef caseTypeId="TEST_WAIT" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Wait for signal" stepTypeEnumId="CASE_STEP_WAIT"
+            requiredIndicator="Y" sequenceNum="1" description="Wait for external signal"/>
+    <CaseStepDef caseTypeId="TEST_WAIT" definitionVersion="1" stageSeq="2" stepSeq="1"
+            stepName="After wait" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Human task after wait"/>
+    <CaseStepTransition caseTypeId="TEST_WAIT" definitionVersion="1" transitionSeq="1"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="2" toStepSeq="1" priority="1" isDefault="Y"
+            description="Signal received"/>
+    <CaseStepTransition caseTypeId="TEST_WAIT" definitionVersion="1" transitionSeq="2"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_TIMEOUT"
+            toStageSeq="2" toStepSeq="1" priority="1" isDefault="Y"
+            description="Wait timed out"/>
+    <CaseStepWait caseTypeId="TEST_WAIT" definitionVersion="1" stageSeq="1" stepSeq="1"
+            signalName="employee-ready" timeoutDuration="60"
+            timeoutOutcomeEnumId="CASE_OUT_TIMEOUT"
+            description="Wait for onboarding signal or one hour timeout"/>
+
+    <CaseType caseTypeId="TEST_ENTRY" caseTypeName="Test stage entry service"
+            description="Run a stage entry service"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_ENTRY" definitionVersion="1" stageSeq="1"
+            stageName="Entry" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            entryServiceName="casemgmtTestConditionTrue" description="Entry service stage"/>
+    <CaseStepDef caseTypeId="TEST_ENTRY" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Human work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Human task"/>
+
+    <CaseType caseTypeId="TEST_FORM" caseTypeName="Test dynamic form"
+            description="Case type with a dynamic form"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_FORM" definitionVersion="1" stageSeq="1"
+            stageName="Form" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Form stage"/>
+    <CaseStepDef caseTypeId="TEST_FORM" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Form task" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Form task"/>
+    <CaseFieldMapping caseTypeId="TEST_FORM" definitionVersion="1" stageSeq="1" stepSeq="1" fieldSeq="1"
+            fieldName="description" entityName="Case" entityFieldName="description"
+            label="Description" fieldTypeEnumId="CASE_FIELD_TEXTAREA"
+            requiredIndicator="Y" sequenceNum="1"/>
+    <CaseFieldMapping caseTypeId="TEST_FORM" definitionVersion="1" stageSeq="1" stepSeq="1" fieldSeq="2"
+            fieldName="priority" entityName="Case" entityFieldName="priority"
+            label="Priority" fieldTypeEnumId="CASE_FIELD_NUMBER"
+            requiredIndicator="N" sequenceNum="2"/>
+    <CaseTypeStartForm caseTypeId="TEST_FORM" definitionVersion="1"
+            formLocation="component://casemgmt/widget/CasemgmtForms.xml"
+            formName="TestStartCaseForm" formTarget="StartCaseSubmit"
+            startServiceName="casemgmtTestStartForm" submitLabel="Start"
+            description="Test start form metadata"/>
+    <CaseStepForm caseTypeId="TEST_FORM" definitionVersion="1" stageSeq="1" stepSeq="1"
+            formLocation="component://casemgmt/widget/CasemgmtForms.xml"
+            formName="TestTaskCaseForm" formTarget="TaskFormSubmit"
+            completeServiceName="casemgmtTestTaskForm"
+            description="Test task form metadata"/>
+
+    <CaseType caseTypeId="TEST_STANDARD_FORM" caseTypeName="Test standard form reuse"
+            description="Reuse AddPartyNote with a case-specific target"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_STANDARD_FORM" definitionVersion="1" stageSeq="1"
+            stageName="Standard form" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Standard form stage"/>
+    <CaseStepDef caseTypeId="TEST_STANDARD_FORM" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Add party note" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Standard party note task"/>
+    <CaseStepForm caseTypeId="TEST_STANDARD_FORM" definitionVersion="1" stageSeq="1" stepSeq="1"
+            formLocation="component://casemgmt/widget/CasemgmtForms.xml"
+            formName="CaseStandardPartyNoteForm" formTarget="TaskFormSubmit"
+            completeServiceName="createPartyNote"
+            description="Extends the standard AddPartyNote form"/>
+
+    <CaseType caseTypeId="TEST_ACCESS" caseTypeName="Test access control"
+            description="Case type for row-level access tests"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            accessPolicyId="TEST_ACCESS_AGENT2"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_ACCESS" definitionVersion="1" stageSeq="1"
+            stageName="Work" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Access test stage"/>
+    <CaseStepDef caseTypeId="TEST_ACCESS" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Access test task"/>
+    <CaseAccessPolicy accessPolicyId="TEST_ACCESS_AGENT2" caseTypeId="TEST_ACCESS"
+            description="Agent 2 may view test access cases"/>
+    <CaseAccessRule accessPolicyId="TEST_ACCESS_AGENT2" ruleSeq="1"
+            partyId="TEST_AGENT2" permissionEnumId="CASE_VIEW"
+            description="Agent 2 may view"/>
+
+    <Party partyId="TEST_STRANGER" partyTypeId="PERSON" statusId="PARTY_ENABLED"/>
+    <UserLogin userLoginId="TEST_STRANGER_USER" partyId="TEST_STRANGER" enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="TEST_STRANGER_USER" groupId="CASEMGMT_USER"
+            fromDate="2026-10-24 00:00:00.000"/>
+
+    <CaseType caseTypeId="TEST_SLA" caseTypeName="Test SLA"
+            description="Case type with a short SLA"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_SLA" definitionVersion="1" stageSeq="1"
+            stageName="SLA work" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="SLA work stage"/>
+    <CaseStepDef caseTypeId="TEST_SLA" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="SLA task" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="SLA task"/>
+    <CaseSla slaId="TEST_SLA" slaName="Test SLA"
+            description="Short SLA for tests"/>
+    <CaseSlaMilestone slaId="TEST_SLA" milestoneSeq="1"
+            milestoneName="Resolution" milestoneTypeEnumId="SLA_RESOLUTION"
+            goalDuration="60" deadlineDuration="120" passedDeadlineDuration="180"
+            description="Goal 1 hour, deadline 2 hours, passed deadline 3 hours"/>
+    <CaseSlaRule slaId="TEST_SLA" ruleSeq="1" caseTypeId="TEST_SLA"
+            priority="1" sequenceNum="1"/>
+
+    <CaseType caseTypeId="TEST_CHILD" caseTypeName="Test child case"
+            description="Simple child case for sub-case tests"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_CHILD" definitionVersion="1" stageSeq="1"
+            stageName="Child work" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Child work stage"/>
+    <CaseStepDef caseTypeId="TEST_CHILD" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Child work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Child task"/>
+
+    <CaseType caseTypeId="TEST_SUBCASE" caseTypeName="Test sub-case"
+            description="Parent case with a sub-case step"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseTypeAttr caseTypeId="TEST_SUBCASE" attrName="SUB_CASE_TYPE" attrValue="TEST_CHILD"
+            description="Child case type"/>
+    <CaseStageDef caseTypeId="TEST_SUBCASE" definitionVersion="1" stageSeq="1"
+            stageName="Sub-case" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Create and wait for a sub-case"/>
+    <CaseStageDef caseTypeId="TEST_SUBCASE" definitionVersion="1" stageSeq="2"
+            stageName="After sub-case" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="After sub-case stage"/>
+    <CaseStepDef caseTypeId="TEST_SUBCASE" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Create sub-case" stepTypeEnumId="CASE_STEP_SUB_CASE"
+            subCaseTypeId="TEST_CHILD"
+            requiredIndicator="Y" sequenceNum="1" description="Create and wait for child case"/>
+    <CaseStepDef caseTypeId="TEST_SUBCASE" definitionVersion="1" stageSeq="2" stepSeq="1"
+            stepName="Parent work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Parent task after child"/>
+    <CaseStepTransition caseTypeId="TEST_SUBCASE" definitionVersion="1" transitionSeq="1"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="2" toStepSeq="1" priority="1" isDefault="Y"
+            description="Sub-case complete"/>
+
+    <CaseType caseTypeId="TEST_CHILD2" caseTypeName="Test child case 2"
+            description="Second child type for step-level sub-case tests"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_CHILD2" definitionVersion="1" stageSeq="1"
+            stageName="Child 2 work" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Child 2 work stage"/>
+    <CaseStepDef caseTypeId="TEST_CHILD2" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Child 2 work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Child 2 task"/>
+
+    <CaseType caseTypeId="TEST_SUBCASE_STEP" caseTypeName="Test step-level sub-case"
+            description="Step-level child type takes priority over the legacy attribute"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseTypeAttr caseTypeId="TEST_SUBCASE_STEP" attrName="SUB_CASE_TYPE" attrValue="TEST_CHILD"
+            description="Legacy child case type"/>
+    <CaseStageDef caseTypeId="TEST_SUBCASE_STEP" definitionVersion="1" stageSeq="1"
+            stageName="Step child" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Create and wait for the step-level child"/>
+    <CaseStageDef caseTypeId="TEST_SUBCASE_STEP" definitionVersion="1" stageSeq="2"
+            stageName="After step child" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="After step-level child stage"/>
+    <CaseStepDef caseTypeId="TEST_SUBCASE_STEP" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Create step child" stepTypeEnumId="CASE_STEP_SUB_CASE"
+            subCaseTypeId="TEST_CHILD2"
+            requiredIndicator="Y" sequenceNum="1" description="Create child type 2"/>
+    <CaseStepDef caseTypeId="TEST_SUBCASE_STEP" definitionVersion="1" stageSeq="2" stepSeq="1"
+            stepName="Parent work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Parent task after child"/>
+    <CaseStepTransition caseTypeId="TEST_SUBCASE_STEP" definitionVersion="1" transitionSeq="1"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="2" toStepSeq="1" priority="1" isDefault="Y"
+            description="Step-level sub-case complete"/>
+
+    <CaseType caseTypeId="TEST_SUB_PARALLEL" caseTypeName="Test parallel sub-cases"
+            description="Two child cases run in parallel in the same stage"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_SUB_PARALLEL" definitionVersion="1" stageSeq="1"
+            stageName="Parallel children" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Run two child cases in parallel"/>
+    <CaseStageDef caseTypeId="TEST_SUB_PARALLEL" definitionVersion="1" stageSeq="2"
+            stageName="After parallel children" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Parent work after both children complete"/>
+    <CaseStepDef caseTypeId="TEST_SUB_PARALLEL" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Create child 1" stepTypeEnumId="CASE_STEP_SUB_CASE"
+            subCaseTypeId="TEST_CHILD"
+            requiredIndicator="Y" sequenceNum="1" description="Create first parallel child"/>
+    <CaseStepDef caseTypeId="TEST_SUB_PARALLEL" definitionVersion="1" stageSeq="1" stepSeq="2"
+            stepName="Create child 2" stepTypeEnumId="CASE_STEP_SUB_CASE"
+            subCaseTypeId="TEST_CHILD2"
+            requiredIndicator="Y" sequenceNum="2" description="Create second parallel child"/>
+    <CaseStepDef caseTypeId="TEST_SUB_PARALLEL" definitionVersion="1" stageSeq="2" stepSeq="1"
+            stepName="Parent work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Parent task after both children"/>
+    <CaseStepTransition caseTypeId="TEST_SUB_PARALLEL" definitionVersion="1" transitionSeq="1"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="2" toStepSeq="1" priority="1" isDefault="Y"
+            description="First parallel child complete"/>
+    <CaseStepTransition caseTypeId="TEST_SUB_PARALLEL" definitionVersion="1" transitionSeq="1"
+            stageSeq="1" stepSeq="2" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="2" toStepSeq="1" priority="1" isDefault="Y"
+            description="Second parallel child complete"/>
+
+    <CaseType caseTypeId="TEST_DEFAULT" caseTypeName="Test default transition"
+            description="Default transition is used when conditions fail"
+            definitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+    <CaseStageDef caseTypeId="TEST_DEFAULT" definitionVersion="1" stageSeq="1"
+            stageName="Start" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Start"/>
+    <CaseStageDef caseTypeId="TEST_DEFAULT" definitionVersion="1" stageSeq="2"
+            stageName="Conditional" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Conditional target"/>
+    <CaseStageDef caseTypeId="TEST_DEFAULT" definitionVersion="1" stageSeq="3"
+            stageName="Default" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Default target"/>
+    <CaseStepDef caseTypeId="TEST_DEFAULT" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Do work" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            requiredIndicator="Y" sequenceNum="1" description="Complete the task"/>
+    <CaseStepTransition caseTypeId="TEST_DEFAULT" definitionVersion="1" transitionSeq="1"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="2" toStepSeq="1" priority="10" isDefault="N"
+            conditionServiceName="casemgmtTestConditionFalse"
+            description="Conditional candidate that fails"/>
+    <CaseStepTransition caseTypeId="TEST_DEFAULT" definitionVersion="1" transitionSeq="2"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="3" toStepSeq="1" priority="1" isDefault="Y"
+            description="Default candidate"/>
+</entity-engine-xml>

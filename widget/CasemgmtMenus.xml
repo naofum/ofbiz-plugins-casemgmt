@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<menus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://ofbiz.apache.org/Widget-Menu"
+        xsi:schemaLocation="http://ofbiz.apache.org/Widget-Menu http://ofbiz.apache.org/dtds/widget-menu.xsd">
+
+    <menu name="CasemgmtAppBar" title="${uiLabelMap.CasemgmtApplication}"
+            extends="CommonAppBarMenu" extends-resource="component://common/widget/CommonMenus.xml"
+            default-menu-item-name="main">
+        <menu-item name="caseWorklist" title="${uiLabelMap.CasemgmtCaseWorklist}">
+            <link target="CaseWorklist"/>
+        </menu-item>
+        <menu-item name="caseTypes" title="${uiLabelMap.CasemgmtCaseTypes}">
+            <link target="CaseTypeList"/>
+        </menu-item>
+        <menu-item name="caseStack" title="${uiLabelMap.CasemgmtCaseStack}">
+            <link target="CaseStack"/>
+        </menu-item>
+        <menu-item name="caseReports" title="${uiLabelMap.CasemgmtReports}">
+            <link target="CaseReports"/>
+        </menu-item>
+        <menu-item name="caseSimulator" title="${uiLabelMap.CasemgmtSimulator}">
+            <link target="CaseSimulator"/>
+        </menu-item>
+    </menu>
+</menus>

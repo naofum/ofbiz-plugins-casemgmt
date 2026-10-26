@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://ofbiz.apache.org/Site-Conf"
+        xsi:schemaLocation="http://ofbiz.apache.org/Site-Conf http://ofbiz.apache.org/dtds/site-conf.xsd">
+    <include location="component://common/webcommon/WEB-INF/common-controller.xml"/>
+    <include location="component://commonext/webapp/WEB-INF/controller.xml"/>
+
+    <description>Case Management Component Site Configuration File</description>
+
+    <request-map uri="main">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="Main"/>
+        <response name="error" type="view" value="Main"/>
+    </request-map>
+
+    <request-map uri="Main">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="Main"/>
+        <response name="error" type="view" value="Main"/>
+    </request-map>
+
+    <request-map uri="CaseWorklist">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="CaseWorklist"/>
+        <response name="error" type="view" value="CaseWorklist"/>
+    </request-map>
+
+    <request-map uri="CreateCase">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="CreateCase"/>
+    </request-map>
+
+    <request-map uri="CreateCaseSubmit">
+        <security https="true" auth="true"/>
+        <event type="groovy" path="component://casemgmt/webapp/casemgmt/WEB-INF/actions/CreateCase.groovy"/>
+        <response name="success" type="view" value="CaseDetail"/>
+        <response name="error" type="view" value="CreateCase"/>
+    </request-map>
+
+    <request-map uri="StartCase">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="StartCase"/>
+    </request-map>
+
+    <request-map uri="StartCaseSubmit">
+        <security https="true" auth="true"/>
+        <event type="groovy" path="component://casemgmt/webapp/casemgmt/WEB-INF/actions/StartCaseSubmit.groovy"/>
+        <response name="success" type="view" value="CaseDetail"/>
+        <response name="error" type="view" value="StartCase"/>
+    </request-map>
+
+    <request-map uri="TaskForm">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="TaskForm"/>
+    </request-map>
+
+    <request-map uri="TaskFormSubmit">
+        <security https="true" auth="true"/>
+        <event type="groovy" path="component://casemgmt/webapp/casemgmt/WEB-INF/actions/TaskFormSubmit.groovy"/>
+        <response name="success" type="view" value="CaseDetail"/>
+        <response name="error" type="view" value="TaskForm"/>
+    </request-map>
+
+    <request-map uri="ViewCase">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="CaseDetail"/>
+        <response name="error" type="view" value="CaseDetail"/>
+    </request-map>
+
+    <request-map uri="CompleteCaseTask">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="completeCaseTask"/>
+        <response name="success" type="request" value="ViewCase"/>
+        <response name="error" type="view" value="CaseDetail"/>
+    </request-map>
+
+    <request-map uri="CloseCase">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="closeCase"/>
+        <response name="success" type="request" value="ViewCase"/>
+        <response name="error" type="view" value="CaseDetail"/>
+    </request-map>
+
+    <request-map uri="SaveCaseForm">
+        <security https="true" auth="true"/>
+        <event type="groovy" path="component://casemgmt/webapp/casemgmt/WEB-INF/actions/SaveCaseForm.groovy"/>
+        <response name="success" type="request" value="ViewCase"/>
+        <response name="error" type="view" value="CaseDetail"/>
+    </request-map>
+
+    <request-map uri="CaseStack">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="CaseStack"/>
+        <response name="error" type="view" value="CaseStack"/>
+    </request-map>
+
+    <request-map uri="CaseSimulator">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="CaseSimulator"/>
+        <response name="error" type="view" value="CaseSimulator"/>
+    </request-map>
+
+    <request-map uri="CaseReports">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="CaseReports"/>
+        <response name="error" type="view" value="CaseReports"/>
+    </request-map>
+
+    <request-map uri="ExportCaseMetrics">
+        <security https="true" auth="true"/>
+        <event type="groovy" path="component://casemgmt/webapp/casemgmt/WEB-INF/actions/ExportCaseMetrics.groovy"/>
+        <response name="success" type="none"/>
+        <response name="error" type="none"/>
+    </request-map>
+
+    <request-map uri="CaseTypeList">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="CaseTypeList"/>
+        <response name="error" type="view" value="CaseTypeList"/>
+    </request-map>
+
+    <request-map uri="EditCaseType">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="CreateCaseTypeDraft">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="createCaseTypeDraft"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="CaseTypeList"/>
+    </request-map>
+
+    <request-map uri="UpdateCaseTypeDraft">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="updateCaseTypeDraft"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="SaveCaseTypeStartForm">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="saveCaseTypeStartForm"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="DeleteCaseTypeStartForm">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="deleteCaseTypeStartForm"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="SaveCaseStepForm">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="saveCaseStepForm"/>
+        <response name="success" type="request" value="EditCaseStep"/>
+        <response name="error" type="view" value="EditCaseStep"/>
+    </request-map>
+
+    <request-map uri="DeleteCaseStepForm">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="deleteCaseStepForm"/>
+        <response name="success" type="request" value="EditCaseStep"/>
+        <response name="error" type="view" value="EditCaseStep"/>
+    </request-map>
+
+    <request-map uri="SaveCaseStepWait">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="saveCaseStepWait"/>
+        <response name="success" type="request" value="EditCaseStep"/>
+        <response name="error" type="view" value="EditCaseStep"/>
+    </request-map>
+
+    <request-map uri="DeleteCaseStepWait">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="deleteCaseStepWait"/>
+        <response name="success" type="request" value="EditCaseStep"/>
+        <response name="error" type="view" value="EditCaseStep"/>
+    </request-map>
+
+    <request-map uri="CloneCaseTypeDefinition">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="cloneCaseTypeDefinition"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="ValidateCaseTypeDefinition">
+        <security https="true" auth="true"/>
+        <event type="groovy" path="component://casemgmt/webapp/casemgmt/WEB-INF/actions/ValidateCaseTypeDefinition.groovy"/>
+        <response name="success" type="none"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="PublishCaseTypeDefinition">
+        <security https="true" auth="true"/>
+        <event type="groovy" path="component://casemgmt/webapp/casemgmt/WEB-INF/actions/PublishCaseTypeDefinition.groovy"/>
+        <response name="success" type="none"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="CreateCaseStageDef">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="createCaseStageDef"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="CreateCaseStepDef">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="createCaseStepDef"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="CreateCaseStepTransition">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="createCaseStepTransition"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="EditCaseStage">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="EditCaseStage"/>
+        <response name="error" type="view" value="EditCaseStage"/>
+    </request-map>
+
+    <request-map uri="UpdateCaseStageDef">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="updateCaseStageDef"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseStage"/>
+    </request-map>
+
+    <request-map uri="DeleteCaseStageDef">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="deleteCaseStageDef"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="MoveCaseStageDef">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="moveCaseStageDef"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="EditCaseStep">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="EditCaseStep"/>
+        <response name="error" type="view" value="EditCaseStep"/>
+    </request-map>
+
+    <request-map uri="UpdateCaseStepDef">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="updateCaseStepDef"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseStep"/>
+    </request-map>
+
+    <request-map uri="DeleteCaseStepDef">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="deleteCaseStepDef"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="CreateCaseServiceParam">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="createCaseStepServiceParam"/>
+        <response name="success" type="request" value="EditCaseStep"/>
+        <response name="error" type="view" value="EditCaseStep"/>
+    </request-map>
+
+    <request-map uri="DeleteCaseServiceParam">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="deleteCaseStepServiceParam"/>
+        <response name="success" type="request" value="EditCaseStep"/>
+        <response name="error" type="view" value="EditCaseStep"/>
+    </request-map>
+
+    <request-map uri="CreateCaseServiceOutput">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="createCaseStepServiceOutput"/>
+        <response name="success" type="request" value="EditCaseStep"/>
+        <response name="error" type="view" value="EditCaseStep"/>
+    </request-map>
+
+    <request-map uri="DeleteCaseServiceOutput">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="deleteCaseStepServiceOutput"/>
+        <response name="success" type="request" value="EditCaseStep"/>
+        <response name="error" type="view" value="EditCaseStep"/>
+    </request-map>
+
+    <request-map uri="MoveCaseStepDef">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="moveCaseStepDef"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="EditCaseTransition">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="EditCaseTransition"/>
+        <response name="error" type="view" value="EditCaseTransition"/>
+    </request-map>
+
+    <request-map uri="UpdateCaseStepTransition">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="updateCaseStepTransition"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseTransition"/>
+    </request-map>
+
+    <request-map uri="DeleteCaseStepTransition">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="deleteCaseStepTransition"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="MoveCaseStepTransition">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="moveCaseStepTransition"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="CreateCaseFieldMapping">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="createCaseFieldMapping"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="EditCaseFieldMapping">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="EditCaseFieldMapping"/>
+        <response name="error" type="view" value="EditCaseFieldMapping"/>
+    </request-map>
+
+    <request-map uri="UpdateCaseFieldMapping">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="updateCaseFieldMapping"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseFieldMapping"/>
+    </request-map>
+
+    <request-map uri="DeleteCaseFieldMapping">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="deleteCaseFieldMapping"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="MoveCaseFieldMapping">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="moveCaseFieldMapping"/>
+        <response name="success" type="request" value="EditCaseType"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <request-map uri="SaveCaseFieldLabel">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="saveCaseFieldLabel"/>
+        <response name="success" type="request" value="EditCaseFieldMapping"/>
+        <response name="error" type="view" value="EditCaseFieldMapping"/>
+    </request-map>
+
+    <request-map uri="DeleteCaseFieldLabel">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="deleteCaseFieldLabel"/>
+        <response name="success" type="request" value="EditCaseFieldMapping"/>
+        <response name="error" type="view" value="EditCaseFieldMapping"/>
+    </request-map>
+
+    <request-map uri="CaseTypeDiff">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="CaseTypeDiff"/>
+        <response name="error" type="view" value="CaseTypeDiff"/>
+    </request-map>
+
+    <request-map uri="LookupPartyName">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="LookupPartyName"/>
+        <response name="error" type="view" value="LookupPartyName"/>
+    </request-map>
+
+    <request-map uri="DeleteCaseTypeDraft">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="deleteCaseTypeDraft"/>
+        <response name="success" type="request" value="CaseTypeList"/>
+        <response name="error" type="view" value="EditCaseType"/>
+    </request-map>
+
+    <view-map name="main" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#Main"/>
+    <view-map name="Main" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#Main"/>
+    <view-map name="CaseWorklist" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#CaseWorklist"/>
+    <view-map name="CaseDetail" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#CaseDetail"/>
+    <view-map name="CreateCase" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#CreateCase"/>
+    <view-map name="StartCase" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#StartCase"/>
+    <view-map name="TaskForm" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#TaskForm"/>
+    <view-map name="CaseTypeList" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#CaseTypeList"/>
+    <view-map name="EditCaseType" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#EditCaseType"/>
+    <view-map name="EditCaseStage" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#EditCaseStage"/>
+    <view-map name="EditCaseStep" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#EditCaseStep"/>
+    <view-map name="EditCaseTransition" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#EditCaseTransition"/>
+    <view-map name="EditCaseFieldMapping" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#EditCaseFieldMapping"/>
+    <view-map name="CaseTypeDiff" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#CaseTypeDiff"/>
+    <view-map name="CaseStack" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#CaseStack"/>
+    <view-map name="CaseReports" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#CaseReports"/>
+    <view-map name="CaseSimulator" type="screen" page="component://casemgmt/widget/CasemgmtScreens.xml#CaseSimulator"/>
+    <view-map name="LookupPartyName" type="screen" page="component://party/widget/partymgr/LookupScreens.xml#LookupPartyName"/>
+</site-conf>

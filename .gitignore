@@ -1,0 +1,5 @@
+# Core patch files are source artifacts and must be tracked.
+!patches/**/*.patch
+
+# private memo
+*_private.txt

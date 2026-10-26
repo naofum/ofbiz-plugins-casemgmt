@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://ofbiz.apache.org/dtds/ofbiz-properties.xsd">
+    <property key="CasemgmtPatchManagerTitle">
+        <value xml:lang="en">Case Management Patch Manager</value>
+        <value xml:lang="ja">ケース管理パッチマネージャ</value>
+    </property>
+    <property key="CasemgmtApplication">
+        <value xml:lang="en">Case Management</value>
+        <value xml:lang="ja">ケース管理</value>
+    </property>
+    <property key="CasemgmtCaseWorklist">
+        <value xml:lang="en">Case Worklist</value>
+        <value xml:lang="ja">ケースワークリスト</value>
+    </property>
+    <property key="CasemgmtCaseDetail">
+        <value xml:lang="en">Case Detail</value>
+        <value xml:lang="ja">ケース詳細</value>
+    </property>
+    <property key="CasemgmtCaseNumber">
+        <value xml:lang="en">Case Number</value>
+        <value xml:lang="ja">ケース番号</value>
+    </property>
+    <property key="CasemgmtCaseType">
+        <value xml:lang="en">Case Type</value>
+        <value xml:lang="ja">ケースタイプ</value>
+    </property>
+    <property key="CasemgmtStatus">
+        <value xml:lang="en">Status</value>
+        <value xml:lang="ja">状態</value>
+    </property>
+    <property key="CasemgmtStage">
+        <value xml:lang="en">Stage</value>
+        <value xml:lang="ja">ステージ</value>
+    </property>
+    <property key="CasemgmtStep">
+        <value xml:lang="en">Step</value>
+        <value xml:lang="ja">ステップ</value>
+    </property>
+    <property key="CasemgmtTasks">
+        <value xml:lang="en">Tasks</value>
+        <value xml:lang="ja">タスク</value>
+    </property>
+    <property key="CasemgmtHistory">
+        <value xml:lang="en">History</value>
+        <value xml:lang="ja">履歴</value>
+    </property>
+    <property key="CasemgmtOpenedDate">
+        <value xml:lang="en">Opened</value>
+        <value xml:lang="ja">起票日</value>
+    </property>
+    <property key="CasemgmtOwner">
+        <value xml:lang="en">Owner</value>
+        <value xml:lang="ja">オーナー</value>
+    </property>
+    <property key="CasemgmtCustomer">
+        <value xml:lang="en">Customer</value>
+        <value xml:lang="ja">顧客</value>
+    </property>
+    <property key="CasemgmtAssignedTo">
+        <value xml:lang="en">Assigned To</value>
+        <value xml:lang="ja">担当</value>
+    </property>
+    <property key="CasemgmtComplete">
+        <value xml:lang="en">Complete</value>
+        <value xml:lang="ja">完了</value>
+    </property>
+    <property key="CasemgmtCloseCase">
+        <value xml:lang="en">Close Case</value>
+        <value xml:lang="ja">ケースをクローズ</value>
+    </property>
+    <property key="CasemgmtCaseState">
+        <value xml:lang="en">Case State</value>
+        <value xml:lang="ja">ケース状態</value>
+    </property>
+    <property key="CasemgmtBlockedReasons">
+        <value xml:lang="en">Blocked Reasons</value>
+        <value xml:lang="ja">ブロック理由</value>
+    </property>
+    <property key="CasemgmtNextSteps">
+        <value xml:lang="en">Next Steps</value>
+        <value xml:lang="ja">次のステップ</value>
+    </property>
+    <property key="CasemgmtNoCases">
+        <value xml:lang="en">No cases found.</value>
+        <value xml:lang="ja">ケースがありません。</value>
+    </property>
+    <property key="CasemgmtEventDate">
+        <value xml:lang="en">Date</value>
+        <value xml:lang="ja">日時</value>
+    </property>
+    <property key="CasemgmtEventType">
+        <value xml:lang="en">Event</value>
+        <value xml:lang="ja">イベント</value>
+    </property>
+    <property key="CasemgmtActor">
+        <value xml:lang="en">Actor</value>
+        <value xml:lang="ja">実行者</value>
+    </property>
+    <property key="CasemgmtDetail">
+        <value xml:lang="en">Detail</value>
+        <value xml:lang="ja">詳細</value>
+    </property>
+    <property key="CasemgmtCaseTypes">
+        <value xml:lang="en">Case Types</value>
+        <value xml:lang="ja">ケースタイプ</value>
+    </property>
+    <property key="CasemgmtCaseTypeId">
+        <value xml:lang="en">Case Type ID</value>
+        <value xml:lang="ja">ケースタイプID</value>
+    </property>
+    <property key="CasemgmtCaseTypeName">
+        <value xml:lang="en">Case Type Name</value>
+        <value xml:lang="ja">ケースタイプ名</value>
+    </property>
+    <property key="CasemgmtDefinitionVersion">
+        <value xml:lang="en">Definition Version</value>
+        <value xml:lang="ja">定義バージョン</value>
+    </property>
+    <property key="CasemgmtActiveDefinitionVersion">
+        <value xml:lang="en">Active Version</value>
+        <value xml:lang="ja">公開バージョン</value>
+    </property>
+    <property key="CasemgmtCreateCaseType">
+        <value xml:lang="en">Create Case Type</value>
+        <value xml:lang="ja">ケースタイプを作成</value>
+    </property>
+    <property key="CasemgmtEditCaseType">
+        <value xml:lang="en">Edit Case Type</value>
+        <value xml:lang="ja">ケースタイプを編集</value>
+    </property>
+    <property key="CasemgmtValidate">
+        <value xml:lang="en">Validate</value>
+        <value xml:lang="ja">検証</value>
+    </property>
+    <property key="CasemgmtPublish">
+        <value xml:lang="en">Publish</value>
+        <value xml:lang="ja">公開</value>
+    </property>
+    <property key="CasemgmtClone">
+        <value xml:lang="en">Create Draft Version</value>
+        <value xml:lang="ja">ドラフト版を作成</value>
+    </property>
+    <property key="CasemgmtStages">
+        <value xml:lang="en">Stages</value>
+        <value xml:lang="ja">ステージ</value>
+    </property>
+    <property key="CasemgmtSteps">
+        <value xml:lang="en">Steps</value>
+        <value xml:lang="ja">ステップ</value>
+    </property>
+    <property key="CasemgmtTransitions">
+        <value xml:lang="en">Transitions</value>
+        <value xml:lang="ja">遷移</value>
+    </property>
+    <property key="CasemgmtStageSeq">
+        <value xml:lang="en">Stage Seq</value>
+        <value xml:lang="ja">ステージ順</value>
+    </property>
+    <property key="CasemgmtStepSeq">
+        <value xml:lang="en">Step Seq</value>
+        <value xml:lang="ja">ステップ順</value>
+    </property>
+    <property key="CasemgmtAutoAdvance">
+        <value xml:lang="en">Auto Advance</value>
+        <value xml:lang="ja">自動進行</value>
+    </property>
+    <property key="CasemgmtEntryService">
+        <value xml:lang="en">Entry Service</value>
+        <value xml:lang="ja">入口サービス</value>
+    </property>
+    <property key="CasemgmtExitService">
+        <value xml:lang="en">Exit Service</value>
+        <value xml:lang="ja">出口サービス</value>
+    </property>
+    <property key="CasemgmtServiceName">
+        <value xml:lang="en">Service Name</value>
+        <value xml:lang="ja">サービス名</value>
+    </property>
+    <property key="CasemgmtServiceInputs">
+        <value xml:lang="en">Service Inputs</value>
+        <value xml:lang="ja">サービス入力</value>
+    </property>
+    <property key="CasemgmtServiceOutputs">
+        <value xml:lang="en">Service Outputs</value>
+        <value xml:lang="ja">サービス出力</value>
+    </property>
+    <property key="CasemgmtStartForm">
+        <value xml:lang="en">Start Form</value>
+        <value xml:lang="ja">開始フォーム</value>
+    </property>
+    <property key="CasemgmtStartFormHint">
+        <value xml:lang="en">The form definition must post to StartCaseSubmit.</value>
+        <value xml:lang="ja">フォーム定義の送信先は StartCaseSubmit にしてください。</value>
+    </property>
+    <property key="CasemgmtTaskForm">
+        <value xml:lang="en">Task Form</value>
+        <value xml:lang="ja">タスクフォーム</value>
+    </property>
+    <property key="CasemgmtTaskFormHint">
+        <value xml:lang="en">The form definition must post to TaskFormSubmit. It takes priority over dynamic form fields.</value>
+        <value xml:lang="ja">フォーム定義の送信先は TaskFormSubmit にしてください。動的フォーム項目より優先されます。</value>
+    </property>
+    <property key="CasemgmtFormLocation">
+        <value xml:lang="en">Form Location</value>
+        <value xml:lang="ja">フォーム配置</value>
+    </property>
+    <property key="CasemgmtFormName">
+        <value xml:lang="en">Form Name</value>
+        <value xml:lang="ja">フォーム名</value>
+    </property>
+    <property key="CasemgmtFormTarget">
+        <value xml:lang="en">Form Target</value>
+        <value xml:lang="ja">フォーム送信先</value>
+    </property>
+    <property key="CasemgmtStartService">
+        <value xml:lang="en">Start Service</value>
+        <value xml:lang="ja">開始サービス</value>
+    </property>
+    <property key="CasemgmtCompleteService">
+        <value xml:lang="en">Complete Service</value>
+        <value xml:lang="ja">完了サービス</value>
+    </property>
+    <property key="CasemgmtSubmitLabel">
+        <value xml:lang="en">Submit Label</value>
+        <value xml:lang="ja">送信ラベル</value>
+    </property>
+    <property key="CasemgmtOpenTask">
+        <value xml:lang="en">Open Task</value>
+        <value xml:lang="ja">タスクを開く</value>
+    </property>
+    <property key="CasemgmtNext">
+        <value xml:lang="en">Next</value>
+        <value xml:lang="ja">次へ</value>
+    </property>
+    <property key="CasemgmtServiceParam">
+        <value xml:lang="en">Input Name</value>
+        <value xml:lang="ja">入力名</value>
+    </property>
+    <property key="CasemgmtServiceOutput">
+        <value xml:lang="en">Output Name</value>
+        <value xml:lang="ja">出力名</value>
+    </property>
+    <property key="CasemgmtVariableName">
+        <value xml:lang="en">Variable Name</value>
+        <value xml:lang="ja">変数名</value>
+    </property>
+    <property key="CasemgmtSourceType">
+        <value xml:lang="en">Source Type</value>
+        <value xml:lang="ja">取得元</value>
+    </property>
+    <property key="CasemgmtSourceValue">
+        <value xml:lang="en">Source Value</value>
+        <value xml:lang="ja">取得値</value>
+    </property>
+    <property key="CasemgmtValueType">
+        <value xml:lang="en">Value Type</value>
+        <value xml:lang="ja">値型</value>
+    </property>
+    <property key="CasemgmtScope">
+        <value xml:lang="en">Scope</value>
+        <value xml:lang="ja">スコープ</value>
+    </property>
+    <property key="CasemgmtTtlSeconds">
+        <value xml:lang="en">TTL Seconds</value>
+        <value xml:lang="ja">TTL秒</value>
+    </property>
+    <property key="CasemgmtSensitive">
+        <value xml:lang="en">Sensitive</value>
+        <value xml:lang="ja">機密</value>
+    </property>
+    <property key="CasemgmtAddInput">
+        <value xml:lang="en">Add Input</value>
+        <value xml:lang="ja">入力を追加</value>
+    </property>
+    <property key="CasemgmtAddOutput">
+        <value xml:lang="en">Add Output</value>
+        <value xml:lang="ja">出力を追加</value>
+    </property>
+    <property key="CasemgmtAssignmentPolicy">
+        <value xml:lang="en">Assignment Policy</value>
+        <value xml:lang="ja">割当ポリシー</value>
+    </property>
+    <property key="CasemgmtRequired">
+        <value xml:lang="en">Required</value>
+        <value xml:lang="ja">必須</value>
+    </property>
+    <property key="CasemgmtOutcome">
+        <value xml:lang="en">Outcome</value>
+        <value xml:lang="ja">結果</value>
+    </property>
+    <property key="CasemgmtToStage">
+        <value xml:lang="en">To Stage</value>
+        <value xml:lang="ja">遷移先ステージ</value>
+    </property>
+    <property key="CasemgmtToStep">
+        <value xml:lang="en">To Step</value>
+        <value xml:lang="ja">遷移先ステップ</value>
+    </property>
+    <property key="CasemgmtConditionService">
+        <value xml:lang="en">Condition Service</value>
+        <value xml:lang="ja">条件サービス</value>
+    </property>
+    <property key="CasemgmtPriority">
+        <value xml:lang="en">Priority</value>
+        <value xml:lang="ja">優先度</value>
+    </property>
+    <property key="CasemgmtDefault">
+        <value xml:lang="en">Default</value>
+        <value xml:lang="ja">既定</value>
+    </property>
+    <property key="CasemgmtTransitionSeq">
+        <value xml:lang="en">Transition Seq</value>
+        <value xml:lang="ja">遷移順</value>
+    </property>
+    <property key="CasemgmtValidationResult">
+        <value xml:lang="en">Validation Result</value>
+        <value xml:lang="ja">検証結果</value>
+    </property>
+    <property key="CasemgmtAddStage">
+        <value xml:lang="en">Add Stage</value>
+        <value xml:lang="ja">ステージを追加</value>
+    </property>
+    <property key="CasemgmtAddStep">
+        <value xml:lang="en">Add Step</value>
+        <value xml:lang="ja">ステップを追加</value>
+    </property>
+    <property key="CasemgmtAddTransition">
+        <value xml:lang="en">Add Transition</value>
+        <value xml:lang="ja">遷移を追加</value>
+    </property>
+    <property key="CasemgmtProcessMap">
+        <value xml:lang="en">Process Map</value>
+        <value xml:lang="ja">プロセスマップ</value>
+    </property>
+    <property key="CasemgmtCaseStack">
+        <value xml:lang="en">Case Stack Analysis</value>
+        <value xml:lang="ja">ケース滞留分析</value>
+    </property>
+    <property key="CasemgmtSimulator">
+        <value xml:lang="en">Flow Simulator</value>
+        <value xml:lang="ja">フローシミュレータ</value>
+    </property>
+    <property key="CasemgmtSimulationResult">
+        <value xml:lang="en">Simulation Result</value>
+        <value xml:lang="ja">シミュレーション結果</value>
+    </property>
+    <property key="CasemgmtRunSimulation">
+        <value xml:lang="en">Run Simulation</value>
+        <value xml:lang="ja">シミュレーション実行</value>
+    </property>
+    <property key="CasemgmtResolved">
+        <value xml:lang="en">Resolved</value>
+        <value xml:lang="ja">解決済み</value>
+    </property>
+    <property key="CasemgmtWarnings">
+        <value xml:lang="en">Warnings</value>
+        <value xml:lang="ja">警告</value>
+    </property>
+    <property key="CasemgmtForm">
+        <value xml:lang="en">Case Form</value>
+        <value xml:lang="ja">ケースフォーム</value>
+    </property>
+    <property key="CasemgmtSave">
+        <value xml:lang="en">Save</value>
+        <value xml:lang="ja">保存</value>
+    </property>
+    <property key="CasemgmtReports">
+        <value xml:lang="en">Case Reports</value>
+        <value xml:lang="ja">ケースレポート</value>
+    </property>
+    <property key="CasemgmtReportFilter">
+        <value xml:lang="en">Report Filters</value>
+        <value xml:lang="ja">レポートフィルタ</value>
+    </property>
+    <property key="CasemgmtQueue">
+        <value xml:lang="en">Queue</value>
+        <value xml:lang="ja">キュー</value>
+    </property>
+    <property key="CasemgmtFromDate">
+        <value xml:lang="en">From Date</value>
+        <value xml:lang="ja">開始日</value>
+    </property>
+    <property key="CasemgmtToDate">
+        <value xml:lang="en">To Date</value>
+        <value xml:lang="ja">終了日</value>
+    </property>
+    <property key="CasemgmtTotal">
+        <value xml:lang="en">Total</value>
+        <value xml:lang="ja">合計</value>
+    </property>
+    <property key="CasemgmtOpen">
+        <value xml:lang="en">Open</value>
+        <value xml:lang="ja">オープン</value>
+    </property>
+    <property key="CasemgmtClosed">
+        <value xml:lang="en">Closed</value>
+        <value xml:lang="ja">クローズ</value>
+    </property>
+    <property key="CasemgmtCompleted">
+        <value xml:lang="en">Completed</value>
+        <value xml:lang="ja">完了</value>
+    </property>
+    <property key="CasemgmtOnTime">
+        <value xml:lang="en">On Time</value>
+        <value xml:lang="ja">期限内</value>
+    </property>
+    <property key="CasemgmtLate">
+        <value xml:lang="en">Late</value>
+        <value xml:lang="ja">期限超過</value>
+    </property>
+    <property key="CasemgmtOverdue">
+        <value xml:lang="en">Overdue</value>
+        <value xml:lang="ja">未完了超過</value>
+    </property>
+    <property key="CasemgmtDate">
+        <value xml:lang="en">Date</value>
+        <value xml:lang="ja">日付</value>
+    </property>
+    <property key="CasemgmtWeek">
+        <value xml:lang="en">Week</value>
+        <value xml:lang="ja">週</value>
+    </property>
+    <property key="CasemgmtMonth">
+        <value xml:lang="en">Month</value>
+        <value xml:lang="ja">月</value>
+    </property>
+    <property key="CasemgmtCases">
+        <value xml:lang="en">Cases</value>
+        <value xml:lang="ja">ケース数</value>
+    </property>
+    <property key="CasemgmtAverageCycleMinutes">
+        <value xml:lang="en">Avg Cycle (min)</value>
+        <value xml:lang="ja">平均サイクル(分)</value>
+    </property>
+    <property key="CasemgmtCompliancePercent">
+        <value xml:lang="en">Compliance %</value>
+        <value xml:lang="ja">遵守率%</value>
+    </property>
+    <property key="CasemgmtMilestone">
+        <value xml:lang="en">Milestone</value>
+        <value xml:lang="ja">マイルストーン</value>
+    </property>
+    <property key="CasemgmtAgeBucket">
+        <value xml:lang="en">Age</value>
+        <value xml:lang="ja">滞留期間</value>
+    </property>
+    <property key="CasemgmtCompletedVisits">
+        <value xml:lang="en">Completed Visits</value>
+        <value xml:lang="ja">完了回数</value>
+    </property>
+    <property key="CasemgmtSummary">
+        <value xml:lang="en">Summary</value>
+        <value xml:lang="ja">サマリ</value>
+    </property>
+    <property key="CasemgmtThroughput">
+        <value xml:lang="en">Throughput</value>
+        <value xml:lang="ja">スループット</value>
+    </property>
+    <property key="CasemgmtSlaByMilestone">
+        <value xml:lang="en">SLA by Milestone</value>
+        <value xml:lang="ja">SLA(マイルストーン別)</value>
+    </property>
+    <property key="CasemgmtAging">
+        <value xml:lang="en">Backlog Aging</value>
+        <value xml:lang="ja">滞留期間</value>
+    </property>
+    <property key="CasemgmtBacklog">
+        <value xml:lang="en">Backlog</value>
+        <value xml:lang="ja">バックログ</value>
+    </property>
+    <property key="CasemgmtReworkRate">
+        <value xml:lang="en">Rework Rate %</value>
+        <value xml:lang="ja">再作業率%</value>
+    </property>
+    <property key="CasemgmtAutoAdvanceRate">
+        <value xml:lang="en">Auto Advance Rate %</value>
+        <value xml:lang="ja">自動進行率%</value>
+    </property>
+    <property key="CasemgmtEscalations">
+        <value xml:lang="en">Escalations</value>
+        <value xml:lang="ja">エスカレーション</value>
+    </property>
+    <property key="CasemgmtAverageCycle">
+        <value xml:lang="en">Avg Cycle</value>
+        <value xml:lang="ja">平均サイクル</value>
+    </property>
+    <property key="CasemgmtAverageOpenAge">
+        <value xml:lang="en">Avg Open Age</value>
+        <value xml:lang="ja">平均滞留</value>
+    </property>
+    <property key="CasemgmtSlaCompliance">
+        <value xml:lang="en">SLA Compliance</value>
+        <value xml:lang="ja">SLA遵守率</value>
+    </property>
+    <property key="CasemgmtExportCsv">
+        <value xml:lang="en">Export CSV</value>
+        <value xml:lang="ja">CSV出力</value>
+    </property>
+    <property key="CasemgmtCycleByType">
+        <value xml:lang="en">Cycle Time by Case Type</value>
+        <value xml:lang="ja">ケースタイプ別サイクルタイム</value>
+    </property>
+    <property key="CasemgmtCycleByStage">
+        <value xml:lang="en">Cycle Time by Stage</value>
+        <value xml:lang="ja">ステージ別サイクルタイム</value>
+    </property>
+    <property key="CasemgmtNoReportData">
+        <value xml:lang="en">No data for the selected filters.</value>
+        <value xml:lang="ja">選択した条件のデータがありません。</value>
+    </property>
+    <property key="CasemgmtPrimaryEntity">
+        <value xml:lang="en">Primary Entity</value>
+        <value xml:lang="ja">主エンティティ</value>
+    </property>
+    <property key="CasemgmtExtensionEntity">
+        <value xml:lang="en">Extension Entity</value>
+        <value xml:lang="ja">拡張エンティティ</value>
+    </property>
+    <property key="CasemgmtDefaultSla">
+        <value xml:lang="en">Default SLA</value>
+        <value xml:lang="ja">既定SLA</value>
+    </property>
+    <property key="CasemgmtAccessPolicy">
+        <value xml:lang="en">Access Policy</value>
+        <value xml:lang="ja">アクセスポリシー</value>
+    </property>
+    <property key="CasemgmtType">
+        <value xml:lang="en">Type</value>
+        <value xml:lang="ja">種別</value>
+    </property>
+    <property key="CasemgmtSla">
+        <value xml:lang="en">SLA</value>
+        <value xml:lang="ja">SLA</value>
+    </property>
+    <property key="CasemgmtSequence">
+        <value xml:lang="en">Sequence</value>
+        <value xml:lang="ja">順序</value>
+    </property>
+    <property key="CasemgmtVisit">
+        <value xml:lang="en">Visit</value>
+        <value xml:lang="ja">訪問回</value>
+    </property>
+    <property key="CasemgmtGoal">
+        <value xml:lang="en">Goal</value>
+        <value xml:lang="ja">目標日時</value>
+    </property>
+    <property key="CasemgmtDeadline">
+        <value xml:lang="en">Deadline</value>
+        <value xml:lang="ja">期限日時</value>
+    </property>
+    <property key="CasemgmtCount">
+        <value xml:lang="en">Count</value>
+        <value xml:lang="ja">件数</value>
+    </property>
+    <property key="CasemgmtMaxSteps">
+        <value xml:lang="en">Max Steps</value>
+        <value xml:lang="ja">最大ステップ数</value>
+    </property>
+    <property key="CasemgmtApply">
+        <value xml:lang="en">Apply</value>
+        <value xml:lang="ja">適用</value>
+    </property>
+    <property key="CasemgmtMinutesShort">
+        <value xml:lang="en">min</value>
+        <value xml:lang="ja">分</value>
+    </property>
+    <property key="CasemgmtCreateCase">
+        <value xml:lang="en">Create Case</value>
+        <value xml:lang="ja">ケースを作成</value>
+    </property>
+    <property key="CasemgmtMyAssignments">
+        <value xml:lang="en">My Assignments</value>
+        <value xml:lang="ja">自分の担当</value>
+    </property>
+    <property key="CasemgmtMain">
+        <value xml:lang="en">Main</value>
+        <value xml:lang="ja">メイン</value>
+    </property>
+    <property key="CasemgmtCaseFilter">
+        <value xml:lang="en">Case Filter</value>
+        <value xml:lang="ja">ケース検索条件</value>
+    </property>
+    <property key="CasemgmtClosedWithin">
+        <value xml:lang="en">Closed Cases</value>
+        <value xml:lang="ja">クローズ済の表示期間</value>
+    </property>
+    <property key="CasemgmtClosedWithinNone">
+        <value xml:lang="en">Do not show closed</value>
+        <value xml:lang="ja">クローズ済を表示しない</value>
+    </property>
+    <property key="CasemgmtClosedWithinWeek">
+        <value xml:lang="en">Last 1 week</value>
+        <value xml:lang="ja">過去1週間</value>
+    </property>
+    <property key="CasemgmtClosedWithinMonth">
+        <value xml:lang="en">Last 1 month</value>
+        <value xml:lang="ja">過去1か月</value>
+    </property>
+    <property key="CasemgmtClosedWithinYear">
+        <value xml:lang="en">Last 1 year</value>
+        <value xml:lang="ja">過去1年</value>
+    </property>
+    <property key="CasemgmtOpenOnly">
+        <value xml:lang="en">Open only</value>
+        <value xml:lang="ja">未完了のみ</value>
+    </property>
+    <property key="CasemgmtSearchCases">
+        <value xml:lang="en">Search Cases</value>
+        <value xml:lang="ja">ケースを検索</value>
+    </property>
+    <property key="CasemgmtAllCases">
+        <value xml:lang="en">All Cases</value>
+        <value xml:lang="ja">すべてのケース</value>
+    </property>
+    <property key="CasemgmtChannel">
+        <value xml:lang="en">Channel</value>
+        <value xml:lang="ja">チャネル</value>
+    </property>
+    <property key="CasemgmtValidationError">
+        <value xml:lang="en">Validation Error</value>
+        <value xml:lang="ja">検証エラー</value>
+    </property>
+    <property key="CasemgmtValidationSuccess">
+        <value xml:lang="en">The case type definition is valid.</value>
+        <value xml:lang="ja">ケースタイプ定義は有効です。</value>
+    </property>
+    <property key="CasemgmtValidationFailed">
+        <value xml:lang="en">The case type definition has errors.</value>
+        <value xml:lang="ja">ケースタイプ定義にエラーがあります。</value>
+    </property>
+    <property key="CasemgmtSelectedStage">
+        <value xml:lang="en">Selected Stage</value>
+        <value xml:lang="ja">選択中のステージ</value>
+    </property>
+    <property key="CasemgmtFormFields">
+        <value xml:lang="en">Form Fields</value>
+        <value xml:lang="ja">フォーム項目</value>
+    </property>
+    <property key="CasemgmtFieldSeq">
+        <value xml:lang="en">Field Seq</value>
+        <value xml:lang="ja">項目順</value>
+    </property>
+    <property key="CasemgmtFieldName">
+        <value xml:lang="en">Field Name</value>
+        <value xml:lang="ja">項目名</value>
+    </property>
+    <property key="CasemgmtFieldLabel">
+        <value xml:lang="en">Field Label</value>
+        <value xml:lang="ja">項目ラベル</value>
+    </property>
+    <property key="CasemgmtEntityField">
+        <value xml:lang="en">Entity Field</value>
+        <value xml:lang="ja">エンティティ項目</value>
+    </property>
+    <property key="CasemgmtLookupEntity">
+        <value xml:lang="en">Lookup Entity</value>
+        <value xml:lang="ja">ルックアップエンティティ</value>
+    </property>
+    <property key="CasemgmtLookupField">
+        <value xml:lang="en">Lookup Field</value>
+        <value xml:lang="ja">ルックアップ項目</value>
+    </property>
+    <property key="CasemgmtDefaultValue">
+        <value xml:lang="en">Default Value</value>
+        <value xml:lang="ja">既定値</value>
+    </property>
+    <property key="CasemgmtVisibilityCondition">
+        <value xml:lang="en">Visibility Condition Service</value>
+        <value xml:lang="ja">表示条件サービス</value>
+    </property>
+    <property key="CasemgmtReadOnlyCondition">
+        <value xml:lang="en">Read-only Condition Service</value>
+        <value xml:lang="ja">読取専用条件サービス</value>
+    </property>
+    <property key="CasemgmtAddField">
+        <value xml:lang="en">Add Field</value>
+        <value xml:lang="ja">項目を追加</value>
+    </property>
+    <property key="CasemgmtVersionDiff">
+        <value xml:lang="en">Version Diff</value>
+        <value xml:lang="ja">バージョン差分</value>
+    </property>
+    <property key="CasemgmtDeleteCaseType">
+        <value xml:lang="en">Delete Draft Case Type</value>
+        <value xml:lang="ja">ドラフトケースタイプを削除</value>
+    </property>
+    <property key="CasemgmtEditStage">
+        <value xml:lang="en">Edit Stage</value>
+        <value xml:lang="ja">ステージを編集</value>
+    </property>
+    <property key="CasemgmtEditStep">
+        <value xml:lang="en">Edit Step</value>
+        <value xml:lang="ja">ステップを編集</value>
+    </property>
+    <property key="CasemgmtEditTransition">
+        <value xml:lang="en">Edit Transition</value>
+        <value xml:lang="ja">遷移を編集</value>
+    </property>
+    <property key="CasemgmtEditField">
+        <value xml:lang="en">Edit Field</value>
+        <value xml:lang="ja">項目を編集</value>
+    </property>
+    <property key="CasemgmtBack">
+        <value xml:lang="en">Back</value>
+        <value xml:lang="ja">戻る</value>
+    </property>
+    <property key="CasemgmtEdit">
+        <value xml:lang="en">Edit</value>
+        <value xml:lang="ja">編集</value>
+    </property>
+    <property key="CasemgmtDelete">
+        <value xml:lang="en">Delete</value>
+        <value xml:lang="ja">削除</value>
+    </property>
+    <property key="CasemgmtMoveUp">
+        <value xml:lang="en">Move Up</value>
+        <value xml:lang="ja">上へ</value>
+    </property>
+    <property key="CasemgmtMoveDown">
+        <value xml:lang="en">Move Down</value>
+        <value xml:lang="ja">下へ</value>
+    </property>
+    <property key="CasemgmtFromVersion">
+        <value xml:lang="en">From Version</value>
+        <value xml:lang="ja">比較元バージョン</value>
+    </property>
+    <property key="CasemgmtToVersion">
+        <value xml:lang="en">To Version</value>
+        <value xml:lang="ja">比較先バージョン</value>
+    </property>
+    <property key="CasemgmtCompare">
+        <value xml:lang="en">Compare</value>
+        <value xml:lang="ja">比較</value>
+    </property>
+    <property key="CasemgmtChange">
+        <value xml:lang="en">Change</value>
+        <value xml:lang="ja">変更</value>
+    </property>
+    <property key="CasemgmtKey">
+        <value xml:lang="en">Key</value>
+        <value xml:lang="ja">キー</value>
+    </property>
+    <property key="CasemgmtBefore">
+        <value xml:lang="en">Before</value>
+        <value xml:lang="ja">変更前</value>
+    </property>
+    <property key="CasemgmtAfter">
+        <value xml:lang="en">After</value>
+        <value xml:lang="ja">変更後</value>
+    </property>
+    <property key="CasemgmtChangeCount">
+        <value xml:lang="en">Change Count</value>
+        <value xml:lang="ja">変更件数</value>
+    </property>
+    <property key="CasemgmtFormId">
+        <value xml:lang="en">Form ID</value>
+        <value xml:lang="ja">フォームID</value>
+    </property>
+    <property key="CasemgmtCurrent">
+        <value xml:lang="en">Current</value>
+        <value xml:lang="ja">現在</value>
+    </property>
+    <property key="CasemgmtFuture">
+        <value xml:lang="en">Future</value>
+        <value xml:lang="ja">未着手</value>
+    </property>
+    <property key="CasemgmtProcessMapHint">
+        <value xml:lang="en">Read-only metadata view. Switch between graph and tables.</value>
+        <value xml:lang="ja">参照専用のメタデータ表示です。グラフと表を切り替えられます。</value>
+    </property>
+    <property key="CasemgmtProcessMapGraph">
+        <value xml:lang="en">Graph</value>
+        <value xml:lang="ja">グラフ</value>
+    </property>
+    <property key="CasemgmtProcessMapTable">
+        <value xml:lang="en">Table</value>
+        <value xml:lang="ja">表</value>
+    </property>
+    <property key="CasemgmtProcessMapDefinitionHint">
+        <value xml:lang="en">Read-only definition view. Changes are reflected after saving.</value>
+        <value xml:lang="ja">参照専用の定義表示です。変更は保存後に反映されます。</value>
+    </property>
+    <property key="CasemgmtCaseResolved">
+        <value xml:lang="en">Case resolved</value>
+        <value xml:lang="ja">ケース完了</value>
+    </property>
+    <property key="CasemgmtSelectCaseType">
+        <value xml:lang="en">Select a case type.</value>
+        <value xml:lang="ja">ケースタイプを選択してください。</value>
+    </property>
+    <property key="CasemgmtCreateCaseError">
+        <value xml:lang="en">Could not create the case.</value>
+        <value xml:lang="ja">ケースを作成できませんでした。</value>
+    </property>
+    <property key="CasemgmtSubCaseType">
+        <value xml:lang="en">Sub-case Type ID</value>
+        <value xml:lang="ja">子ケースタイプID</value>
+    </property>
+    <property key="CasemgmtWaitSettings">
+        <value xml:lang="en">Wait Settings</value>
+        <value xml:lang="ja">待機設定</value>
+    </property>
+    <property key="CasemgmtWaitSettingsHint">
+        <value xml:lang="en">Set a signal name, a timeout in minutes, or both. A timeout uses the timeout outcome.</value>
+        <value xml:lang="ja">シグナル名、タイムアウト（分）、またはその両方を設定します。タイムアウト時はタイムアウト結果を使用します。</value>
+    </property>
+    <property key="CasemgmtSignalName">
+        <value xml:lang="en">Signal Name</value>
+        <value xml:lang="ja">シグナル名</value>
+    </property>
+    <property key="CasemgmtTimeoutDuration">
+        <value xml:lang="en">Timeout (minutes)</value>
+        <value xml:lang="ja">タイムアウト（分）</value>
+    </property>
+    <property key="CasemgmtTimeoutOutcome">
+        <value xml:lang="en">Timeout Outcome</value>
+        <value xml:lang="ja">タイムアウト結果</value>
+    </property>
+    <property key="CasemgmtFieldLabels">
+        <value xml:lang="en">Localized Labels</value>
+        <value xml:lang="ja">言語別ラベル</value>
+    </property>
+    <property key="CasemgmtFieldLabelHint">
+        <value xml:lang="en">Enter a locale such as ja, en, or ja_JP. The default label is used when no localized label exists.</value>
+        <value xml:lang="ja">ja、en、ja_JP などのロケールを入力します。該当する翻訳がない場合は既定ラベルが使われます。</value>
+    </property>
+    <property key="CasemgmtLocale">
+        <value xml:lang="en">Locale</value>
+        <value xml:lang="ja">ロケール</value>
+    </property>
+    <property key="CasemgmtAddFieldLabel">
+        <value xml:lang="en">Add / Update Label</value>
+        <value xml:lang="ja">ラベルを追加・更新</value>
+    </property>
+</resource>

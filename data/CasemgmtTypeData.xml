@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<entity-engine-xml>
+    <!-- WorkEffort types. Presence of CASE_MANAGED means the type is owned by
+         casemgmt and must be written through casemgmt services. -->
+    <WorkEffortType workEffortTypeId="CASE" description="Case" hasTable="N"/>
+    <WorkEffortType workEffortTypeId="CASE_ASSIGNMENT" description="Case Assignment" hasTable="N"/>
+    <WorkEffortTypeAttr workEffortTypeId="CASE" attrName="CASE_MANAGED" description="Y"/>
+    <WorkEffortTypeAttr workEffortTypeId="CASE_ASSIGNMENT" attrName="CASE_MANAGED" description="Y"/>
+
+    <!-- Case statuses -->
+    <StatusType statusTypeId="CASE_STATUS" description="Case status" hasTable="N"/>
+    <StatusItem statusTypeId="CASE_STATUS" statusId="CASE_NEW" statusCode="NEW" sequenceId="01" description="New"/>
+    <StatusItem statusTypeId="CASE_STATUS" statusId="CASE_IN_PROGRESS" statusCode="IN_PROGRESS" sequenceId="02" description="In progress"/>
+    <StatusItem statusTypeId="CASE_STATUS" statusId="CASE_PENDING" statusCode="PENDING" sequenceId="03" description="Pending"/>
+    <StatusItem statusTypeId="CASE_STATUS" statusId="CASE_RESOLVED" statusCode="RESOLVED" sequenceId="04" description="Resolved"/>
+    <StatusItem statusTypeId="CASE_STATUS" statusId="CASE_CLOSED" statusCode="CLOSED" sequenceId="05" description="Closed"/>
+    <StatusItem statusTypeId="CASE_STATUS" statusId="CASE_CANCELLED" statusCode="CANCELLED" sequenceId="99" description="Cancelled"/>
+
+    <StatusType statusTypeId="CASE_TASK_STATUS" description="Case task status" hasTable="N"/>
+    <StatusItem statusTypeId="CASE_TASK_STATUS" statusId="TASK_CREATED" statusCode="CREATED" sequenceId="01" description="Created"/>
+    <StatusItem statusTypeId="CASE_TASK_STATUS" statusId="TASK_ASSIGNED" statusCode="ASSIGNED" sequenceId="02" description="Assigned"/>
+    <StatusItem statusTypeId="CASE_TASK_STATUS" statusId="TASK_IN_PROGRESS" statusCode="IN_PROGRESS" sequenceId="03" description="In progress"/>
+    <StatusItem statusTypeId="CASE_TASK_STATUS" statusId="TASK_WAITING" statusCode="WAITING" sequenceId="06" description="Waiting"/>
+    <StatusItem statusTypeId="CASE_TASK_STATUS" statusId="TASK_COMPLETED" statusCode="COMPLETED" sequenceId="04" description="Completed"/>
+    <StatusItem statusTypeId="CASE_TASK_STATUS" statusId="TASK_SKIPPED" statusCode="SKIPPED" sequenceId="05" description="Skipped"/>
+    <StatusItem statusTypeId="CASE_TASK_STATUS" statusId="TASK_CANCELLED" statusCode="CANCELLED" sequenceId="99" description="Cancelled"/>
+
+    <StatusType statusTypeId="CASE_STAGE_STATUS" description="Case stage status" hasTable="N"/>
+    <StatusItem statusTypeId="CASE_STAGE_STATUS" statusId="CASE_STAGE_OPEN" statusCode="OPEN" sequenceId="01" description="Open"/>
+    <StatusItem statusTypeId="CASE_STAGE_STATUS" statusId="CASE_STAGE_COMPLETED" statusCode="COMPLETED" sequenceId="02" description="Completed"/>
+    <StatusItem statusTypeId="CASE_STAGE_STATUS" statusId="CASE_STAGE_CANCELLED" statusCode="CANCELLED" sequenceId="99" description="Cancelled"/>
+
+    <StatusType statusTypeId="CASE_TYPE_STATUS" description="Case type status" hasTable="N"/>
+    <StatusItem statusTypeId="CASE_TYPE_STATUS" statusId="CASE_TYPE_DRAFT" statusCode="DRAFT" sequenceId="01" description="Draft"/>
+    <StatusItem statusTypeId="CASE_TYPE_STATUS" statusId="CASE_TYPE_ACTIVE" statusCode="ACTIVE" sequenceId="02" description="Active"/>
+    <StatusItem statusTypeId="CASE_TYPE_STATUS" statusId="CASE_TYPE_VALIDATED" statusCode="VALIDATED" sequenceId="03" description="Validated"/>
+    <StatusItem statusTypeId="CASE_TYPE_STATUS" statusId="CASE_TYPE_RETIRED" statusCode="RETIRED" sequenceId="99" description="Retired"/>
+
+    <StatusValidChange statusId="CASE_NEW" statusIdTo="CASE_IN_PROGRESS" transitionName="Start"/>
+    <StatusValidChange statusId="CASE_IN_PROGRESS" statusIdTo="CASE_PENDING" transitionName="Hold"/>
+    <StatusValidChange statusId="CASE_PENDING" statusIdTo="CASE_IN_PROGRESS" transitionName="Resume"/>
+    <StatusValidChange statusId="CASE_IN_PROGRESS" statusIdTo="CASE_RESOLVED" transitionName="Resolve"/>
+    <StatusValidChange statusId="CASE_PENDING" statusIdTo="CASE_RESOLVED" transitionName="Resolve"/>
+    <StatusValidChange statusId="CASE_RESOLVED" statusIdTo="CASE_CLOSED" transitionName="Close"/>
+    <StatusValidChange statusId="CASE_IN_PROGRESS" statusIdTo="CASE_CANCELLED" transitionName="Cancel"/>
+    <StatusValidChange statusId="CASE_PENDING" statusIdTo="CASE_CANCELLED" transitionName="Cancel"/>
+    <StatusValidChange statusId="CASE_NEW" statusIdTo="CASE_CLOSED" transitionName="Close"/>
+    <StatusValidChange statusId="CASE_IN_PROGRESS" statusIdTo="CASE_CLOSED" transitionName="Close"/>
+    <StatusValidChange statusId="CASE_PENDING" statusIdTo="CASE_CLOSED" transitionName="Close"/>
+    <StatusValidChange statusId="CASE_RESOLVED" statusIdTo="CASE_IN_PROGRESS" transitionName="Reopen"/>
+    <StatusValidChange statusId="CASE_CLOSED" statusIdTo="CASE_IN_PROGRESS" transitionName="Reopen"/>
+
+    <StatusValidChange statusId="TASK_CREATED" statusIdTo="TASK_ASSIGNED" transitionName="Assign"/>
+    <StatusValidChange statusId="TASK_ASSIGNED" statusIdTo="TASK_IN_PROGRESS" transitionName="Start"/>
+    <StatusValidChange statusId="TASK_CREATED" statusIdTo="TASK_COMPLETED" transitionName="Complete"/>
+    <StatusValidChange statusId="TASK_ASSIGNED" statusIdTo="TASK_COMPLETED" transitionName="Complete"/>
+    <StatusValidChange statusId="TASK_IN_PROGRESS" statusIdTo="TASK_COMPLETED" transitionName="Complete"/>
+    <StatusValidChange statusId="TASK_WAITING" statusIdTo="TASK_COMPLETED" transitionName="Complete"/>
+    <StatusValidChange statusId="TASK_CREATED" statusIdTo="TASK_WAITING" transitionName="Wait"/>
+    <StatusValidChange statusId="TASK_ASSIGNED" statusIdTo="TASK_WAITING" transitionName="Wait"/>
+    <StatusValidChange statusId="TASK_WAITING" statusIdTo="TASK_CANCELLED" transitionName="Cancel"/>
+    <StatusValidChange statusId="TASK_WAITING" statusIdTo="TASK_SKIPPED" transitionName="Skip"/>
+    <StatusValidChange statusId="TASK_CREATED" statusIdTo="TASK_CANCELLED" transitionName="Cancel"/>
+    <StatusValidChange statusId="TASK_ASSIGNED" statusIdTo="TASK_CANCELLED" transitionName="Cancel"/>
+    <StatusValidChange statusId="TASK_IN_PROGRESS" statusIdTo="TASK_CANCELLED" transitionName="Cancel"/>
+    <StatusValidChange statusId="TASK_CREATED" statusIdTo="TASK_SKIPPED" transitionName="Skip"/>
+    <StatusValidChange statusId="TASK_ASSIGNED" statusIdTo="TASK_SKIPPED" transitionName="Skip"/>
+    <StatusValidChange statusId="TASK_IN_PROGRESS" statusIdTo="TASK_SKIPPED" transitionName="Skip"/>
+
+    <StatusValidChange statusId="CASE_STAGE_OPEN" statusIdTo="CASE_STAGE_COMPLETED" transitionName="Complete"/>
+    <StatusValidChange statusId="CASE_STAGE_OPEN" statusIdTo="CASE_STAGE_CANCELLED" transitionName="Cancel"/>
+
+    <!-- Enumerations -->
+    <EnumerationType enumTypeId="CASE_STAGE_TYPE" description="Case stage type"/>
+    <Enumeration enumTypeId="CASE_STAGE_TYPE" enumId="CASE_STAGE_PRIMARY" enumCode="PRIMARY" sequenceId="01" description="Primary"/>
+    <Enumeration enumTypeId="CASE_STAGE_TYPE" enumId="CASE_STAGE_ALTERNATE" enumCode="ALTERNATE" sequenceId="02" description="Alternate"/>
+
+    <EnumerationType enumTypeId="CASE_STEP_TYPE" description="Case step type"/>
+    <Enumeration enumTypeId="CASE_STEP_TYPE" enumId="CASE_STEP_HUMAN_TASK" enumCode="HUMAN_TASK" sequenceId="01" description="Human task"/>
+    <Enumeration enumTypeId="CASE_STEP_TYPE" enumId="CASE_STEP_SERVICE" enumCode="SERVICE" sequenceId="02" description="Service"/>
+    <Enumeration enumTypeId="CASE_STEP_TYPE" enumId="CASE_STEP_DECISION" enumCode="DECISION" sequenceId="03" description="Decision"/>
+    <Enumeration enumTypeId="CASE_STEP_TYPE" enumId="CASE_STEP_WAIT" enumCode="WAIT" sequenceId="04" description="Wait"/>
+    <Enumeration enumTypeId="CASE_STEP_TYPE" enumId="CASE_STEP_SUB_CASE" enumCode="SUB_CASE" sequenceId="05" description="Sub-case"/>
+
+    <EnumerationType enumTypeId="CASE_OUTCOME" description="Case step outcome"/>
+    <Enumeration enumTypeId="CASE_OUTCOME" enumId="CASE_OUT_COMPLETE" enumCode="COMPLETE" sequenceId="01" description="Complete"/>
+    <Enumeration enumTypeId="CASE_OUTCOME" enumId="CASE_OUT_REJECT" enumCode="REJECT" sequenceId="02" description="Reject"/>
+    <Enumeration enumTypeId="CASE_OUTCOME" enumId="CASE_OUT_REFER" enumCode="REFER" sequenceId="03" description="Refer"/>
+    <Enumeration enumTypeId="CASE_OUTCOME" enumId="CASE_OUT_APPROVE" enumCode="APPROVE" sequenceId="04" description="Approve"/>
+    <Enumeration enumTypeId="CASE_OUTCOME" enumId="CASE_OUT_REWORK" enumCode="REWORK" sequenceId="05" description="Rework"/>
+    <Enumeration enumTypeId="CASE_OUTCOME" enumId="CASE_OUT_TIMEOUT" enumCode="TIMEOUT" sequenceId="06" description="Timeout"/>
+    <Enumeration enumTypeId="CASE_OUTCOME" enumId="CASE_OUT_SIGNAL" enumCode="SIGNAL" sequenceId="07" description="External signal"/>
+
+    <EnumerationType enumTypeId="CASE_EVENT_TYPE" description="Case event type"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_EVENT_CREATED" enumCode="CREATED" sequenceId="01" description="Created"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_STAGE_ENTERED" enumCode="STAGE_ENTERED" sequenceId="02" description="Stage entered"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_STAGE_COMPLETED" enumCode="STAGE_COMPLETED" sequenceId="03" description="Stage completed"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_TASK_CREATED" enumCode="TASK_CREATED" sequenceId="04" description="Task created"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_TASK_ASSIGNED" enumCode="TASK_ASSIGNED" sequenceId="05" description="Task assigned"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_TASK_COMPLETED" enumCode="TASK_COMPLETED" sequenceId="06" description="Task completed"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_TASK_SIGNALED" enumCode="TASK_SIGNALED" sequenceId="20" description="Task signaled"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_SUBCASE_NEW" enumCode="SUBCASE_CREATED" sequenceId="21" description="Sub-case created"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_SUBCASE_DONE" enumCode="SUBCASE_COMPLETED" sequenceId="22" description="Sub-case completed"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_FIELD_CHANGED" enumCode="FIELD_CHANGED" sequenceId="07" description="Field changed"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_SLA_BREACHED" enumCode="SLA_BREACHED" sequenceId="08" description="SLA breached"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_SLA_STARTED" enumCode="SLA_STARTED" sequenceId="23" description="SLA started"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_SLA_AT_RISK" enumCode="SLA_AT_RISK" sequenceId="24" description="SLA at risk"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_SLA_GOAL_MISSED" enumCode="SLA_GOAL_MISSED" sequenceId="25" description="SLA goal missed"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_SLA_OVERDUE" enumCode="SLA_OVERDUE" sequenceId="26" description="SLA overdue"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_SLA_PASSED" enumCode="SLA_PASSED" sequenceId="27" description="SLA passed deadline"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_SLA_COMPLETED" enumCode="SLA_COMPLETED" sequenceId="28" description="SLA completed"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_SLA_ESCALATED" enumCode="SLA_ESCALATED" sequenceId="29" description="SLA escalated"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_SERVICE_DONE" enumCode="SERVICE_EXECUTED" sequenceId="30" description="Case service step executed"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_COMMENT_ADDED" enumCode="COMMENT_ADDED" sequenceId="09" description="Comment added"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_DOC_ADDED" enumCode="DOCUMENT_ADDED" sequenceId="10" description="Document added"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_CLOSED" enumCode="CLOSED" sequenceId="11" description="Closed"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_REOPENED" enumCode="REOPENED" sequenceId="12" description="Reopened"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_DELEGATED" enumCode="DELEGATED" sequenceId="13" description="Delegated"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_STUCK" enumCode="STUCK" sequenceId="14" description="Stuck"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_INCONSISTENCY" enumCode="INCONSISTENCY" sequenceId="15" description="Inconsistency detected"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_FLOW_CONDITION" enumCode="FLOW_CONDITION_EVALUATED" sequenceId="16" description="Flow condition evaluated"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_FLOW_NO_TRANS" enumCode="FLOW_NO_TRANSITION" sequenceId="17" description="No valid flow transition"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_FLOW_ENTRY" enumCode="FLOW_ENTRY_SERVICE" sequenceId="18" description="Stage entry service invoked"/>
+    <Enumeration enumTypeId="CASE_EVENT_TYPE" enumId="CASE_FLOW_AUTO" enumCode="FLOW_AUTO_ADVANCED" sequenceId="19" description="Case auto advanced"/>
+
+    <EnumerationType enumTypeId="CASE_FIELD_TYPE" description="Case form field type"/>
+    <Enumeration enumTypeId="CASE_FIELD_TYPE" enumId="CASE_FIELD_TEXT" enumCode="TEXT" sequenceId="01" description="Text"/>
+    <Enumeration enumTypeId="CASE_FIELD_TYPE" enumId="CASE_FIELD_NUMBER" enumCode="NUMBER" sequenceId="02" description="Number"/>
+    <Enumeration enumTypeId="CASE_FIELD_TYPE" enumId="CASE_FIELD_DATE" enumCode="DATE" sequenceId="03" description="Date"/>
+    <Enumeration enumTypeId="CASE_FIELD_TYPE" enumId="CASE_FIELD_DATETIME" enumCode="DATETIME" sequenceId="04" description="Date and time"/>
+    <Enumeration enumTypeId="CASE_FIELD_TYPE" enumId="CASE_FIELD_DROPDOWN" enumCode="DROPDOWN" sequenceId="05" description="Drop-down"/>
+    <Enumeration enumTypeId="CASE_FIELD_TYPE" enumId="CASE_FIELD_LOOKUP" enumCode="LOOKUP" sequenceId="06" description="Lookup"/>
+    <Enumeration enumTypeId="CASE_FIELD_TYPE" enumId="CASE_FIELD_TEXTAREA" enumCode="TEXTAREA" sequenceId="07" description="Text area"/>
+    <Enumeration enumTypeId="CASE_FIELD_TYPE" enumId="CASE_FIELD_CHECKBOX" enumCode="CHECKBOX" sequenceId="08" description="Checkbox"/>
+
+    <EnumerationType enumTypeId="CASE_ACCESS_PERM" description="Case access permission"/>
+    <Enumeration enumTypeId="CASE_ACCESS_PERM" enumId="CASE_VIEW" enumCode="VIEW" sequenceId="01" description="View"/>
+    <Enumeration enumTypeId="CASE_ACCESS_PERM" enumId="CASE_UPDATE" enumCode="UPDATE" sequenceId="02" description="Update"/>
+    <Enumeration enumTypeId="CASE_ACCESS_PERM" enumId="CASE_ASSIGN" enumCode="ASSIGN" sequenceId="03" description="Assign"/>
+    <Enumeration enumTypeId="CASE_ACCESS_PERM" enumId="CASE_CLOSE" enumCode="CLOSE" sequenceId="04" description="Close"/>
+    <Enumeration enumTypeId="CASE_ACCESS_PERM" enumId="CASE_ADMIN" enumCode="ADMIN" sequenceId="05" description="Admin"/>
+
+    <EnumerationType enumTypeId="CASE_SLA_STATE" description="Case SLA state"/>
+    <Enumeration enumTypeId="CASE_SLA_STATE" enumId="SLA_ON_TRACK" enumCode="ON_TRACK" sequenceId="01" description="On track"/>
+    <Enumeration enumTypeId="CASE_SLA_STATE" enumId="SLA_AT_RISK" enumCode="AT_RISK" sequenceId="02" description="At risk"/>
+    <Enumeration enumTypeId="CASE_SLA_STATE" enumId="SLA_GOAL_MISSED" enumCode="GOAL_MISSED" sequenceId="03" description="Goal missed"/>
+    <Enumeration enumTypeId="CASE_SLA_STATE" enumId="SLA_DEADLINE_MISSED" enumCode="DEADLINE_MISSED" sequenceId="04" description="Deadline missed"/>
+    <Enumeration enumTypeId="CASE_SLA_STATE" enumId="SLA_PASSED_DEADLINE" enumCode="PASSED_DEADLINE" sequenceId="05" description="Passed deadline"/>
+    <Enumeration enumTypeId="CASE_SLA_STATE" enumId="SLA_COMPLETED" enumCode="COMPLETED" sequenceId="06" description="Completed"/>
+
+    <EnumerationType enumTypeId="CASE_SLA_MS_TYPE" description="Case SLA milestone type"/>
+    <Enumeration enumTypeId="CASE_SLA_MS_TYPE" enumId="SLA_FIRST_RESPONSE" enumCode="FIRST_RESPONSE" sequenceId="01" description="First response"/>
+    <Enumeration enumTypeId="CASE_SLA_MS_TYPE" enumId="SLA_RESOLUTION" enumCode="RESOLUTION" sequenceId="02" description="Resolution"/>
+    <Enumeration enumTypeId="CASE_SLA_MS_TYPE" enumId="SLA_STAGE" enumCode="STAGE" sequenceId="03" description="Stage"/>
+    <Enumeration enumTypeId="CASE_SLA_MS_TYPE" enumId="SLA_CUSTOM" enumCode="CUSTOM" sequenceId="04" description="Custom"/>
+
+    <EnumerationType enumTypeId="CASE_QUEUE_STRATEGY" description="Case queue assignment strategy"/>
+    <Enumeration enumTypeId="CASE_QUEUE_STRATEGY" enumId="CASE_Q_ROUND_ROBIN" enumCode="ROUND_ROBIN" sequenceId="01" description="Round robin"/>
+    <Enumeration enumTypeId="CASE_QUEUE_STRATEGY" enumId="CASE_Q_LEAST_LOAD" enumCode="LEAST_LOAD" sequenceId="02" description="Least load"/>
+    <Enumeration enumTypeId="CASE_QUEUE_STRATEGY" enumId="CASE_Q_SKILL" enumCode="SKILL_BASED" sequenceId="03" description="Skill based"/>
+    <Enumeration enumTypeId="CASE_QUEUE_STRATEGY" enumId="CASE_Q_SPECIFIC" enumCode="SPECIFIC" sequenceId="04" description="Specific party"/>
+    <Enumeration enumTypeId="CASE_QUEUE_STRATEGY" enumId="CASE_Q_PICK" enumCode="QUEUE" sequenceId="05" description="Queue pick"/>
+
+    <EnumerationType enumTypeId="CASE_CONTEXT_TYPE" description="Case context type"/>
+    <Enumeration enumTypeId="CASE_CONTEXT_TYPE" enumId="CASE_CTX_PRIMARY" enumCode="PRIMARY" sequenceId="01" description="Primary"/>
+    <Enumeration enumTypeId="CASE_CONTEXT_TYPE" enumId="CASE_CTX_RELATED" enumCode="RELATED" sequenceId="02" description="Related"/>
+
+    <EnumerationType enumTypeId="CASE_SVC_INPUT_SRC" description="Case service input source"/>
+    <Enumeration enumTypeId="CASE_SVC_INPUT_SRC" enumId="CASE_SVC_SRC_LITERAL" enumCode="LITERAL" sequenceId="01" description="Literal"/>
+    <Enumeration enumTypeId="CASE_SVC_INPUT_SRC" enumId="CASE_SVC_SRC_CONTEXT" enumCode="CONTEXT_FIELD" sequenceId="02" description="Execution context field"/>
+    <Enumeration enumTypeId="CASE_SVC_INPUT_SRC" enumId="CASE_SVC_SRC_CASE" enumCode="CASE_FIELD" sequenceId="03" description="Case field"/>
+    <Enumeration enumTypeId="CASE_SVC_INPUT_SRC" enumId="CASE_SVC_SRC_ENTITY" enumCode="ENTITY_FIELD" sequenceId="04" description="Business entity field"/>
+    <Enumeration enumTypeId="CASE_SVC_INPUT_SRC" enumId="CASE_SVC_SRC_CCTX" enumCode="CASE_CONTEXT" sequenceId="05" description="Case context entity field"/>
+    <Enumeration enumTypeId="CASE_SVC_INPUT_SRC" enumId="CASE_SVC_SRC_VAR" enumCode="CASE_VARIABLE" sequenceId="06" description="Case variable"/>
+    <Enumeration enumTypeId="CASE_SVC_INPUT_SRC" enumId="CASE_SVC_SRC_FORM" enumCode="FORM_VALUE" sequenceId="07" description="Form value"/>
+
+    <EnumerationType enumTypeId="CASE_VAR_TYPE" description="Case variable value type"/>
+    <Enumeration enumTypeId="CASE_VAR_TYPE" enumId="CASE_VAR_STRING" enumCode="STRING" sequenceId="01" description="String"/>
+    <Enumeration enumTypeId="CASE_VAR_TYPE" enumId="CASE_VAR_NUMBER" enumCode="NUMBER" sequenceId="02" description="Number"/>
+    <Enumeration enumTypeId="CASE_VAR_TYPE" enumId="CASE_VAR_DATE" enumCode="DATE" sequenceId="03" description="Date"/>
+    <Enumeration enumTypeId="CASE_VAR_TYPE" enumId="CASE_VAR_BOOLEAN" enumCode="BOOLEAN" sequenceId="04" description="Boolean"/>
+    <Enumeration enumTypeId="CASE_VAR_TYPE" enumId="CASE_VAR_JSON" enumCode="JSON" sequenceId="05" description="JSON"/>
+
+    <EnumerationType enumTypeId="CASE_VAR_SCOPE" description="Case variable scope"/>
+    <Enumeration enumTypeId="CASE_VAR_SCOPE" enumId="CASE_VAR_SCOPE_CASE" enumCode="CASE_RUNTIME" sequenceId="01" description="Until case close"/>
+    <Enumeration enumTypeId="CASE_VAR_SCOPE" enumId="CASE_VAR_SCOPE_STAGE" enumCode="STAGE_RUNTIME" sequenceId="02" description="Until stage complete"/>
+    <Enumeration enumTypeId="CASE_VAR_SCOPE" enumId="CASE_VAR_SCOPE_STEP" enumCode="STEP_RUNTIME" sequenceId="03" description="Until next step"/>
+    <Enumeration enumTypeId="CASE_VAR_SCOPE" enumId="CASE_VAR_SCOPE_TTL" enumCode="TTL" sequenceId="04" description="Until expiry"/>
+
+    <EnumerationType enumTypeId="CASE_CMT_VISIBILITY" description="Case comment visibility"/>
+    <Enumeration enumTypeId="CASE_CMT_VISIBILITY" enumId="CASE_CMT_INTERNAL" enumCode="INTERNAL" sequenceId="01" description="Internal"/>
+    <Enumeration enumTypeId="CASE_CMT_VISIBILITY" enumId="CASE_CMT_CUSTOMER" enumCode="CUSTOMER" sequenceId="02" description="Customer"/>
+
+    <EnumerationType enumTypeId="CASE_TRIGGER_TYPE" description="Case event trigger type"/>
+    <Enumeration enumTypeId="CASE_TRIGGER_TYPE" enumId="CASE_TRIG_USER" enumCode="USER_ACTION" sequenceId="01" description="User action"/>
+    <Enumeration enumTypeId="CASE_TRIGGER_TYPE" enumId="CASE_TRIG_SERVICE" enumCode="SERVICE_CALL" sequenceId="02" description="Service call"/>
+    <Enumeration enumTypeId="CASE_TRIGGER_TYPE" enumId="CASE_TRIG_TIMER" enumCode="TIMER" sequenceId="03" description="Timer"/>
+    <Enumeration enumTypeId="CASE_TRIGGER_TYPE" enumId="CASE_TRIG_SYSTEM" enumCode="SYSTEM" sequenceId="04" description="System"/>
+
+    <EnumerationType enumTypeId="CASE_CHANNEL" description="Case intake channel"/>
+    <Enumeration enumTypeId="CASE_CHANNEL" enumId="CASE_CHANNEL_WEB" enumCode="WEB" sequenceId="01" description="Web"/>
+    <Enumeration enumTypeId="CASE_CHANNEL" enumId="CASE_CHANNEL_PHONE" enumCode="PHONE" sequenceId="02" description="Phone"/>
+    <Enumeration enumTypeId="CASE_CHANNEL" enumId="CASE_CHANNEL_EMAIL" enumCode="EMAIL" sequenceId="03" description="Email"/>
+    <Enumeration enumTypeId="CASE_CHANNEL" enumId="CASE_CHANNEL_API" enumCode="API" sequenceId="04" description="API"/>
+
+    <!-- Pilot case type -->
+    <CaseType caseTypeId="PILOT_INQUIRY" caseTypeName="Pilot Inquiry"
+            description="Pilot case type for the Phase 1 lifecycle"
+            primaryEntityName="" extensionEntityName="" extensionFormId=""
+            definitionVersion="1" activeDefinitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+
+    <TechDataCalendarWeek calendarWeekId="CASE_WEEK_STANDARD"
+            description="Monday-Friday 09:00-17:00"
+            mondayStartTime="09:00:00" mondayCapacity="8"
+            tuesdayStartTime="09:00:00" tuesdayCapacity="8"
+            wednesdayStartTime="09:00:00" wednesdayCapacity="8"
+            thursdayStartTime="09:00:00" thursdayCapacity="8"
+            fridayStartTime="09:00:00" fridayCapacity="8"
+            saturdayCapacity="0" sundayCapacity="0"/>
+    <TechDataCalendar calendarId="CASE_CAL_DEFAULT"
+            description="Default case management business calendar"
+            calendarWeekId="CASE_WEEK_STANDARD"/>
+
+    <CaseSla slaId="CASE_SLA_DEFAULT" slaName="Default case SLA"
+            calendarId="CASE_CAL_DEFAULT"
+            description="Default resolution SLA for the pilot case type"/>
+    <CaseSlaMilestone slaId="CASE_SLA_DEFAULT" milestoneSeq="1"
+            milestoneName="Resolution" milestoneTypeEnumId="SLA_RESOLUTION"
+            goalDuration="1440" deadlineDuration="2880" passedDeadlineDuration="4320"
+            description="Goal 1 day, deadline 2 days, passed deadline 3 days"/>
+    <CaseSlaRule slaId="CASE_SLA_DEFAULT" ruleSeq="1" caseTypeId="PILOT_INQUIRY"
+            priority="3" sequenceNum="1"/>
+
+    <CaseQueue queueId="CASE_QUEUE_DEFAULT" partyId="Company"
+            queueName="Default Case Queue" activeIndicator="Y"/>
+    <CaseAssignmentPolicy assignmentPolicyId="CASE_POLICY_DEFAULT"
+            policyName="Default case assignment" strategyEnumId="CASE_Q_PICK"
+            queueId="CASE_QUEUE_DEFAULT"
+            maxOpenTasks="0" description="Leave tasks in the case worklist"/>
+
+    <CaseAccessPolicy accessPolicyId="CASE_ACCESS_DEFAULT" caseTypeId="PILOT_INQUIRY"
+            description="Default pilot case access policy"/>
+    <CaseStageDef caseTypeId="PILOT_INQUIRY" definitionVersion="1" stageSeq="1" stageName="Intake"
+            stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Receive and triage the inquiry"/>
+    <CaseStageDef caseTypeId="PILOT_INQUIRY" definitionVersion="1" stageSeq="2" stageName="Review"
+            stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Review the inquiry"/>
+    <CaseStageDef caseTypeId="PILOT_INQUIRY" definitionVersion="1" stageSeq="3" stageName="Resolution"
+            stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Resolve the inquiry"/>
+
+    <CaseStepDef caseTypeId="PILOT_INQUIRY" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Triage" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="CASE_POLICY_DEFAULT" requiredIndicator="Y"
+            sequenceNum="1" description="Triage the incoming inquiry"/>
+    <CaseStepDef caseTypeId="PILOT_INQUIRY" definitionVersion="1" stageSeq="2" stepSeq="1"
+            stepName="Review" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="CASE_POLICY_DEFAULT" requiredIndicator="Y"
+            sequenceNum="1" description="Review the inquiry"/>
+    <CaseStepDef caseTypeId="PILOT_INQUIRY" definitionVersion="1" stageSeq="3" stepSeq="1"
+            stepName="Resolve" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="CASE_POLICY_DEFAULT" requiredIndicator="Y"
+            sequenceNum="1" description="Resolve the inquiry"/>
+
+    <CaseStepTransition caseTypeId="PILOT_INQUIRY" definitionVersion="1" transitionSeq="1" stageSeq="1" stepSeq="1"
+            outcomeEnumId="CASE_OUT_COMPLETE" toStageSeq="2" toStepSeq="1"
+            priority="1" isDefault="Y" description="Triage complete"/>
+    <CaseStepTransition caseTypeId="PILOT_INQUIRY" definitionVersion="1" transitionSeq="1" stageSeq="2" stepSeq="1"
+            outcomeEnumId="CASE_OUT_COMPLETE" toStageSeq="3" toStepSeq="1"
+            priority="1" isDefault="Y" description="Review complete"/>
+
+    <!-- Phase 2 UAT case type: customer complaint -->
+    <CaseType caseTypeId="CUSTOMER_COMPLAINT" caseTypeName="Customer Complaint"
+            description="Customer complaint intake, investigation and resolution"
+            primaryEntityName="" extensionEntityName="" extensionFormId=""
+            definitionVersion="1" activeDefinitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            defaultSlaId="CASE_SLA_COMPLAINT" accessPolicyId="CASE_ACC_COMPLAINT"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+
+    <CaseQueue queueId="CASE_QUEUE_COMPLAINT" partyId="Company"
+            queueName="Customer Complaint Queue" activeIndicator="Y"/>
+    <CaseAssignmentPolicy assignmentPolicyId="CASE_POL_COMPLAINT"
+            policyName="Customer complaint queue" strategyEnumId="CASE_Q_PICK"
+            queueId="CASE_QUEUE_COMPLAINT" maxOpenTasks="0"
+            description="Leave complaint tasks in the complaint queue"/>
+
+    <CaseAccessPolicy accessPolicyId="CASE_ACC_COMPLAINT" caseTypeId="CUSTOMER_COMPLAINT"
+            description="Customer complaint access policy"/>
+
+    <CaseSla slaId="CASE_SLA_COMPLAINT" slaName="Customer complaint SLA"
+            calendarId="CASE_CAL_DEFAULT"
+            description="First response and resolution SLA for complaints"/>
+    <CaseSlaMilestone slaId="CASE_SLA_COMPLAINT" milestoneSeq="1"
+            milestoneName="First response" milestoneTypeEnumId="SLA_FIRST_RESPONSE"
+            goalDuration="60" deadlineDuration="120" passedDeadlineDuration="180"
+            description="Acknowledge the complaint within 1-3 business hours"/>
+    <CaseSlaMilestone slaId="CASE_SLA_COMPLAINT" milestoneSeq="2"
+            milestoneName="Resolution" milestoneTypeEnumId="SLA_RESOLUTION"
+            goalDuration="1440" deadlineDuration="2880" passedDeadlineDuration="4320"
+            description="Resolve within 1-3 business days"/>
+    <CaseSlaRule slaId="CASE_SLA_COMPLAINT" ruleSeq="1"
+            caseTypeId="CUSTOMER_COMPLAINT" priority="1" sequenceNum="1"/>
+
+    <CaseStageDef caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1" stageSeq="1"
+            stageName="Intake" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Receive and acknowledge the complaint"/>
+    <CaseStageDef caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1" stageSeq="2"
+            stageName="Investigation" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Investigate the complaint"/>
+    <CaseStageDef caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1" stageSeq="3"
+            stageName="Resolution" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Agree and deliver the resolution"/>
+    <CaseStageDef caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1" stageSeq="4"
+            stageName="Closure" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Confirm the customer-facing closure"/>
+
+    <CaseStepDef caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Acknowledge complaint" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="CASE_POL_COMPLAINT" requiredIndicator="Y"
+            sequenceNum="1" description="Send the first response to the customer"/>
+    <CaseStepDef caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1" stageSeq="2" stepSeq="1"
+            stepName="Investigate complaint" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="CASE_POL_COMPLAINT" requiredIndicator="Y"
+            sequenceNum="1" description="Investigate the complaint"/>
+    <CaseStepDef caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1" stageSeq="3" stepSeq="1"
+            stepName="Resolve complaint" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="CASE_POL_COMPLAINT" requiredIndicator="Y"
+            sequenceNum="1" description="Deliver the resolution"/>
+    <CaseStepDef caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1" stageSeq="4" stepSeq="1"
+            stepName="Confirm closure" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="CASE_POL_COMPLAINT" requiredIndicator="Y"
+            sequenceNum="1" description="Confirm closure with the customer"/>
+
+    <CaseStepTransition caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1" transitionSeq="1"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="2" toStepSeq="1" priority="1" isDefault="Y"
+            description="Complaint acknowledged"/>
+    <CaseStepTransition caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1" transitionSeq="1"
+            stageSeq="2" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="3" toStepSeq="1" priority="1" isDefault="Y"
+            description="Investigation complete"/>
+    <CaseStepTransition caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1" transitionSeq="1"
+            stageSeq="3" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="4" toStepSeq="1" priority="1" isDefault="Y"
+            description="Resolution delivered"/>
+
+    <CaseFieldMapping caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1"
+            stageSeq="1" stepSeq="1" fieldSeq="1"
+            fieldName="description" entityName="Case" entityFieldName="description"
+            label="Complaint details" fieldTypeEnumId="CASE_FIELD_TEXTAREA"
+            requiredIndicator="Y" sequenceNum="1"/>
+    <CaseFieldMapping caseTypeId="CUSTOMER_COMPLAINT" definitionVersion="1"
+            stageSeq="1" stepSeq="1" fieldSeq="2"
+            fieldName="priority" entityName="Case" entityFieldName="priority"
+            label="Priority" fieldTypeEnumId="CASE_FIELD_NUMBER"
+            requiredIndicator="N" sequenceNum="2"/>
+
+    <!-- Phase 2 UAT case type: service request with approval and rework -->
+    <CaseType caseTypeId="SERVICE_REQUEST" caseTypeName="Service Request"
+            description="Request, approve, execute and close an internal service request"
+            primaryEntityName="" extensionEntityName="" extensionFormId=""
+            definitionVersion="1" activeDefinitionVersion="1" statusId="CASE_TYPE_ACTIVE"
+            defaultSlaId="CASE_SLA_SVC_REQ" accessPolicyId="CASE_ACC_SVC_REQUEST"
+            createdDate="2026-10-24 00:00:00.000" lastModifiedDate="2026-10-24 00:00:00.000"/>
+
+    <CaseQueue queueId="CASE_Q_SVC_REQUEST" partyId="Company"
+            queueName="Service Request Queue" activeIndicator="Y"/>
+    <CaseAssignmentPolicy assignmentPolicyId="CASE_POL_SVC_REQ"
+            policyName="Service request queue" strategyEnumId="CASE_Q_PICK"
+            queueId="CASE_Q_SVC_REQUEST" maxOpenTasks="0"
+            description="Leave service request tasks in the request queue"/>
+
+    <CaseAccessPolicy accessPolicyId="CASE_ACC_SVC_REQUEST" caseTypeId="SERVICE_REQUEST"
+            description="Service request access policy"/>
+
+    <CaseSla slaId="CASE_SLA_SVC_REQ" slaName="Service request SLA"
+            calendarId="CASE_CAL_DEFAULT"
+            description="Resolution SLA for service requests"/>
+    <CaseSlaMilestone slaId="CASE_SLA_SVC_REQ" milestoneSeq="1"
+            milestoneName="Resolution" milestoneTypeEnumId="SLA_RESOLUTION"
+            goalDuration="2880" deadlineDuration="4320" passedDeadlineDuration="5760"
+            description="Resolve within 2-4 business days"/>
+    <CaseSlaRule slaId="CASE_SLA_SVC_REQ" ruleSeq="1"
+            caseTypeId="SERVICE_REQUEST" priority="1" sequenceNum="1"/>
+
+    <CaseStageDef caseTypeId="SERVICE_REQUEST" definitionVersion="1" stageSeq="1"
+            stageName="Request" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Capture the service request"/>
+    <CaseStageDef caseTypeId="SERVICE_REQUEST" definitionVersion="1" stageSeq="2"
+            stageName="Approval" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Approve or return the request"/>
+    <CaseStageDef caseTypeId="SERVICE_REQUEST" definitionVersion="1" stageSeq="3"
+            stageName="Execution" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="Y"
+            description="Run the approved service step"/>
+    <CaseStageDef caseTypeId="SERVICE_REQUEST" definitionVersion="1" stageSeq="4"
+            stageName="Completion" stageTypeEnumId="CASE_STAGE_PRIMARY" autoAdvance="N"
+            description="Confirm the service result"/>
+
+    <CaseStepDef caseTypeId="SERVICE_REQUEST" definitionVersion="1" stageSeq="1" stepSeq="1"
+            stepName="Capture request" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="CASE_POL_SVC_REQ" requiredIndicator="Y"
+            sequenceNum="1" description="Capture the request details"/>
+    <CaseStepDef caseTypeId="SERVICE_REQUEST" definitionVersion="1" stageSeq="2" stepSeq="1"
+            stepName="Approve request" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="CASE_POL_SVC_REQ" requiredIndicator="Y"
+            sequenceNum="1" description="Approve or return the request"/>
+    <CaseStepDef caseTypeId="SERVICE_REQUEST" definitionVersion="1" stageSeq="3" stepSeq="1"
+            stepName="Provision service" stepTypeEnumId="CASE_STEP_SERVICE"
+            serviceName="casemgmtServiceRequestProvision" requiredIndicator="Y"
+            sequenceNum="1" description="Execute the approved service"/>
+    <CaseStepDef caseTypeId="SERVICE_REQUEST" definitionVersion="1" stageSeq="4" stepSeq="1"
+            stepName="Confirm completion" stepTypeEnumId="CASE_STEP_HUMAN_TASK"
+            assignmentPolicyId="CASE_POL_SVC_REQ" requiredIndicator="Y"
+            sequenceNum="1" description="Confirm the service result"/>
+
+    <CaseStepTransition caseTypeId="SERVICE_REQUEST" definitionVersion="1" transitionSeq="1"
+            stageSeq="1" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="2" toStepSeq="1" priority="1" isDefault="Y"
+            description="Request captured"/>
+    <CaseStepTransition caseTypeId="SERVICE_REQUEST" definitionVersion="1" transitionSeq="1"
+            stageSeq="2" stepSeq="1" outcomeEnumId="CASE_OUT_APPROVE"
+            toStageSeq="3" toStepSeq="1" priority="1" isDefault="N"
+            description="Request approved"/>
+    <CaseStepTransition caseTypeId="SERVICE_REQUEST" definitionVersion="1" transitionSeq="1"
+            stageSeq="2" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="3" toStepSeq="1" priority="1" isDefault="Y"
+            description="Default approval path"/>
+    <CaseStepTransition caseTypeId="SERVICE_REQUEST" definitionVersion="1" transitionSeq="1"
+            stageSeq="2" stepSeq="1" outcomeEnumId="CASE_OUT_REJECT"
+            toStageSeq="1" toStepSeq="1" priority="10" isDefault="N"
+            description="Return for rework"/>
+    <CaseStepTransition caseTypeId="SERVICE_REQUEST" definitionVersion="1" transitionSeq="1"
+            stageSeq="3" stepSeq="1" outcomeEnumId="CASE_OUT_COMPLETE"
+            toStageSeq="4" toStepSeq="1" priority="1" isDefault="Y"
+            description="Service provisioned"/>
+
+    <CaseFieldMapping caseTypeId="SERVICE_REQUEST" definitionVersion="1"
+            stageSeq="1" stepSeq="1" fieldSeq="1"
+            fieldName="description" entityName="Case" entityFieldName="description"
+            label="Request details" fieldTypeEnumId="CASE_FIELD_TEXTAREA"
+            requiredIndicator="Y" sequenceNum="1"/>
+    <CaseFieldMapping caseTypeId="SERVICE_REQUEST" definitionVersion="1"
+            stageSeq="1" stepSeq="1" fieldSeq="2"
+            fieldName="priority" entityName="Case" entityFieldName="priority"
+            label="Priority" fieldTypeEnumId="CASE_FIELD_NUMBER"
+            requiredIndicator="N" sequenceNum="2"/>
+</entity-engine-xml>

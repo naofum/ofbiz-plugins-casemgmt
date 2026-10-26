@@ -1,0 +1,1197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://ofbiz.apache.org/Widget-Form"
+        xsi:schemaLocation="http://ofbiz.apache.org/Widget-Form http://ofbiz.apache.org/dtds/widget-form.xsd">
+
+    <form name="CaseList" type="list" list-name="cases" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="caseNumber" title="${uiLabelMap.CasemgmtCaseNumber}" widget-style="buttontext">
+            <hyperlink target="ViewCase" description="${caseNumber}" target-type="intra-app">
+                <parameter param-name="caseId" from-field="caseId"/>
+            </hyperlink>
+        </field>
+        <field name="caseTypeId" title="${uiLabelMap.CasemgmtCaseType}"><display/></field>
+        <field name="statusId" title="${uiLabelMap.CasemgmtStatus}"><display/></field>
+        <field name="currentStageSeq" title="${uiLabelMap.CasemgmtStage}"><display/></field>
+        <field name="ownerPartyId" title="${uiLabelMap.CasemgmtOwner}"><display/></field>
+        <field name="openedDate" title="${uiLabelMap.CasemgmtOpenedDate}"><display/></field>
+    </form>
+
+    <form name="CaseWorklistFilter" type="single" target="CaseWorklist" title=""
+            default-map-name="worklistFilter" default-table-style="basic-table">
+        <field name="caseTypeId" title="${uiLabelMap.CasemgmtCaseType}">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="CaseType" key-field-name="caseTypeId" description="${caseTypeName}">
+                    <entity-order-by field-name="caseTypeId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="statusId" title="${uiLabelMap.CasemgmtStatus}">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="StatusItem" key-field-name="statusId" description="${description}">
+                    <entity-constraint name="statusTypeId" operator="equals" value="CASE_STATUS"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="stageSeq" title="${uiLabelMap.CasemgmtStageSeq}"><text/></field>
+        <field name="queueId" title="${uiLabelMap.CasemgmtQueue}">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="CaseQueue" key-field-name="queueId" description="${queueName}">
+                    <entity-order-by field-name="queueId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="assignedPartyId" title="${uiLabelMap.CasemgmtAssignedTo}"><text/></field>
+        <field name="slaStateEnumId" title="${uiLabelMap.CasemgmtSla}">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
+                    <entity-constraint name="enumTypeId" operator="equals" value="CASE_SLA_STATE"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="slaMilestoneName" title="${uiLabelMap.CasemgmtMilestone}"><text/></field>
+        <field name="closedWithin" title="${uiLabelMap.CasemgmtClosedWithin}">
+            <drop-down>
+                <option key="NONE" description="${uiLabelMap.CasemgmtClosedWithinNone}"/>
+                <option key="WEEK" description="${uiLabelMap.CasemgmtClosedWithinWeek}"/>
+                <option key="MONTH" description="${uiLabelMap.CasemgmtClosedWithinMonth}"/>
+                <option key="YEAR" description="${uiLabelMap.CasemgmtClosedWithinYear}"/>
+            </drop-down>
+        </field>
+        <field name="fromDate" title="${uiLabelMap.CasemgmtFromDate}"><text/></field>
+        <field name="toDate" title="${uiLabelMap.CasemgmtToDate}"><text/></field>
+        <field name="openOnly"><hidden/></field>
+        <field name="closedPeriod"><hidden/></field>
+        <field name="closedFromDate"><hidden/></field>
+        <field name="closedToDate"><hidden/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtSearchCases}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseTaskList" type="list" list-name="tasks" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="stepSeq" title="${uiLabelMap.CasemgmtStep}"><display/></field>
+        <field name="taskTypeEnumId" title="${uiLabelMap.CasemgmtTasks}"><display/></field>
+        <field name="statusId" title="${uiLabelMap.CasemgmtStatus}"><display/></field>
+        <field name="assignedPartyId" title="${uiLabelMap.CasemgmtAssignedTo}"><display/></field>
+        <field name="caseTaskId" title="${uiLabelMap.CasemgmtComplete}" widget-style="buttontext">
+            <hyperlink target="TaskForm" description="${uiLabelMap.CasemgmtOpenTask}" target-type="intra-app">
+                <parameter param-name="caseTaskId"/>
+                <parameter param-name="caseId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="CaseHistory" type="list" list-name="history" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="eventDate" title="${uiLabelMap.CasemgmtEventDate}"><display/></field>
+        <field name="eventTypeEnumId" title="${uiLabelMap.CasemgmtEventType}"><display/></field>
+        <field name="actorUserLoginId" title="${uiLabelMap.CasemgmtActor}"><display/></field>
+        <field name="detail" title="${uiLabelMap.CasemgmtDetail}"><display/></field>
+    </form>
+
+    <form name="CaseTypeList" type="list" list-name="caseTypes" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="caseTypeId" title="${uiLabelMap.CasemgmtCaseTypeId}" widget-style="buttontext">
+            <hyperlink target="EditCaseType" description="${caseTypeId}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+            </hyperlink>
+        </field>
+        <field name="caseTypeName" title="${uiLabelMap.CasemgmtCaseTypeName}"><display/></field>
+        <field name="statusId" title="${uiLabelMap.CasemgmtStatus}"><display/></field>
+        <field name="definitionVersion" title="${uiLabelMap.CasemgmtDefinitionVersion}"><display/></field>
+        <field name="activeDefinitionVersion" title="${uiLabelMap.CasemgmtActiveDefinitionVersion}"><display/></field>
+    </form>
+
+    <form name="CreateCaseType" type="single" target="CreateCaseTypeDraft" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId" title="${uiLabelMap.CasemgmtCaseTypeId}"><text/></field>
+        <field name="caseTypeName" title="${uiLabelMap.CasemgmtCaseTypeName}"><text/></field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtCreateCaseType}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="EditCaseTypeDraft" type="single" target="UpdateCaseTypeDraft" title=""
+            default-map-name="caseType" default-table-style="basic-table">
+        <field name="caseTypeId"><hidden/></field>
+        <field name="caseTypeName" title="${uiLabelMap.CasemgmtCaseTypeName}"><text/></field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="primaryEntityName" title="${uiLabelMap.CasemgmtPrimaryEntity}"><text/></field>
+        <field name="extensionEntityName" title="${uiLabelMap.CasemgmtExtensionEntity}"><text/></field>
+        <field name="defaultSlaId" title="${uiLabelMap.CasemgmtDefaultSla}"><text/></field>
+        <field name="accessPolicyId" title="${uiLabelMap.CasemgmtAccessPolicy}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtSave}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseStageList" type="list" list-name="stages" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="stageSeq" title="${uiLabelMap.CasemgmtStageSeq}"><display/></field>
+        <field name="stageName" title="${uiLabelMap.CasemgmtStage}" widget-style="buttontext">
+            <hyperlink target="EditCaseType" description="${stageName}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+            </hyperlink>
+        </field>
+        <field name="autoAdvance" title="${uiLabelMap.CasemgmtAutoAdvance}"><display/></field>
+        <field name="entryServiceName" title="${uiLabelMap.CasemgmtEntryService}"><display/></field>
+        <field name="exitServiceName" title="${uiLabelMap.CasemgmtExitService}"><display/></field>
+        <field name="editAction" title="${uiLabelMap.CasemgmtEdit}" widget-style="buttontext">
+            <hyperlink target="EditCaseStage" description="${uiLabelMap.CasemgmtEdit}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+            </hyperlink>
+        </field>
+        <field name="deleteAction" title="${uiLabelMap.CasemgmtDelete}" widget-style="buttontext">
+            <hyperlink target="DeleteCaseStageDef" description="${uiLabelMap.CasemgmtDelete}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+            </hyperlink>
+        </field>
+        <field name="moveUpAction" title="${uiLabelMap.CasemgmtMoveUp}" widget-style="buttontext">
+            <hyperlink target="MoveCaseStageDef" description="${uiLabelMap.CasemgmtMoveUp}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="direction" value="up"/>
+            </hyperlink>
+        </field>
+        <field name="moveDownAction" title="${uiLabelMap.CasemgmtMoveDown}" widget-style="buttontext">
+            <hyperlink target="MoveCaseStageDef" description="${uiLabelMap.CasemgmtMoveDown}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="direction" value="down"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="CreateCaseStage" type="single" target="CreateCaseStageDef" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId"><hidden/></field>
+        <field name="definitionVersion"><hidden/></field>
+        <field name="stageSeq" title="${uiLabelMap.CasemgmtStageSeq}"><text/></field>
+        <field name="stageName" title="${uiLabelMap.CasemgmtStage}"><text/></field>
+        <field name="autoAdvance" title="${uiLabelMap.CasemgmtAutoAdvance}">
+            <drop-down><option key="N" description="N"/><option key="Y" description="Y"/></drop-down>
+        </field>
+        <field name="entryServiceName" title="${uiLabelMap.CasemgmtEntryService}"><text/></field>
+        <field name="exitServiceName" title="${uiLabelMap.CasemgmtExitService}"><text/></field>
+        <field name="stageTypeEnumId"><hidden value="CASE_STAGE_PRIMARY"/></field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtAddStage}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseStepList" type="list" list-name="steps" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="stageSeq" title="${uiLabelMap.CasemgmtStageSeq}"><display/></field>
+        <field name="stepSeq" title="${uiLabelMap.CasemgmtStepSeq}"><display/></field>
+        <field name="stepName" title="${uiLabelMap.CasemgmtStep}" widget-style="buttontext">
+            <hyperlink target="EditCaseType" description="${stepName}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+            </hyperlink>
+        </field>
+        <field name="stepTypeEnumId" title="${uiLabelMap.CasemgmtType}"><display/></field>
+        <field name="serviceName" title="${uiLabelMap.CasemgmtServiceName}"><display/></field>
+        <field name="formId" title="${uiLabelMap.CasemgmtFormId}"><display/></field>
+        <field name="assignmentPolicyId" title="${uiLabelMap.CasemgmtAssignmentPolicy}"><display/></field>
+        <field name="editAction" title="${uiLabelMap.CasemgmtEdit}" widget-style="buttontext">
+            <hyperlink target="EditCaseStep" description="${uiLabelMap.CasemgmtEdit}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+            </hyperlink>
+        </field>
+        <field name="deleteAction" title="${uiLabelMap.CasemgmtDelete}" widget-style="buttontext">
+            <hyperlink target="DeleteCaseStepDef" description="${uiLabelMap.CasemgmtDelete}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+            </hyperlink>
+        </field>
+        <field name="moveUpAction" title="${uiLabelMap.CasemgmtMoveUp}" widget-style="buttontext">
+            <hyperlink target="MoveCaseStepDef" description="${uiLabelMap.CasemgmtMoveUp}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                <parameter param-name="direction" value="up"/>
+            </hyperlink>
+        </field>
+        <field name="moveDownAction" title="${uiLabelMap.CasemgmtMoveDown}" widget-style="buttontext">
+            <hyperlink target="MoveCaseStepDef" description="${uiLabelMap.CasemgmtMoveDown}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                <parameter param-name="direction" value="down"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="CreateCaseStep" type="single" target="CreateCaseStepDef" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId"><hidden/></field>
+        <field name="definitionVersion"><hidden/></field>
+        <field name="stageSeq"><hidden value="${selectedStageSeq}"/></field>
+        <field name="selectedStageSeq"><hidden value="${selectedStageSeq}"/></field>
+        <field name="selectedStepSeq"><hidden value="${selectedStepSeq}"/></field>
+        <field name="stepSeq" title="${uiLabelMap.CasemgmtStepSeq}"><text/></field>
+        <field name="stepName" title="${uiLabelMap.CasemgmtStep}"><text/></field>
+        <field name="stepTypeEnumId" title="${uiLabelMap.CasemgmtType}" required-field="true">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
+                    <entity-constraint name="enumTypeId" operator="equals" value="CASE_STEP_TYPE"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="serviceName" title="${uiLabelMap.CasemgmtServiceName}"><text/></field>
+        <field name="formId" title="${uiLabelMap.CasemgmtFormId}"><text/></field>
+        <field name="subCaseTypeId" title="${uiLabelMap.CasemgmtSubCaseType}"><text/></field>
+        <field name="signalName" title="${uiLabelMap.CasemgmtSignalName}"><text/></field>
+        <field name="timeoutDuration" title="${uiLabelMap.CasemgmtTimeoutDuration}"><text/></field>
+        <field name="timeoutOutcomeEnumId" title="${uiLabelMap.CasemgmtTimeoutOutcome}">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
+                    <entity-constraint name="enumTypeId" operator="equals" value="CASE_OUTCOME"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="assignmentPolicyId" title="${uiLabelMap.CasemgmtAssignmentPolicy}"><text/></field>
+        <field name="slaId" title="${uiLabelMap.CasemgmtSla}"><text/></field>
+        <field name="requiredIndicator" title="${uiLabelMap.CasemgmtRequired}">
+            <drop-down><option key="Y" description="Y"/><option key="N" description="N"/></drop-down>
+        </field>
+        <field name="sequenceNum" title="${uiLabelMap.CasemgmtSequence}"><text/></field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtAddStep}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseServiceParamList" type="list" list-name="serviceParams" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="paramSeq" title="${uiLabelMap.CasemgmtSequence}"><display/></field>
+        <field name="paramName" title="${uiLabelMap.CasemgmtServiceParam}"><display/></field>
+        <field name="sourceTypeEnumId" title="${uiLabelMap.CasemgmtSourceType}"><display/></field>
+        <field name="sourceValue" title="${uiLabelMap.CasemgmtSourceValue}"><display/></field>
+        <field name="requiredIndicator" title="${uiLabelMap.CasemgmtRequired}"><display/></field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><display/></field>
+        <field name="deleteAction" title="${uiLabelMap.CasemgmtDelete}" widget-style="buttontext">
+            <hyperlink target="DeleteCaseServiceParam" description="${uiLabelMap.CasemgmtDelete}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="paramSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="CreateCaseServiceParam" type="single" target="CreateCaseServiceParam" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId"><hidden value="${caseTypeId}"/></field>
+        <field name="definitionVersion"><hidden value="${definitionVersion}"/></field>
+        <field name="stageSeq"><hidden value="${stageSeq}"/></field>
+        <field name="stepSeq"><hidden value="${stepSeq}"/></field>
+        <field name="selectedStageSeq"><hidden value="${stageSeq}"/></field>
+        <field name="selectedStepSeq"><hidden value="${stepSeq}"/></field>
+        <field name="paramSeq" title="${uiLabelMap.CasemgmtSequence}"><text/></field>
+        <field name="paramName" title="${uiLabelMap.CasemgmtServiceParam}" required-field="true"><text/></field>
+        <field name="sourceTypeEnumId" title="${uiLabelMap.CasemgmtSourceType}" required-field="true">
+            <drop-down>
+                <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
+                    <entity-constraint name="enumTypeId" operator="equals" value="CASE_SVC_INPUT_SRC"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="sourceValue" title="${uiLabelMap.CasemgmtSourceValue}"><text/></field>
+        <field name="requiredIndicator" title="${uiLabelMap.CasemgmtRequired}">
+            <drop-down><option key="N" description="N"/><option key="Y" description="Y"/></drop-down>
+        </field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtAddInput}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseServiceOutputList" type="list" list-name="serviceOutputs" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="outputSeq" title="${uiLabelMap.CasemgmtSequence}"><display/></field>
+        <field name="outputName" title="${uiLabelMap.CasemgmtServiceOutput}"><display/></field>
+        <field name="variableName" title="${uiLabelMap.CasemgmtVariableName}"><display/></field>
+        <field name="valueTypeEnumId" title="${uiLabelMap.CasemgmtValueType}"><display/></field>
+        <field name="scopeEnumId" title="${uiLabelMap.CasemgmtScope}"><display/></field>
+        <field name="requiredIndicator" title="${uiLabelMap.CasemgmtRequired}"><display/></field>
+        <field name="deleteAction" title="${uiLabelMap.CasemgmtDelete}" widget-style="buttontext">
+            <hyperlink target="DeleteCaseServiceOutput" description="${uiLabelMap.CasemgmtDelete}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="outputSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="CreateCaseServiceOutput" type="single" target="CreateCaseServiceOutput" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId"><hidden value="${caseTypeId}"/></field>
+        <field name="definitionVersion"><hidden value="${definitionVersion}"/></field>
+        <field name="stageSeq"><hidden value="${stageSeq}"/></field>
+        <field name="stepSeq"><hidden value="${stepSeq}"/></field>
+        <field name="selectedStageSeq"><hidden value="${stageSeq}"/></field>
+        <field name="selectedStepSeq"><hidden value="${stepSeq}"/></field>
+        <field name="outputSeq" title="${uiLabelMap.CasemgmtSequence}"><text/></field>
+        <field name="outputName" title="${uiLabelMap.CasemgmtServiceOutput}" required-field="true"><text/></field>
+        <field name="variableName" title="${uiLabelMap.CasemgmtVariableName}" required-field="true"><text/></field>
+        <field name="valueTypeEnumId" title="${uiLabelMap.CasemgmtValueType}" required-field="true">
+            <drop-down>
+                <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
+                    <entity-constraint name="enumTypeId" operator="equals" value="CASE_VAR_TYPE"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="scopeEnumId" title="${uiLabelMap.CasemgmtScope}" required-field="true">
+            <drop-down>
+                <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
+                    <entity-constraint name="enumTypeId" operator="equals" value="CASE_VAR_SCOPE"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="ttlSeconds" title="${uiLabelMap.CasemgmtTtlSeconds}"><text/></field>
+        <field name="requiredIndicator" title="${uiLabelMap.CasemgmtRequired}">
+            <drop-down><option key="N" description="N"/><option key="Y" description="Y"/></drop-down>
+        </field>
+        <field name="sensitiveIndicator" title="${uiLabelMap.CasemgmtSensitive}">
+            <drop-down><option key="N" description="N"/><option key="Y" description="Y"/></drop-down>
+        </field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtAddOutput}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseTransitionList" type="list" list-name="transitions" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="stageSeq" title="${uiLabelMap.CasemgmtStageSeq}"><display/></field>
+        <field name="stepSeq" title="${uiLabelMap.CasemgmtStepSeq}"><display/></field>
+        <field name="outcomeEnumId" title="${uiLabelMap.CasemgmtOutcome}"><display/></field>
+        <field name="transitionSeq" title="${uiLabelMap.CasemgmtTransitionSeq}"><display/></field>
+        <field name="toStageSeq" title="${uiLabelMap.CasemgmtToStage}"><display/></field>
+        <field name="toStepSeq" title="${uiLabelMap.CasemgmtToStep}"><display/></field>
+        <field name="conditionServiceName" title="${uiLabelMap.CasemgmtConditionService}"><display/></field>
+        <field name="priority" title="${uiLabelMap.CasemgmtPriority}"><display/></field>
+        <field name="isDefault" title="${uiLabelMap.CasemgmtDefault}"><display/></field>
+        <field name="editAction" title="${uiLabelMap.CasemgmtEdit}" widget-style="buttontext">
+            <hyperlink target="EditCaseTransition" description="${uiLabelMap.CasemgmtEdit}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="outcomeEnumId"/>
+                <parameter param-name="transitionSeq"/>
+            </hyperlink>
+        </field>
+        <field name="deleteAction" title="${uiLabelMap.CasemgmtDelete}" widget-style="buttontext">
+            <hyperlink target="DeleteCaseStepTransition" description="${uiLabelMap.CasemgmtDelete}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="outcomeEnumId"/>
+                <parameter param-name="transitionSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+            </hyperlink>
+        </field>
+        <field name="moveUpAction" title="${uiLabelMap.CasemgmtMoveUp}" widget-style="buttontext">
+            <hyperlink target="MoveCaseStepTransition" description="${uiLabelMap.CasemgmtMoveUp}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="outcomeEnumId"/>
+                <parameter param-name="transitionSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                <parameter param-name="direction" value="up"/>
+            </hyperlink>
+        </field>
+        <field name="moveDownAction" title="${uiLabelMap.CasemgmtMoveDown}" widget-style="buttontext">
+            <hyperlink target="MoveCaseStepTransition" description="${uiLabelMap.CasemgmtMoveDown}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="outcomeEnumId"/>
+                <parameter param-name="transitionSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                <parameter param-name="direction" value="down"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="CaseProcessMapStages" type="list" list-name="processStages" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="stageSeq" title="${uiLabelMap.CasemgmtStageSeq}"><display/></field>
+        <field name="stageName" title="${uiLabelMap.CasemgmtStage}"><display/></field>
+        <field name="statusId" title="${uiLabelMap.CasemgmtStatus}"><display/></field>
+        <field name="visitSeq" title="${uiLabelMap.CasemgmtVisit}"><display/></field>
+        <field name="stepCount" title="${uiLabelMap.CasemgmtSteps}"><display/></field>
+        <field name="completedSteps" title="${uiLabelMap.CasemgmtCompleted}"><display/></field>
+    </form>
+
+    <form name="CaseProcessMapSteps" type="list" list-name="processSteps" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="stageSeq" title="${uiLabelMap.CasemgmtStageSeq}"><display/></field>
+        <field name="stepSeq" title="${uiLabelMap.CasemgmtStepSeq}"><display/></field>
+        <field name="stepName" title="${uiLabelMap.CasemgmtStep}"><display/></field>
+        <field name="stepTypeEnumId" title="${uiLabelMap.CasemgmtType}"><display/></field>
+        <field name="statusId" title="${uiLabelMap.CasemgmtStatus}"><display/></field>
+        <field name="assignedPartyId" title="${uiLabelMap.CasemgmtAssignedTo}"><display/></field>
+    </form>
+
+    <form name="CaseSlaList" type="list" list-name="processSla" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="milestoneSeq" title="${uiLabelMap.CasemgmtMilestone}"><display/></field>
+        <field name="milestoneName" title="${uiLabelMap.CasemgmtStage}"><display/></field>
+        <field name="slaStateEnumId" title="${uiLabelMap.CasemgmtStatus}"><display/></field>
+        <field name="goalDate" title="${uiLabelMap.CasemgmtGoal}"><display/></field>
+        <field name="deadlineDate" title="${uiLabelMap.CasemgmtDeadline}"><display/></field>
+    </form>
+
+    <form name="CaseStackByStage" type="list" list-name="stackByStage" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="stageSeq" title="${uiLabelMap.CasemgmtStageSeq}" widget-style="buttontext">
+            <hyperlink target="CaseWorklist" description="${stageSeq}" target-type="intra-app">
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="openOnly" value="Y"/>
+            </hyperlink>
+        </field>
+        <field name="count" title="${uiLabelMap.CasemgmtCount}"><display/></field>
+    </form>
+    <form name="CaseStackByQueue" type="list" list-name="stackByQueue" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="queueId" title="${uiLabelMap.CasemgmtQueue}" widget-style="buttontext">
+            <hyperlink target="CaseWorklist" description="${queueId}" target-type="intra-app">
+                <parameter param-name="queueId"/>
+                <parameter param-name="openOnly" value="Y"/>
+            </hyperlink>
+        </field>
+        <field name="count" title="${uiLabelMap.CasemgmtCount}"><display/></field>
+    </form>
+    <form name="CaseStackByAssignee" type="list" list-name="stackByAssignee" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="partyId" title="${uiLabelMap.CasemgmtAssignedTo}" widget-style="buttontext">
+            <hyperlink target="CaseWorklist" description="${partyId}" target-type="intra-app">
+                <parameter param-name="assignedPartyId"/>
+                <parameter param-name="openOnly" value="Y"/>
+            </hyperlink>
+        </field>
+        <field name="count" title="${uiLabelMap.CasemgmtCount}"><display/></field>
+    </form>
+    <form name="CaseStackBySla" type="list" list-name="stackBySla" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="slaStateEnumId" title="${uiLabelMap.CasemgmtStatus}" widget-style="buttontext">
+            <hyperlink target="CaseWorklist" description="${slaStateEnumId}" target-type="intra-app">
+                <parameter param-name="slaStateEnumId"/>
+                <parameter param-name="openOnly" value="Y"/>
+            </hyperlink>
+        </field>
+        <field name="count" title="${uiLabelMap.CasemgmtCount}"><display/></field>
+    </form>
+
+    <form name="SimulateCaseFlow" type="single" target="CaseSimulator" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId" title="${uiLabelMap.CasemgmtCaseTypeId}"><text/></field>
+        <field name="definitionVersion" title="${uiLabelMap.CasemgmtDefinitionVersion}"><text/></field>
+        <field name="outcomeEnumId" title="${uiLabelMap.CasemgmtOutcome}"><text/></field>
+        <field name="maxSteps" title="${uiLabelMap.CasemgmtMaxSteps}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtRunSimulation}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    <form name="SimulationPath" type="list" list-name="simulationPath" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="stageSeq" title="${uiLabelMap.CasemgmtStageSeq}"><display/></field>
+        <field name="stageName" title="${uiLabelMap.CasemgmtStage}"><display/></field>
+        <field name="stepSeq" title="${uiLabelMap.CasemgmtStepSeq}"><display/></field>
+        <field name="stepName" title="${uiLabelMap.CasemgmtStep}"><display/></field>
+        <field name="outcomeEnumId" title="${uiLabelMap.CasemgmtOutcome}"><display/></field>
+    </form>
+
+    <form name="CaseReportFilter" type="single" target="CaseReports" title=""
+            default-map-name="reportFilter" default-table-style="basic-table">
+        <field name="caseTypeId" title="${uiLabelMap.CasemgmtCaseTypeId}"><text/></field>
+        <field name="statusId" title="${uiLabelMap.CasemgmtStatus}"><text/></field>
+        <field name="stageSeq" title="${uiLabelMap.CasemgmtStageSeq}"><text/></field>
+        <field name="queueId" title="${uiLabelMap.CasemgmtQueue}"><text/></field>
+        <field name="assignedPartyId" title="${uiLabelMap.CasemgmtAssignedTo}"><text/></field>
+        <field name="fromDate" title="${uiLabelMap.CasemgmtFromDate}"><text/></field>
+        <field name="toDate" title="${uiLabelMap.CasemgmtToDate}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtApply}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseReportByType" type="list" list-name="reportByType" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="caseTypeName" title="${uiLabelMap.CasemgmtCaseType}" widget-style="buttontext">
+            <hyperlink target="CaseWorklist" description="${caseTypeName}" target-type="intra-app">
+                <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                <parameter param-name="closedWithin" value="YEAR"/>
+            </hyperlink>
+        </field>
+        <field name="total" title="${uiLabelMap.CasemgmtTotal}"><display/></field>
+        <field name="open" title="${uiLabelMap.CasemgmtOpen}"><display/></field>
+        <field name="resolved" title="${uiLabelMap.CasemgmtResolved}"><display/></field>
+        <field name="closed" title="${uiLabelMap.CasemgmtClosed}"><display/></field>
+        <field name="averageCycleMinutes" title="${uiLabelMap.CasemgmtAverageCycleMinutes}"><display/></field>
+    </form>
+
+    <form name="CaseReportByStage" type="list" list-name="reportByStage" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="caseTypeId" title="${uiLabelMap.CasemgmtCaseType}"><display/></field>
+        <field name="stageSeq" title="${uiLabelMap.CasemgmtStageSeq}"><display/></field>
+        <field name="stageName" title="${uiLabelMap.CasemgmtStage}" widget-style="buttontext">
+            <hyperlink target="CaseWorklist" description="${stageName}" target-type="intra-app">
+                <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                <parameter param-name="stageSeq" from-field="stageSeq"/>
+                <parameter param-name="closedWithin" value="YEAR"/>
+            </hyperlink>
+        </field>
+        <field name="completedCount" title="${uiLabelMap.CasemgmtCompletedVisits}"><display/></field>
+        <field name="averageCycleMinutes" title="${uiLabelMap.CasemgmtAverageCycleMinutes}"><display/></field>
+    </form>
+
+    <form name="CaseReportSlaMilestone" type="list" list-name="reportSlaByMilestone" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="milestoneName" title="${uiLabelMap.CasemgmtMilestone}" widget-style="buttontext">
+            <hyperlink target="CaseWorklist" description="${milestoneName}" target-type="intra-app">
+                <parameter param-name="slaMilestoneName" from-field="milestoneName"/>
+                <parameter param-name="closedWithin" value="YEAR"/>
+            </hyperlink>
+        </field>
+        <field name="total" title="${uiLabelMap.CasemgmtTotal}"><display/></field>
+        <field name="completed" title="${uiLabelMap.CasemgmtCompleted}"><display/></field>
+        <field name="onTime" title="${uiLabelMap.CasemgmtOnTime}"><display/></field>
+        <field name="late" title="${uiLabelMap.CasemgmtLate}"><display/></field>
+        <field name="overdue" title="${uiLabelMap.CasemgmtOverdue}"><display/></field>
+        <field name="compliancePct" title="${uiLabelMap.CasemgmtCompliancePercent}"><display/></field>
+    </form>
+
+    <form name="CaseReportThroughputDaily" type="list" list-name="reportThroughputDaily" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="date" title="${uiLabelMap.CasemgmtDate}" widget-style="buttontext">
+            <hyperlink target="CaseWorklist" description="${date}" target-type="intra-app">
+                <parameter param-name="closedPeriod" from-field="date"/>
+                <parameter param-name="statusId" value="CASE_CLOSED"/>
+            </hyperlink>
+        </field>
+        <field name="count" title="${uiLabelMap.CasemgmtClosed}"><display/></field>
+    </form>
+
+    <form name="CaseReportThroughputWeekly" type="list" list-name="reportThroughputWeekly" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="week" title="${uiLabelMap.CasemgmtWeek}" widget-style="buttontext">
+            <hyperlink target="CaseWorklist" description="${week}" target-type="intra-app">
+                <parameter param-name="closedPeriod" from-field="week"/>
+                <parameter param-name="statusId" value="CASE_CLOSED"/>
+            </hyperlink>
+        </field>
+        <field name="count" title="${uiLabelMap.CasemgmtClosed}"><display/></field>
+    </form>
+
+    <form name="CaseReportThroughputMonthly" type="list" list-name="reportThroughputMonthly" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="month" title="${uiLabelMap.CasemgmtMonth}" widget-style="buttontext">
+            <hyperlink target="CaseWorklist" description="${month}" target-type="intra-app">
+                <parameter param-name="closedPeriod" from-field="month"/>
+                <parameter param-name="statusId" value="CASE_CLOSED"/>
+            </hyperlink>
+        </field>
+        <field name="count" title="${uiLabelMap.CasemgmtClosed}"><display/></field>
+    </form>
+
+    <form name="CaseReportAging" type="list" list-name="reportAging" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="bucket" title="${uiLabelMap.CasemgmtAgeBucket}" widget-style="buttontext">
+            <hyperlink target="CaseWorklist" description="${bucket}" target-type="intra-app">
+                <parameter param-name="ageBucket" from-field="bucket"/>
+                <parameter param-name="openOnly" value="Y"/>
+            </hyperlink>
+        </field>
+        <field name="count" title="${uiLabelMap.CasemgmtCases}"><display/></field>
+    </form>
+
+    <form name="CreateCaseTransition" type="single" target="CreateCaseStepTransition" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId"><hidden/></field>
+        <field name="definitionVersion"><hidden/></field>
+        <field name="stageSeq"><hidden value="${selectedStageSeq}"/></field>
+        <field name="stepSeq"><hidden value="${selectedStepSeq}"/></field>
+        <field name="selectedStageSeq"><hidden value="${selectedStageSeq}"/></field>
+        <field name="selectedStepSeq"><hidden value="${selectedStepSeq}"/></field>
+        <field name="outcomeEnumId" title="${uiLabelMap.CasemgmtOutcome}"><text/></field>
+        <field name="transitionSeq" title="${uiLabelMap.CasemgmtTransitionSeq}"><text/></field>
+        <field name="toStageSeq" title="${uiLabelMap.CasemgmtToStage}"><text/></field>
+        <field name="toStepSeq" title="${uiLabelMap.CasemgmtToStep}"><text/></field>
+        <field name="conditionServiceName" title="${uiLabelMap.CasemgmtConditionService}"><text/></field>
+        <field name="priority" title="${uiLabelMap.CasemgmtPriority}"><text/></field>
+        <field name="isDefault" title="${uiLabelMap.CasemgmtDefault}">
+            <drop-down><option key="N" description="N"/><option key="Y" description="Y"/></drop-down>
+        </field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtAddTransition}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CreateCase" type="single" target="StartCase" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId" title="${uiLabelMap.CasemgmtCaseType}" required-field="true">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="CaseType" key-field-name="caseTypeId" description="${caseTypeName}">
+                    <entity-constraint name="statusId" operator="equals" value="CASE_TYPE_ACTIVE"/>
+                    <entity-order-by field-name="caseTypeId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtNext}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseValidationErrors" type="list" list-name="validationErrors" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table">
+        <field name="message" title="${uiLabelMap.CasemgmtValidationError}"><display/></field>
+    </form>
+
+    <form name="EditCaseStage" type="single" target="UpdateCaseStageDef" title=""
+            default-map-name="stage" default-table-style="basic-table">
+        <field name="caseTypeId"><hidden/></field>
+        <field name="definitionVersion"><hidden/></field>
+        <field name="stageSeq"><hidden/></field>
+        <field name="selectedStageSeq"><hidden value="${stage.stageSeq}"/></field>
+        <field name="stageName" title="${uiLabelMap.CasemgmtStage}"><text/></field>
+        <field name="autoAdvance" title="${uiLabelMap.CasemgmtAutoAdvance}">
+            <drop-down><option key="N" description="N"/><option key="Y" description="Y"/></drop-down>
+        </field>
+        <field name="entryServiceName" title="${uiLabelMap.CasemgmtEntryService}"><text/></field>
+        <field name="exitServiceName" title="${uiLabelMap.CasemgmtExitService}"><text/></field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtSave}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="EditCaseStep" type="single" target="UpdateCaseStepDef" title=""
+            default-map-name="step" default-table-style="basic-table">
+        <field name="caseTypeId"><hidden/></field>
+        <field name="definitionVersion"><hidden/></field>
+        <field name="stageSeq"><hidden/></field>
+        <field name="stepSeq"><hidden/></field>
+        <field name="selectedStageSeq"><hidden value="${step.stageSeq}"/></field>
+        <field name="selectedStepSeq"><hidden value="${step.stepSeq}"/></field>
+        <field name="stepName" title="${uiLabelMap.CasemgmtStep}"><text/></field>
+        <field name="stepTypeEnumId" title="${uiLabelMap.CasemgmtType}">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
+                    <entity-constraint name="enumTypeId" operator="equals" value="CASE_STEP_TYPE"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="serviceName" title="${uiLabelMap.CasemgmtServiceName}"><text/></field>
+        <field name="formId" title="${uiLabelMap.CasemgmtFormId}"><text/></field>
+        <field name="subCaseTypeId" title="${uiLabelMap.CasemgmtSubCaseType}"><text/></field>
+        <field name="assignmentPolicyId" title="${uiLabelMap.CasemgmtAssignmentPolicy}"><text/></field>
+        <field name="slaId" title="${uiLabelMap.CasemgmtSla}"><text/></field>
+        <field name="requiredIndicator" title="${uiLabelMap.CasemgmtRequired}">
+            <drop-down><option key="Y" description="Y"/><option key="N" description="N"/></drop-down>
+        </field>
+        <field name="sequenceNum" title="${uiLabelMap.CasemgmtSequence}"><text/></field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtSave}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="EditCaseStepWait" type="single" target="SaveCaseStepWait" title=""
+            default-map-name="stepWait" default-table-style="basic-table">
+        <field name="caseTypeId"><hidden value="${caseTypeId}"/></field>
+        <field name="definitionVersion"><hidden value="${definitionVersion}"/></field>
+        <field name="stageSeq"><hidden value="${stageSeq}"/></field>
+        <field name="stepSeq"><hidden value="${stepSeq}"/></field>
+        <field name="selectedStageSeq"><hidden value="${stageSeq}"/></field>
+        <field name="selectedStepSeq"><hidden value="${stepSeq}"/></field>
+        <field name="signalName" title="${uiLabelMap.CasemgmtSignalName}">
+            <text/>
+        </field>
+        <field name="timeoutDuration" title="${uiLabelMap.CasemgmtTimeoutDuration}">
+            <text/>
+        </field>
+        <field name="timeoutOutcomeEnumId" title="${uiLabelMap.CasemgmtTimeoutOutcome}">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
+                    <entity-constraint name="enumTypeId" operator="equals" value="CASE_OUTCOME"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}">
+            <text/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtSave}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseFieldLabelList" type="list" list-name="fieldLabels" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="locale" title="${uiLabelMap.CasemgmtLocale}"><display/></field>
+        <field name="label" title="${uiLabelMap.CasemgmtFieldLabel}"><display/></field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><display/></field>
+        <field name="deleteAction" title="${uiLabelMap.CasemgmtDelete}" widget-style="buttontext">
+            <hyperlink target="DeleteCaseFieldLabel" description="${uiLabelMap.CasemgmtDelete}" target-type="intra-app">
+                <parameter param-name="caseTypeId" from-field="caseTypeId"/>
+                <parameter param-name="definitionVersion" from-field="definitionVersion"/>
+                <parameter param-name="stageSeq" from-field="stageSeq"/>
+                <parameter param-name="stepSeq" from-field="stepSeq"/>
+                <parameter param-name="fieldSeq" from-field="fieldSeq"/>
+                <parameter param-name="labelLocale" from-field="locale"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="CreateCaseFieldLabel" type="single" target="SaveCaseFieldLabel" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId"><hidden value="${caseTypeId}"/></field>
+        <field name="definitionVersion"><hidden value="${definitionVersion}"/></field>
+        <field name="stageSeq"><hidden value="${stageSeq}"/></field>
+        <field name="stepSeq"><hidden value="${stepSeq}"/></field>
+        <field name="fieldSeq"><hidden value="${fieldSeq}"/></field>
+        <field name="selectedStageSeq"><hidden value="${stageSeq}"/></field>
+        <field name="selectedStepSeq"><hidden value="${stepSeq}"/></field>
+        <field name="labelLocale" title="${uiLabelMap.CasemgmtLocale}" required-field="true"><text/></field>
+        <field name="label" title="${uiLabelMap.CasemgmtFieldLabel}" required-field="true"><text/></field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtAddFieldLabel}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="EditCaseTransition" type="single" target="UpdateCaseStepTransition" title=""
+            default-map-name="transition" default-table-style="basic-table">
+        <field name="caseTypeId"><hidden/></field>
+        <field name="definitionVersion"><hidden/></field>
+        <field name="stageSeq"><hidden/></field>
+        <field name="stepSeq"><hidden/></field>
+        <field name="outcomeEnumId"><hidden/></field>
+        <field name="transitionSeq"><hidden/></field>
+        <field name="selectedStageSeq"><hidden value="${transition.stageSeq}"/></field>
+        <field name="selectedStepSeq"><hidden value="${transition.stepSeq}"/></field>
+        <field name="toStageSeq" title="${uiLabelMap.CasemgmtToStage}"><text/></field>
+        <field name="toStepSeq" title="${uiLabelMap.CasemgmtToStep}"><text/></field>
+        <field name="conditionServiceName" title="${uiLabelMap.CasemgmtConditionService}"><text/></field>
+        <field name="priority" title="${uiLabelMap.CasemgmtPriority}"><text/></field>
+        <field name="isDefault" title="${uiLabelMap.CasemgmtDefault}">
+            <drop-down><option key="N" description="N"/><option key="Y" description="Y"/></drop-down>
+        </field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtSave}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseFieldMappingList" type="list" list-name="fieldMappings" target=""
+            title="" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="fieldSeq" title="${uiLabelMap.CasemgmtFieldSeq}"><display/></field>
+        <field name="fieldName" title="${uiLabelMap.CasemgmtFieldName}"><display/></field>
+        <field name="label" title="${uiLabelMap.CasemgmtFieldLabel}"><display/></field>
+        <field name="fieldTypeEnumId" title="${uiLabelMap.CasemgmtType}"><display/></field>
+        <field name="requiredIndicator" title="${uiLabelMap.CasemgmtRequired}"><display/></field>
+        <field name="editAction" title="${uiLabelMap.CasemgmtEdit}" widget-style="buttontext">
+            <hyperlink target="EditCaseFieldMapping" description="${uiLabelMap.CasemgmtEdit}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="fieldSeq"/>
+            </hyperlink>
+        </field>
+        <field name="deleteAction" title="${uiLabelMap.CasemgmtDelete}" widget-style="buttontext">
+            <hyperlink target="DeleteCaseFieldMapping" description="${uiLabelMap.CasemgmtDelete}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="fieldSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+            </hyperlink>
+        </field>
+        <field name="moveUpAction" title="${uiLabelMap.CasemgmtMoveUp}" widget-style="buttontext">
+            <hyperlink target="MoveCaseFieldMapping" description="${uiLabelMap.CasemgmtMoveUp}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="fieldSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                <parameter param-name="direction" value="up"/>
+            </hyperlink>
+        </field>
+        <field name="moveDownAction" title="${uiLabelMap.CasemgmtMoveDown}" widget-style="buttontext">
+            <hyperlink target="MoveCaseFieldMapping" description="${uiLabelMap.CasemgmtMoveDown}" target-type="intra-app">
+                <parameter param-name="caseTypeId"/>
+                <parameter param-name="definitionVersion"/>
+                <parameter param-name="stageSeq"/>
+                <parameter param-name="stepSeq"/>
+                <parameter param-name="fieldSeq"/>
+                <parameter param-name="selectedStageSeq" from-field="stageSeq"/>
+                <parameter param-name="selectedStepSeq" from-field="stepSeq"/>
+                <parameter param-name="direction" value="down"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="CreateCaseFieldMapping" type="single" target="CreateCaseFieldMapping" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId"><hidden value="${caseTypeId}"/></field>
+        <field name="definitionVersion"><hidden value="${definitionVersion}"/></field>
+        <field name="stageSeq"><hidden value="${selectedStageSeq}"/></field>
+        <field name="stepSeq"><hidden value="${selectedStepSeq}"/></field>
+        <field name="selectedStageSeq"><hidden value="${selectedStageSeq}"/></field>
+        <field name="selectedStepSeq"><hidden value="${selectedStepSeq}"/></field>
+        <field name="fieldSeq" title="${uiLabelMap.CasemgmtFieldSeq}"><text/></field>
+        <field name="fieldName" title="${uiLabelMap.CasemgmtFieldName}"><text/></field>
+        <field name="label" title="${uiLabelMap.CasemgmtFieldLabel}"><text/></field>
+        <field name="entityName" title="${uiLabelMap.CasemgmtPrimaryEntity}"><text default-value="Case"/></field>
+        <field name="entityFieldName" title="${uiLabelMap.CasemgmtEntityField}"><text/></field>
+        <field name="fieldTypeEnumId" title="${uiLabelMap.CasemgmtType}">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
+                    <entity-constraint name="enumTypeId" operator="equals" value="CASE_FIELD_TYPE"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="requiredIndicator" title="${uiLabelMap.CasemgmtRequired}">
+            <drop-down><option key="N" description="N"/><option key="Y" description="Y"/></drop-down>
+        </field>
+        <field name="lookupEntityName" title="${uiLabelMap.CasemgmtLookupEntity}"><text/></field>
+        <field name="lookupFieldName" title="${uiLabelMap.CasemgmtLookupField}"><text/></field>
+        <field name="defaultValue" title="${uiLabelMap.CasemgmtDefaultValue}"><text/></field>
+        <field name="visibilityCondition" title="${uiLabelMap.CasemgmtVisibilityCondition}"><text/></field>
+        <field name="readOnlyCondition" title="${uiLabelMap.CasemgmtReadOnlyCondition}"><text/></field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtAddField}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="EditCaseFieldMapping" type="single" target="UpdateCaseFieldMapping" title=""
+            default-map-name="mapping" default-table-style="basic-table">
+        <field name="caseTypeId"><hidden/></field>
+        <field name="definitionVersion"><hidden/></field>
+        <field name="stageSeq"><hidden/></field>
+        <field name="stepSeq"><hidden/></field>
+        <field name="fieldSeq"><hidden/></field>
+        <field name="selectedStageSeq"><hidden value="${mapping.stageSeq}"/></field>
+        <field name="selectedStepSeq"><hidden value="${mapping.stepSeq}"/></field>
+        <field name="fieldName" title="${uiLabelMap.CasemgmtFieldName}"><text/></field>
+        <field name="label" title="${uiLabelMap.CasemgmtFieldLabel}"><text/></field>
+        <field name="entityName" title="${uiLabelMap.CasemgmtPrimaryEntity}"><text/></field>
+        <field name="entityFieldName" title="${uiLabelMap.CasemgmtEntityField}"><text/></field>
+        <field name="fieldTypeEnumId" title="${uiLabelMap.CasemgmtType}">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
+                    <entity-constraint name="enumTypeId" operator="equals" value="CASE_FIELD_TYPE"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="requiredIndicator" title="${uiLabelMap.CasemgmtRequired}">
+            <drop-down><option key="N" description="N"/><option key="Y" description="Y"/></drop-down>
+        </field>
+        <field name="sequenceNum" title="${uiLabelMap.CasemgmtSequence}"><text/></field>
+        <field name="lookupEntityName" title="${uiLabelMap.CasemgmtLookupEntity}"><text/></field>
+        <field name="lookupFieldName" title="${uiLabelMap.CasemgmtLookupField}"><text/></field>
+        <field name="defaultValue" title="${uiLabelMap.CasemgmtDefaultValue}"><text/></field>
+        <field name="visibilityCondition" title="${uiLabelMap.CasemgmtVisibilityCondition}"><text/></field>
+        <field name="readOnlyCondition" title="${uiLabelMap.CasemgmtReadOnlyCondition}"><text/></field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtSave}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseTypeDiffFilter" type="single" target="CaseTypeDiff" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId"><hidden value="${caseTypeId}"/></field>
+        <field name="fromVersion" title="${uiLabelMap.CasemgmtFromVersion}"><text default-value="${fromVersion}"/></field>
+        <field name="toVersion" title="${uiLabelMap.CasemgmtToVersion}"><text default-value="${toVersion}"/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtCompare}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseDiffStages" type="list" list-name="stageChanges" target=""
+            title="${uiLabelMap.CasemgmtStages}" odd-row-style="alternate-row" default-table-style="basic-table">
+        <field name="change" title="${uiLabelMap.CasemgmtChange}"><display/></field>
+        <field name="key" title="${uiLabelMap.CasemgmtKey}"><display/></field>
+        <field name="before" title="${uiLabelMap.CasemgmtBefore}"><display/></field>
+        <field name="after" title="${uiLabelMap.CasemgmtAfter}"><display/></field>
+    </form>
+    <form name="CaseDiffSteps" type="list" list-name="stepChanges" target=""
+            title="${uiLabelMap.CasemgmtSteps}" odd-row-style="alternate-row" default-table-style="basic-table">
+        <field name="change" title="${uiLabelMap.CasemgmtChange}"><display/></field>
+        <field name="key" title="${uiLabelMap.CasemgmtKey}"><display/></field>
+        <field name="before" title="${uiLabelMap.CasemgmtBefore}"><display/></field>
+        <field name="after" title="${uiLabelMap.CasemgmtAfter}"><display/></field>
+    </form>
+    <form name="CaseDiffTransitions" type="list" list-name="transitionChanges" target=""
+            title="${uiLabelMap.CasemgmtTransitions}" odd-row-style="alternate-row" default-table-style="basic-table">
+        <field name="change" title="${uiLabelMap.CasemgmtChange}"><display/></field>
+        <field name="key" title="${uiLabelMap.CasemgmtKey}"><display/></field>
+        <field name="before" title="${uiLabelMap.CasemgmtBefore}"><display/></field>
+        <field name="after" title="${uiLabelMap.CasemgmtAfter}"><display/></field>
+    </form>
+    <form name="CaseDiffFields" type="list" list-name="fieldChanges" target=""
+            title="${uiLabelMap.CasemgmtFormFields}" odd-row-style="alternate-row" default-table-style="basic-table">
+        <field name="change" title="${uiLabelMap.CasemgmtChange}"><display/></field>
+        <field name="key" title="${uiLabelMap.CasemgmtKey}"><display/></field>
+        <field name="before" title="${uiLabelMap.CasemgmtBefore}"><display/></field>
+        <field name="after" title="${uiLabelMap.CasemgmtAfter}"><display/></field>
+    </form>
+
+    <form name="EditCaseTypeStartForm" type="single" target="SaveCaseTypeStartForm" title=""
+            default-map-name="startForm" default-table-style="basic-table">
+        <field name="caseTypeId"><hidden value="${caseTypeId}"/></field>
+        <field name="definitionVersion"><hidden value="${definitionVersion}"/></field>
+        <field name="selectedStageSeq"><hidden value="${selectedStageSeq}"/></field>
+        <field name="formLocation" title="${uiLabelMap.CasemgmtFormLocation}">
+            <text/>
+        </field>
+        <field name="formName" title="${uiLabelMap.CasemgmtFormName}">
+            <text/>
+        </field>
+        <field name="formTarget" title="${uiLabelMap.CasemgmtFormTarget}">
+            <text default-value="StartCaseSubmit"/>
+        </field>
+        <field name="startServiceName" title="${uiLabelMap.CasemgmtStartService}">
+            <text/>
+        </field>
+        <field name="submitLabel" title="${uiLabelMap.CasemgmtSubmitLabel}">
+            <text/>
+        </field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}">
+            <text/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtSave}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="EditCaseStepForm" type="single" target="SaveCaseStepForm" title=""
+            default-map-name="stepForm" default-table-style="basic-table">
+        <field name="caseTypeId"><hidden value="${caseTypeId}"/></field>
+        <field name="definitionVersion"><hidden value="${definitionVersion}"/></field>
+        <field name="stageSeq"><hidden value="${stageSeq}"/></field>
+        <field name="stepSeq"><hidden value="${stepSeq}"/></field>
+        <field name="selectedStageSeq"><hidden value="${stageSeq}"/></field>
+        <field name="selectedStepSeq"><hidden value="${stepSeq}"/></field>
+        <field name="formLocation" title="${uiLabelMap.CasemgmtFormLocation}">
+            <text/>
+        </field>
+        <field name="formName" title="${uiLabelMap.CasemgmtFormName}">
+            <text/>
+        </field>
+        <field name="formTarget" title="${uiLabelMap.CasemgmtFormTarget}">
+            <text default-value="TaskFormSubmit"/>
+        </field>
+        <field name="completeServiceName" title="${uiLabelMap.CasemgmtCompleteService}">
+            <text/>
+        </field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}">
+            <text/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtSave}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="StartCaseLegacy" type="single" target="StartCaseSubmit" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId"><hidden value="${caseTypeId}"/></field>
+        <field name="customerPartyId" title="${uiLabelMap.CasemgmtCustomer}"><text/></field>
+        <field name="ownerPartyId" title="${uiLabelMap.CasemgmtOwner}"><text/></field>
+        <field name="priority" title="${uiLabelMap.CasemgmtPriority}"><text default-value="3"/></field>
+        <field name="channelEnumId" title="${uiLabelMap.CasemgmtChannel}">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
+                    <entity-constraint name="enumTypeId" operator="equals" value="CASE_CHANNEL"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><textarea/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtCreateCase}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="TaskFormComplete" type="single" target="TaskFormSubmit" title=""
+            default-table-style="basic-table">
+        <field name="caseTaskId"><hidden value="${caseTask.caseTaskId}"/></field>
+        <field name="caseId"><hidden value="${caseId}"/></field>
+        <field name="stageSeq"><hidden value="${stageSeq}"/></field>
+        <field name="stepSeq"><hidden value="${stepSeq}"/></field>
+        <field name="outcomeEnumId" title="${uiLabelMap.CasemgmtOutcome}">
+            <drop-down>
+                <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
+                    <entity-constraint name="enumTypeId" operator="equals" value="CASE_OUTCOME"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="notes" title="${uiLabelMap.CasemgmtDetail}"><textarea/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtComplete}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="TestStartCaseForm" type="single" target="StartCaseSubmit" title=""
+            default-table-style="basic-table">
+        <field name="caseTypeId"><hidden value="${caseTypeId}"/></field>
+        <field name="customerPartyId" title="${uiLabelMap.CasemgmtCustomer}"><text/></field>
+        <field name="description" title="${uiLabelMap.CasemgmtDetail}"><textarea/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtCreateCase}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="TestTaskCaseForm" type="single" target="TaskFormSubmit" title=""
+            default-table-style="basic-table">
+        <field name="caseTaskId"><hidden value="${caseTask.caseTaskId}"/></field>
+        <field name="caseId"><hidden value="${caseId}"/></field>
+        <field name="stageSeq"><hidden value="${stageSeq}"/></field>
+        <field name="stepSeq"><hidden value="${stepSeq}"/></field>
+        <field name="taskComment" title="${uiLabelMap.CasemgmtDetail}"><text/></field>
+        <field name="outcomeEnumId"><hidden value="CASE_OUT_COMPLETE"/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtComplete}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <!--
+      PoC: reuse the standard OFBiz AddPartyNote form (which itself uses
+      auto-fields-service) by overriding only the submit target. The standard
+      createPartyNote service remains the completion service.
+    -->
+    <form name="CaseStandardPartyNoteForm" type="single" target="TaskFormSubmit" title=""
+            extends="AddPartyNote"
+            extends-resource="component://party/widget/partymgr/PartyForms.xml"
+            default-table-style="basic-table">
+        <field name="caseTaskId"><hidden value="${caseTask.caseTaskId}"/></field>
+        <field name="caseId"><hidden value="${caseId}"/></field>
+        <field name="partyId"><hidden value="${case.customerPartyId}"/></field>
+        <field name="cancelLink"><hidden/></field>
+        <field name="submitButton" title="${uiLabelMap.CasemgmtComplete}" widget-style="smallSubmit">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="CaseDiffServiceParams" type="list" list-name="serviceParamChanges" target=""
+            title="${uiLabelMap.CasemgmtServiceInputs}" odd-row-style="alternate-row" default-table-style="basic-table">
+        <field name="change" title="${uiLabelMap.CasemgmtChange}"><display/></field>
+        <field name="key" title="${uiLabelMap.CasemgmtKey}"><display/></field>
+        <field name="before" title="${uiLabelMap.CasemgmtBefore}"><display/></field>
+        <field name="after" title="${uiLabelMap.CasemgmtAfter}"><display/></field>
+    </form>
+    <form name="CaseDiffServiceOutputs" type="list" list-name="serviceOutputChanges" target=""
+            title="${uiLabelMap.CasemgmtServiceOutputs}" odd-row-style="alternate-row" default-table-style="basic-table">
+        <field name="change" title="${uiLabelMap.CasemgmtChange}"><display/></field>
+        <field name="key" title="${uiLabelMap.CasemgmtKey}"><display/></field>
+        <field name="before" title="${uiLabelMap.CasemgmtBefore}"><display/></field>
+        <field name="after" title="${uiLabelMap.CasemgmtAfter}"><display/></field>
+    </form>
+    <form name="CaseDiffStartForms" type="list" list-name="startFormChanges" target=""
+            title="${uiLabelMap.CasemgmtStartForm}" odd-row-style="alternate-row" default-table-style="basic-table">
+        <field name="change" title="${uiLabelMap.CasemgmtChange}"><display/></field>
+        <field name="key" title="${uiLabelMap.CasemgmtKey}"><display/></field>
+        <field name="before" title="${uiLabelMap.CasemgmtBefore}"><display/></field>
+        <field name="after" title="${uiLabelMap.CasemgmtAfter}"><display/></field>
+    </form>
+    <form name="CaseDiffStepForms" type="list" list-name="stepFormChanges" target=""
+            title="${uiLabelMap.CasemgmtTaskForm}" odd-row-style="alternate-row" default-table-style="basic-table">
+        <field name="change" title="${uiLabelMap.CasemgmtChange}"><display/></field>
+        <field name="key" title="${uiLabelMap.CasemgmtKey}"><display/></field>
+        <field name="before" title="${uiLabelMap.CasemgmtBefore}"><display/></field>
+        <field name="after" title="${uiLabelMap.CasemgmtAfter}"><display/></field>
+    </form>
+    <form name="CaseDiffWaits" type="list" list-name="waitChanges" target=""
+            title="${uiLabelMap.CasemgmtWaitSettings}" odd-row-style="alternate-row" default-table-style="basic-table">
+        <field name="change" title="${uiLabelMap.CasemgmtChange}"><display/></field>
+        <field name="key" title="${uiLabelMap.CasemgmtKey}"><display/></field>
+        <field name="before" title="${uiLabelMap.CasemgmtBefore}"><display/></field>
+        <field name="after" title="${uiLabelMap.CasemgmtAfter}"><display/></field>
+    </form>
+</forms>

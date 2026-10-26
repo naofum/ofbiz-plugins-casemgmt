@@ -1,0 +1,785 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://ofbiz.apache.org/dtds/entitymodel.xsd">
+    <title>Case Management Entity Model</title>
+    <description>
+        Generic case management kernel. Case is a 1:1 extension of a WorkEffort
+        with workEffortTypeId=CASE. Human tasks use child WorkEfforts with
+        workEffortTypeId=CASE_ASSIGNMENT.
+    </description>
+    <version>1.0</version>
+
+    <!-- ========================================================= -->
+    <!-- Metadata                                                  -->
+    <!-- ========================================================= -->
+
+    <entity entity-name="CaseType" package-name="org.apache.ofbiz.casemgmt.case"
+            title="Case Type">
+        <field name="caseTypeId" type="id"></field>
+        <field name="parentCaseTypeId" type="id"></field>
+        <field name="caseTypeName" type="name"></field>
+        <field name="description" type="description"></field>
+        <field name="primaryEntityName" type="name"></field>
+        <field name="extensionEntityName" type="name"></field>
+        <field name="extensionFormId" type="id-long"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="activeDefinitionVersion" type="numeric"></field>
+        <field name="statusId" type="id"></field>
+        <field name="defaultSlaId" type="id"></field>
+        <field name="accessPolicyId" type="id"></field>
+        <field name="createdDate" type="date-time"></field>
+        <field name="lastModifiedDate" type="date-time"></field>
+        <prim-key field="caseTypeId"/>
+        <relation type="one" fk-name="CASE_TYPE_PARENT" rel-entity-name="CaseType">
+            <key-map field-name="parentCaseTypeId" rel-field-name="caseTypeId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_TYPE_STATUS" rel-entity-name="StatusItem">
+            <key-map field-name="statusId" rel-field-name="statusId"/>
+        </relation>
+        <index name="CASE_TYPE_STATUS_IDX">
+            <index-field name="statusId"/>
+        </index>
+    </entity>
+
+    <entity entity-name="CaseTypeAttr" package-name="org.apache.ofbiz.casemgmt.case"
+            title="Case Type Attribute">
+        <field name="caseTypeId" type="id"></field>
+        <field name="attrName" type="id-long"></field>
+        <field name="attrValue" type="long-varchar"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseTypeId"/>
+        <prim-key field="attrName"/>
+        <relation type="one" fk-name="CASE_TYPE_ATTR_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseStageDef" package-name="org.apache.ofbiz.casemgmt.flow"
+            title="Case Stage Definition">
+        <field name="caseTypeId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="stageSeq" type="numeric"></field>
+        <field name="stageName" type="name"></field>
+        <field name="stageTypeEnumId" type="id"></field>
+        <field name="autoAdvance" type="indicator"></field>
+        <field name="entryServiceName" type="name"></field>
+        <field name="exitServiceName" type="name"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseTypeId"/>
+        <prim-key field="definitionVersion"/>
+        <prim-key field="stageSeq"/>
+        <relation type="one" fk-name="CASE_STAGE_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseStepDef" package-name="org.apache.ofbiz.casemgmt.flow"
+            title="Case Step Definition">
+        <field name="caseTypeId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="stageSeq" type="numeric"></field>
+        <field name="stepSeq" type="numeric"></field>
+        <field name="stepName" type="name"></field>
+        <field name="stepTypeEnumId" type="id"></field>
+        <field name="serviceName" type="name"></field>
+        <field name="formId" type="id-long"></field>
+        <field name="subCaseTypeId" type="id"></field>
+        <field name="assignmentPolicyId" type="id"></field>
+        <field name="slaId" type="id"></field>
+        <field name="requiredIndicator" type="indicator"></field>
+        <field name="sequenceNum" type="numeric"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseTypeId"/>
+        <prim-key field="definitionVersion"/>
+        <prim-key field="stageSeq"/>
+        <prim-key field="stepSeq"/>
+        <relation type="one" fk-name="CASE_STEP_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_STEP_POLICY" rel-entity-name="CaseAssignmentPolicy">
+            <key-map field-name="assignmentPolicyId" rel-field-name="assignmentPolicyId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_STEP_SLA" rel-entity-name="CaseSla">
+            <key-map field-name="slaId" rel-field-name="slaId"/>
+        </relation>
+        <relation type="one-nofk" fk-name="CASE_STEP_SUB_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="subCaseTypeId" rel-field-name="caseTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseStepWait" package-name="org.apache.ofbiz.casemgmt.flow"
+            title="Case Step Wait">
+        <field name="caseTypeId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="stageSeq" type="numeric"></field>
+        <field name="stepSeq" type="numeric"></field>
+        <field name="signalName" type="id-long"></field>
+        <field name="timeoutDuration" type="numeric"></field>
+        <field name="timeoutOutcomeEnumId" type="id"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseTypeId"/>
+        <prim-key field="definitionVersion"/>
+        <prim-key field="stageSeq"/>
+        <prim-key field="stepSeq"/>
+        <relation type="one" fk-name="CASE_STEP_WAIT_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseStepTransition" package-name="org.apache.ofbiz.casemgmt.flow"
+            title="Case Step Transition">
+        <field name="caseTypeId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="stageSeq" type="numeric"></field>
+        <field name="stepSeq" type="numeric"></field>
+        <field name="outcomeEnumId" type="id"></field>
+        <field name="transitionSeq" type="numeric"></field>
+        <field name="toStageSeq" type="numeric"></field>
+        <field name="toStepSeq" type="numeric"></field>
+        <field name="conditionServiceName" type="name"></field>
+        <field name="priority" type="numeric"></field>
+        <field name="isDefault" type="indicator"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseTypeId"/>
+        <prim-key field="definitionVersion"/>
+        <prim-key field="stageSeq"/>
+        <prim-key field="stepSeq"/>
+        <prim-key field="outcomeEnumId"/>
+        <prim-key field="transitionSeq"/>
+        <relation type="one" fk-name="CASE_TRANS_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseSla" package-name="org.apache.ofbiz.casemgmt.sla"
+            title="Case SLA">
+        <field name="slaId" type="id"></field>
+        <field name="slaName" type="name"></field>
+        <field name="calendarId" type="id"></field>
+        <field name="escalationServiceName" type="name"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="slaId"/>
+        <relation type="one" fk-name="CASE_SLA_CAL" rel-entity-name="TechDataCalendar">
+            <key-map field-name="calendarId" rel-field-name="calendarId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseSlaMilestone" package-name="org.apache.ofbiz.casemgmt.sla"
+            title="Case SLA Milestone">
+        <field name="slaId" type="id"></field>
+        <field name="milestoneSeq" type="numeric"></field>
+        <field name="milestoneName" type="name"></field>
+        <field name="milestoneTypeEnumId" type="id"></field>
+        <field name="goalDuration" type="numeric"></field>
+        <field name="deadlineDuration" type="numeric"></field>
+        <field name="passedDeadlineDuration" type="numeric"></field>
+        <field name="calendarId" type="id"></field>
+        <field name="escalationServiceName" type="name"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="slaId"/>
+        <prim-key field="milestoneSeq"/>
+        <relation type="one" fk-name="CASE_SLA_MS_SLA" rel-entity-name="CaseSla">
+            <key-map field-name="slaId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_SLA_MS_CAL" rel-entity-name="TechDataCalendar">
+            <key-map field-name="calendarId" rel-field-name="calendarId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseSlaRule" package-name="org.apache.ofbiz.casemgmt.sla"
+            title="Case SLA Rule">
+        <field name="slaId" type="id"></field>
+        <field name="ruleSeq" type="numeric"></field>
+        <field name="caseTypeId" type="id"></field>
+        <field name="priority" type="numeric"></field>
+        <field name="sourceEnumId" type="id"></field>
+        <field name="productId" type="id"></field>
+        <field name="conditionServiceName" type="name"></field>
+        <field name="sequenceNum" type="numeric"></field>
+        <prim-key field="slaId"/>
+        <prim-key field="ruleSeq"/>
+        <relation type="one" fk-name="CASE_SLA_RULE_SLA" rel-entity-name="CaseSla">
+            <key-map field-name="slaId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_SLA_RULE_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_SLA_RULE_PROD" rel-entity-name="Product">
+            <key-map field-name="productId" rel-field-name="productId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseAssignmentPolicy" package-name="org.apache.ofbiz.casemgmt.assignment"
+            title="Case Assignment Policy">
+        <field name="assignmentPolicyId" type="id"></field>
+        <field name="policyName" type="name"></field>
+        <field name="strategyEnumId" type="id"></field>
+        <field name="queueId" type="id"></field>
+        <field name="requiredSkillTypeId" type="id"></field>
+        <field name="specificPartyId" type="id"></field>
+        <field name="maxOpenTasks" type="numeric"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="assignmentPolicyId"/>
+        <relation type="one" fk-name="CASE_POLICY_QUEUE" rel-entity-name="CaseQueue">
+            <key-map field-name="queueId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_POLICY_PARTY" rel-entity-name="Party">
+            <key-map field-name="specificPartyId" rel-field-name="partyId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseQueue" package-name="org.apache.ofbiz.casemgmt.assignment"
+            title="Case Queue">
+        <field name="queueId" type="id"></field>
+        <field name="partyId" type="id"></field>
+        <field name="queueName" type="name"></field>
+        <field name="parentQueueId" type="id"></field>
+        <field name="activeIndicator" type="indicator"></field>
+        <prim-key field="queueId"/>
+        <relation type="one" fk-name="CASE_QUEUE_PARTY" rel-entity-name="PartyGroup">
+            <key-map field-name="partyId" rel-field-name="partyId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_QUEUE_PARENT" rel-entity-name="CaseQueue">
+            <key-map field-name="parentQueueId" rel-field-name="queueId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseQueueMember" package-name="org.apache.ofbiz.casemgmt.assignment"
+            title="Case Queue Member">
+        <field name="queueId" type="id"></field>
+        <field name="partyId" type="id"></field>
+        <field name="fromDate" type="date-time"></field>
+        <field name="thruDate" type="date-time"></field>
+        <field name="activeIndicator" type="indicator"></field>
+        <field name="weight" type="numeric"></field>
+        <field name="lastAssignedDate" type="date-time"></field>
+        <prim-key field="queueId"/>
+        <prim-key field="partyId"/>
+        <prim-key field="fromDate"/>
+        <relation type="one" fk-name="CASE_QUEUE_MEMBER_QUEUE" rel-entity-name="CaseQueue">
+            <key-map field-name="queueId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_QUEUE_MEMBER_PARTY" rel-entity-name="Party">
+            <key-map field-name="partyId" rel-field-name="partyId"/>
+        </relation>
+        <index name="CASE_QUEUE_MEMBER_PARTY_IDX">
+            <index-field name="partyId"/>
+        </index>
+    </entity>
+
+    <entity entity-name="CaseFieldMapping" package-name="org.apache.ofbiz.casemgmt.form"
+            title="Case Field Mapping">
+        <field name="caseTypeId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="stageSeq" type="numeric"></field>
+        <field name="stepSeq" type="numeric"></field>
+        <field name="fieldSeq" type="numeric"></field>
+        <field name="fieldName" type="name"></field>
+        <field name="entityName" type="name"></field>
+        <field name="entityFieldName" type="name"></field>
+        <field name="label" type="short-varchar"></field>
+        <field name="fieldTypeEnumId" type="id"></field>
+        <field name="requiredIndicator" type="indicator"></field>
+        <field name="sequenceNum" type="numeric"></field>
+        <field name="lookupEntityName" type="name"></field>
+        <field name="lookupFieldName" type="name"></field>
+        <field name="defaultValue" type="long-varchar"></field>
+        <field name="visibilityCondition" type="long-varchar"></field>
+        <field name="readOnlyCondition" type="long-varchar"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseTypeId"/>
+        <prim-key field="definitionVersion"/>
+        <prim-key field="stageSeq"/>
+        <prim-key field="stepSeq"/>
+        <prim-key field="fieldSeq"/>
+        <relation type="one" fk-name="CASE_FLD_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseFieldLabel" package-name="org.apache.ofbiz.casemgmt.form"
+            title="Case Field Label">
+        <field name="caseTypeId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="stageSeq" type="numeric"></field>
+        <field name="stepSeq" type="numeric"></field>
+        <field name="fieldSeq" type="numeric"></field>
+        <field name="locale" type="id"></field>
+        <field name="label" type="short-varchar"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseTypeId"/>
+        <prim-key field="definitionVersion"/>
+        <prim-key field="stageSeq"/>
+        <prim-key field="stepSeq"/>
+        <prim-key field="fieldSeq"/>
+        <prim-key field="locale"/>
+        <relation type="one" fk-name="CASE_FLD_LABEL_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseAccessPolicy" package-name="org.apache.ofbiz.casemgmt.access"
+            title="Case Access Policy">
+        <field name="accessPolicyId" type="id"></field>
+        <field name="caseTypeId" type="id"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="accessPolicyId"/>
+        <relation type="one" fk-name="CASE_ACC_POL_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseAccessRule" package-name="org.apache.ofbiz.casemgmt.access"
+            title="Case Access Rule">
+        <field name="accessPolicyId" type="id"></field>
+        <field name="ruleSeq" type="numeric"></field>
+        <field name="partyId" type="id"></field>
+        <field name="partyRoleTypeId" type="id"></field>
+        <field name="queueId" type="id"></field>
+        <field name="permissionEnumId" type="id"></field>
+        <field name="stageSeq" type="numeric"></field>
+        <field name="stepSeq" type="numeric"></field>
+        <field name="conditionServiceName" type="name"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="accessPolicyId"/>
+        <prim-key field="ruleSeq"/>
+        <relation type="one" fk-name="CASE_ACC_RULE_POL" rel-entity-name="CaseAccessPolicy">
+            <key-map field-name="accessPolicyId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_ACC_RULE_PRTY" rel-entity-name="Party">
+            <key-map field-name="partyId" rel-field-name="partyId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_ACC_RULE_ROLE" rel-entity-name="RoleType">
+            <key-map field-name="partyRoleTypeId" rel-field-name="roleTypeId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_ACC_RULE_QUEUE" rel-entity-name="CaseQueue">
+            <key-map field-name="queueId"/>
+        </relation>
+    </entity>
+
+    <!-- ========================================================= -->
+    <!-- Runtime                                                   -->
+    <!-- ========================================================= -->
+
+    <entity entity-name="Case" package-name="org.apache.ofbiz.casemgmt.case"
+            title="Case">
+        <field name="caseId" type="id"></field>
+        <field name="caseTypeId" type="id"></field>
+        <field name="caseNumber" type="name"></field>
+        <field name="currentStageSeq" type="numeric"></field>
+        <field name="currentStageVisitSeq" type="numeric"></field>
+        <field name="currentStepSeq" type="numeric"></field>
+        <field name="ownerPartyId" type="id"></field>
+        <field name="customerPartyId" type="id"></field>
+        <field name="priority" type="numeric"></field>
+        <field name="channelEnumId" type="id"></field>
+        <field name="resolutionId" type="id"></field>
+        <field name="parentCaseId" type="id"></field>
+        <field name="openedDate" type="date-time"></field>
+        <field name="closedDate" type="date-time"></field>
+        <field name="goalDate" type="date-time"></field>
+        <field name="deadlineDate" type="date-time"></field>
+        <field name="passedDeadlineDate" type="date-time"></field>
+        <field name="slaStateEnumId" type="id"></field>
+        <field name="accessPolicyId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="version" type="numeric"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseId"/>
+        <relation type="one" fk-name="CASE_WE" rel-entity-name="WorkEffort">
+            <key-map field-name="caseId" rel-field-name="workEffortId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_OWNER" rel-entity-name="Party">
+            <key-map field-name="ownerPartyId" rel-field-name="partyId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_CUSTOMER" rel-entity-name="Party">
+            <key-map field-name="customerPartyId" rel-field-name="partyId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_PARENT" rel-entity-name="Case">
+            <key-map field-name="parentCaseId" rel-field-name="caseId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_ACCESS" rel-entity-name="CaseAccessPolicy">
+            <key-map field-name="accessPolicyId" rel-field-name="accessPolicyId"/>
+        </relation>
+        <index name="CASE_TYPE_IDX">
+            <index-field name="caseTypeId"/>
+        </index>
+        <index name="CASE_CUSTOMER_IDX">
+            <index-field name="customerPartyId"/>
+        </index>
+        <index name="CASE_OWNER_IDX">
+            <index-field name="ownerPartyId"/>
+        </index>
+        <index name="CASE_STAGE_IDX">
+            <index-field name="currentStageSeq"/>
+        </index>
+        <index name="CASE_OPENED_IDX">
+            <index-field name="openedDate"/>
+        </index>
+        <index name="CASE_CLOSED_IDX">
+            <index-field name="closedDate"/>
+        </index>
+    </entity>
+
+    <entity entity-name="CaseStageInstance" package-name="org.apache.ofbiz.casemgmt.flow"
+            title="Case Stage Instance">
+        <field name="caseId" type="id"></field>
+        <field name="stageSeq" type="numeric"></field>
+        <field name="visitSeq" type="numeric"></field>
+        <field name="enteredDate" type="date-time"></field>
+        <field name="completedDate" type="date-time"></field>
+        <field name="statusId" type="id"></field>
+        <field name="enteredByUserLogin" type="id-vlong"></field>
+        <field name="completedByUserLogin" type="id-vlong"></field>
+        <prim-key field="caseId"/>
+        <prim-key field="stageSeq"/>
+        <prim-key field="visitSeq"/>
+        <relation type="one" fk-name="CASE_STAGE_INST_CASE" rel-entity-name="Case">
+            <key-map field-name="caseId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_STAGE_INST_STS" rel-entity-name="StatusItem">
+            <key-map field-name="statusId" rel-field-name="statusId"/>
+        </relation>
+        <index name="CASE_STAGE_INST_DATE_IDX">
+            <index-field name="completedDate"/>
+        </index>
+    </entity>
+
+    <entity entity-name="CaseTask" package-name="org.apache.ofbiz.casemgmt.flow"
+            title="Case Task">
+        <field name="caseTaskId" type="id"></field>
+        <field name="caseId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="stageSeq" type="numeric"></field>
+        <field name="stageVisitSeq" type="numeric"></field>
+        <field name="stepSeq" type="numeric"></field>
+        <field name="stepName" type="name"></field>
+        <field name="requiredIndicator" type="indicator"></field>
+        <field name="taskTypeEnumId" type="id"></field>
+        <field name="workEffortId" type="id"></field>
+        <field name="subCaseId" type="id"></field>
+        <field name="assignedPartyId" type="id"></field>
+        <field name="assignedQueueId" type="id"></field>
+        <field name="statusId" type="id"></field>
+        <field name="priority" type="numeric"></field>
+        <field name="goalDate" type="date-time"></field>
+        <field name="deadlineDate" type="date-time"></field>
+        <field name="startedDate" type="date-time"></field>
+        <field name="completedDate" type="date-time"></field>
+        <field name="outcomeEnumId" type="id"></field>
+        <field name="completedByUserLogin" type="id-vlong"></field>
+        <field name="notes" type="comment"></field>
+        <prim-key field="caseTaskId"/>
+        <relation type="one" fk-name="CASE_TASK_CASE" rel-entity-name="Case">
+            <key-map field-name="caseId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_TASK_WE" rel-entity-name="WorkEffort">
+            <key-map field-name="workEffortId" rel-field-name="workEffortId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_TASK_SUB_CASE" rel-entity-name="Case">
+            <key-map field-name="subCaseId" rel-field-name="caseId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_TASK_PARTY" rel-entity-name="Party">
+            <key-map field-name="assignedPartyId" rel-field-name="partyId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_TASK_QUEUE" rel-entity-name="CaseQueue">
+            <key-map field-name="assignedQueueId" rel-field-name="queueId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_TASK_STS" rel-entity-name="StatusItem">
+            <key-map field-name="statusId" rel-field-name="statusId"/>
+        </relation>
+        <index name="CASE_TASK_CASE_IDX">
+            <index-field name="caseId"/>
+        </index>
+        <index name="CASE_TASK_STATUS_IDX">
+            <index-field name="statusId"/>
+        </index>
+        <index name="CASE_TASK_ASSIGNEE_IDX">
+            <index-field name="assignedPartyId"/>
+        </index>
+        <index name="CASE_TASK_QUEUE_IDX">
+            <index-field name="assignedQueueId"/>
+        </index>
+    </entity>
+
+    <entity entity-name="CaseSlaInstance" package-name="org.apache.ofbiz.casemgmt.sla"
+            title="Case SLA Instance">
+        <field name="caseId" type="id"></field>
+        <field name="milestoneSeq" type="numeric"></field>
+        <field name="slaId" type="id"></field>
+        <field name="milestoneName" type="name"></field>
+        <field name="milestoneTypeEnumId" type="id"></field>
+        <field name="goalDate" type="date-time"></field>
+        <field name="deadlineDate" type="date-time"></field>
+        <field name="passedDeadlineDate" type="date-time"></field>
+        <field name="completedDate" type="date-time"></field>
+        <field name="slaStateEnumId" type="id"></field>
+        <field name="pausedMinutes" type="numeric"></field>
+        <field name="escalationLevel" type="numeric"></field>
+        <field name="lastEscalatedDate" type="date-time"></field>
+        <field name="lastNotifiedDate" type="date-time"></field>
+        <prim-key field="caseId"/>
+        <prim-key field="milestoneSeq"/>
+        <relation type="one" fk-name="CASE_SLA_INST_CASE" rel-entity-name="Case">
+            <key-map field-name="caseId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_SLA_INST_SLA" rel-entity-name="CaseSla">
+            <key-map field-name="slaId"/>
+        </relation>
+        <index name="CASE_SLA_INST_STATE_IDX">
+            <index-field name="slaStateEnumId"/>
+        </index>
+    </entity>
+
+    <entity entity-name="CaseEvent" package-name="org.apache.ofbiz.casemgmt.event"
+            title="Case Event">
+        <field name="caseEventId" type="id"></field>
+        <field name="caseId" type="id"></field>
+        <field name="eventTypeEnumId" type="id"></field>
+        <field name="eventDate" type="date-time"></field>
+        <field name="actorUserLoginId" type="id-vlong"></field>
+        <field name="fromValue" type="long-varchar"></field>
+        <field name="toValue" type="long-varchar"></field>
+        <field name="detail" type="long-varchar"></field>
+        <field name="refEntityName" type="name"></field>
+        <field name="refPkValue" type="id-long"></field>
+        <field name="fromStageSeq" type="numeric"></field>
+        <field name="toStageSeq" type="numeric"></field>
+        <field name="stageVisitSeq" type="numeric"></field>
+        <field name="fromStepSeq" type="numeric"></field>
+        <field name="toStepSeq" type="numeric"></field>
+        <field name="triggerTypeEnumId" type="id"></field>
+        <field name="conditionResult" type="long-varchar"></field>
+        <field name="engineVersion" type="name"></field>
+        <field name="idempotencyKey" type="id-long"></field>
+        <prim-key field="caseEventId"/>
+        <relation type="one" fk-name="CASE_EVENT_CASE" rel-entity-name="Case">
+            <key-map field-name="caseId"/>
+        </relation>
+        <index name="CASE_EVENT_CASE_IDX">
+            <index-field name="caseId"/>
+        </index>
+        <index name="CASE_EVENT_DATE_IDX">
+            <index-field name="eventDate"/>
+        </index>
+        <index name="CASE_EVENT_TYPE_IDX">
+            <index-field name="eventTypeEnumId"/>
+        </index>
+        <index name="CASE_EVENT_IDEM_IDX" unique="true">
+            <index-field name="idempotencyKey"/>
+        </index>
+    </entity>
+
+    <entity entity-name="CaseVariable" package-name="org.apache.ofbiz.casemgmt.case"
+            title="Case Variable">
+        <field name="caseId" type="id"></field>
+        <field name="variableName" type="id-long"></field>
+        <field name="valueTypeEnumId" type="id"></field>
+        <field name="valueText" type="very-long"></field>
+        <field name="valueNumber" type="numeric"></field>
+        <field name="valueDate" type="date-time"></field>
+        <field name="valueBoolean" type="indicator"></field>
+        <field name="jsonValue" type="very-long"></field>
+        <field name="sourceCaseTaskId" type="id"></field>
+        <field name="scopeEnumId" type="id"></field>
+        <field name="sensitiveIndicator" type="indicator"></field>
+        <field name="expiresAt" type="date-time"></field>
+        <field name="createdDate" type="date-time"></field>
+        <field name="lastUpdatedDate" type="date-time"></field>
+        <prim-key field="caseId"/>
+        <prim-key field="variableName"/>
+        <relation type="one" fk-name="CASE_VAR_CASE" rel-entity-name="Case">
+            <key-map field-name="caseId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_VAR_TASK" rel-entity-name="CaseTask">
+            <key-map field-name="sourceCaseTaskId" rel-field-name="caseTaskId"/>
+        </relation>
+        <index name="CASE_VAR_EXP_IDX">
+            <index-field name="expiresAt"/>
+        </index>
+    </entity>
+
+    <entity entity-name="CaseStepServiceParam" package-name="org.apache.ofbiz.casemgmt.flow"
+            title="Case Step Service Input">
+        <field name="caseTypeId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="stageSeq" type="numeric"></field>
+        <field name="stepSeq" type="numeric"></field>
+        <field name="paramSeq" type="numeric"></field>
+        <field name="paramName" type="id-long"></field>
+        <field name="sourceTypeEnumId" type="id"></field>
+        <field name="sourceValue" type="very-long"></field>
+        <field name="requiredIndicator" type="indicator"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseTypeId"/>
+        <prim-key field="definitionVersion"/>
+        <prim-key field="stageSeq"/>
+        <prim-key field="stepSeq"/>
+        <prim-key field="paramSeq"/>
+        <relation type="one" fk-name="CASE_SVC_PRM_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseStepServiceOutput" package-name="org.apache.ofbiz.casemgmt.flow"
+            title="Case Step Service Output">
+        <field name="caseTypeId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="stageSeq" type="numeric"></field>
+        <field name="stepSeq" type="numeric"></field>
+        <field name="outputSeq" type="numeric"></field>
+        <field name="outputName" type="id-long"></field>
+        <field name="variableName" type="id-long"></field>
+        <field name="valueTypeEnumId" type="id"></field>
+        <field name="requiredIndicator" type="indicator"></field>
+        <field name="sensitiveIndicator" type="indicator"></field>
+        <field name="scopeEnumId" type="id"></field>
+        <field name="ttlSeconds" type="numeric"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseTypeId"/>
+        <prim-key field="definitionVersion"/>
+        <prim-key field="stageSeq"/>
+        <prim-key field="stepSeq"/>
+        <prim-key field="outputSeq"/>
+        <relation type="one" fk-name="CASE_SVC_OUT_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseTypeStartForm" package-name="org.apache.ofbiz.casemgmt.form"
+            title="Case Type Start Form">
+        <field name="caseTypeId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="formLocation" type="long-varchar"></field>
+        <field name="formName" type="id-long"></field>
+        <field name="formTarget" type="long-varchar"></field>
+        <field name="startServiceName" type="long-varchar"></field>
+        <field name="submitLabel" type="short-varchar"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseTypeId"/>
+        <prim-key field="definitionVersion"/>
+        <relation type="one" fk-name="CASE_START_FORM_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseStepForm" package-name="org.apache.ofbiz.casemgmt.form"
+            title="Case Step Form">
+        <field name="caseTypeId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="stageSeq" type="numeric"></field>
+        <field name="stepSeq" type="numeric"></field>
+        <field name="formLocation" type="long-varchar"></field>
+        <field name="formName" type="id-long"></field>
+        <field name="formTarget" type="long-varchar"></field>
+        <field name="completeServiceName" type="long-varchar"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseTypeId"/>
+        <prim-key field="definitionVersion"/>
+        <prim-key field="stageSeq"/>
+        <prim-key field="stepSeq"/>
+        <relation type="one" fk-name="CASE_STEP_FORM_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseContext" package-name="org.apache.ofbiz.casemgmt.case"
+            title="Case Context">
+        <field name="caseId" type="id"></field>
+        <field name="contextSeq" type="numeric"></field>
+        <field name="entityName" type="name"></field>
+        <field name="pkValue" type="id-long"></field>
+        <field name="contextTypeEnumId" type="id"></field>
+        <field name="roleTypeId" type="id"></field>
+        <field name="description" type="description"></field>
+        <prim-key field="caseId"/>
+        <prim-key field="contextSeq"/>
+        <relation type="one" fk-name="CASE_CTX_CASE" rel-entity-name="Case">
+            <key-map field-name="caseId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_CTX_ROLE" rel-entity-name="RoleType">
+            <key-map field-name="roleTypeId" rel-field-name="roleTypeId"/>
+        </relation>
+        <index name="CASE_CTX_ENTITY_IDX">
+            <index-field name="caseId"/>
+            <index-field name="entityName"/>
+        </index>
+    </entity>
+
+    <entity entity-name="CaseContextKey" package-name="org.apache.ofbiz.casemgmt.case"
+            title="Case Context Key">
+        <field name="caseId" type="id"></field>
+        <field name="contextSeq" type="numeric"></field>
+        <field name="keySeq" type="numeric"></field>
+        <field name="keyName" type="id-long"></field>
+        <field name="keyValue" type="long-varchar"></field>
+        <prim-key field="caseId"/>
+        <prim-key field="contextSeq"/>
+        <prim-key field="keySeq"/>
+        <relation type="one" fk-name="CASE_CTX_KEY_CTX" rel-entity-name="CaseContext">
+            <key-map field-name="caseId"/>
+            <key-map field-name="contextSeq"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="CaseComment" package-name="org.apache.ofbiz.casemgmt.case"
+            title="Case Comment">
+        <field name="caseCommentId" type="id"></field>
+        <field name="caseId" type="id"></field>
+        <field name="commentDate" type="date-time"></field>
+        <field name="authorPartyId" type="id"></field>
+        <field name="authorUserLoginId" type="id-vlong"></field>
+        <field name="visibilityEnumId" type="id"></field>
+        <field name="comment" type="comment"></field>
+        <prim-key field="caseCommentId"/>
+        <relation type="one" fk-name="CASE_CMT_CASE" rel-entity-name="Case">
+            <key-map field-name="caseId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_CMT_PARTY" rel-entity-name="Party">
+            <key-map field-name="authorPartyId" rel-field-name="partyId"/>
+        </relation>
+        <index name="CASE_CMT_CASE_IDX">
+            <index-field name="caseId"/>
+        </index>
+    </entity>
+
+    <entity entity-name="CaseDocument" package-name="org.apache.ofbiz.casemgmt.case"
+            title="Case Document">
+        <field name="caseId" type="id"></field>
+        <field name="contentId" type="id"></field>
+        <field name="docTypeEnumId" type="id"></field>
+        <field name="description" type="description"></field>
+        <field name="uploadedByUserLogin" type="id-vlong"></field>
+        <field name="uploadedDate" type="date-time"></field>
+        <prim-key field="caseId"/>
+        <prim-key field="contentId"/>
+        <relation type="one" fk-name="CASE_DOC_CASE" rel-entity-name="Case">
+            <key-map field-name="caseId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_DOC_CONTENT" rel-entity-name="Content">
+            <key-map field-name="contentId" rel-field-name="contentId"/>
+        </relation>
+    </entity>
+</entitymodel>
