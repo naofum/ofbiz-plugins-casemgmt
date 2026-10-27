@@ -1,0 +1,7 @@
+{
+  "bundle": "casemgmt",
+  "version": "0.1.0",
+  "ofbiz": "24.09.07",
+  "description": "Core patches required by the casemgmt plugin. Add entries as core changes are identified.",
+  "patches": []
+}
