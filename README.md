@@ -657,6 +657,22 @@ data/migration/p3_reserved_word_names_postgres.sql
 
 適用後、OFBiz を再起動してください。外部の生SQLやBIレポートで `"case"` テーブルや旧列名を直接参照している場合は、参照先も更新してください。
 
+### 9.4 既存DBの主キー更新
+
+`CaseContextKey` / `CaseStepForm` / `CaseTypeStartForm` は、複合主キーを定義する前にテーブルが作られた場合、OFBiz が不足する列を追加しても主キーは作り直しません。その状態では起動時に `IS NOT a primary key in the database, but IS a primary key in the entity definition` が出ます。
+
+OFBiz を停止し、DB をバックアップしてから次を適用してください。
+
+```text
+data/migration/p4_primary_keys_postgres.sql
+```
+
+- `case_context_key`: `(case_id, context_seq, key_seq)`
+- `case_step_form`: `(case_type_id, definition_version, stage_seq, step_seq)`
+- `case_type_start_form`: `(case_type_id, definition_version)`
+
+主キーがないテーブルだけに追加するため、何度実行しても同じ結果になります。適用後、OFBiz を再起動し、警告が消えたことを確認してください。新しく作る DB では不要です。
+
 ---
 
 ## 10. テスト
