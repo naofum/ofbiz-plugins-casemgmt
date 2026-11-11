@@ -72,6 +72,10 @@ BEGIN
                WHERE conname = 'case_type'
                  AND conrelid = to_regclass('public."case"')) THEN
         EXECUTE 'ALTER TABLE "case" RENAME CONSTRAINT case_type TO case_to_type';
+    ELSIF EXISTS (SELECT 1 FROM pg_constraint
+                  WHERE conname = 'case_type'
+                    AND conrelid = to_regclass('public.case_header')) THEN
+        EXECUTE 'ALTER TABLE case_header RENAME CONSTRAINT case_type TO case_to_type';
     END IF;
     IF EXISTS (SELECT 1 FROM pg_constraint
                WHERE conname = 'case_start_form_type'

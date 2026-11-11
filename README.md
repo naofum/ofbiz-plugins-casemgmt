@@ -645,13 +645,17 @@ gradlew.bat "ofbiz --load-data readers=seed,demo --load-data component=casemgmt-
 
 ### 9.3 既存DBの識別子名更新
 
-既存の PostgreSQL データベースでは、ケース管理テーブルの外部キー名・インデックス名が旧名のまま残っている場合があります。起動時の `RelFKNameGT18` / `IndexNameGT18` 警告を解消する場合は、OFBiz を停止してから次を適用してください。
+既存の PostgreSQL データベースでは、ケース管理テーブルの外部キー名・インデックス名や、予約語のテーブル名・列名が旧名のまま残っている場合があります。OFBiz を停止し、DBをバックアップしてから次の順に適用してください。
 
 ```text
 data/migration/p3_identifier_names_postgres.sql
+data/migration/p3_reserved_word_names_postgres.sql
 ```
 
-適用後、OFBiz を再起動してください。
+- `p3_identifier_names_postgres.sql`: 長い外部キー名・インデックス名の短縮
+- `p3_reserved_word_names_postgres.sql`: `CASE` テーブルを `CASE_HEADER` へ、`VERSION` / `COMMENT` / `LABEL` 列を予約語ではない列名へ変更
+
+適用後、OFBiz を再起動してください。外部の生SQLやBIレポートで `"case"` テーブルや旧列名を直接参照している場合は、参照先も更新してください。
 
 ---
 

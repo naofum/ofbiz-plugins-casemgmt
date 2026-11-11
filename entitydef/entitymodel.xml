@@ -296,7 +296,7 @@ under the License.
         <field name="fieldName" type="name"></field>
         <field name="entityName" type="name"></field>
         <field name="entityFieldName" type="name"></field>
-        <field name="label" type="short-varchar"></field>
+        <field name="label" type="short-varchar" col-name="LABEL_TEXT"></field>
         <field name="fieldTypeEnumId" type="id"></field>
         <field name="requiredIndicator" type="indicator"></field>
         <field name="sequenceNum" type="numeric"></field>
@@ -324,7 +324,7 @@ under the License.
         <field name="stepSeq" type="numeric"></field>
         <field name="fieldSeq" type="numeric"></field>
         <field name="locale" type="id"></field>
-        <field name="label" type="short-varchar"></field>
+        <field name="label" type="short-varchar" col-name="LABEL_TEXT"></field>
         <field name="description" type="description"></field>
         <prim-key field="caseTypeId"/>
         <prim-key field="definitionVersion"/>
@@ -381,7 +381,7 @@ under the License.
     <!-- ========================================================= -->
 
     <entity entity-name="Case" package-name="org.apache.ofbiz.casemgmt.case"
-            title="Case">
+            table-name="CASE_HEADER" title="Case">
         <field name="caseId" type="id"></field>
         <field name="caseTypeId" type="id"></field>
         <field name="caseNumber" type="name"></field>
@@ -402,7 +402,7 @@ under the License.
         <field name="slaStateEnumId" type="id"></field>
         <field name="accessPolicyId" type="id"></field>
         <field name="definitionVersion" type="numeric"></field>
-        <field name="version" type="numeric"></field>
+        <field name="version" type="numeric" col-name="CASE_VERSION"></field>
         <field name="description" type="description"></field>
         <prim-key field="caseId"/>
         <relation type="one" fk-name="CASE_WE" rel-entity-name="WorkEffort">
@@ -752,7 +752,7 @@ under the License.
         <field name="authorPartyId" type="id"></field>
         <field name="authorUserLoginId" type="id-vlong"></field>
         <field name="visibilityEnumId" type="id"></field>
-        <field name="comment" type="comment"></field>
+        <field name="comment" type="comment" col-name="COMMENT_TEXT"></field>
         <prim-key field="caseCommentId"/>
         <relation type="one" fk-name="CASE_CMT_CASE" rel-entity-name="Case">
             <key-map field-name="caseId"/>
