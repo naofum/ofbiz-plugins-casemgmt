@@ -55,7 +55,7 @@ under the License.
         <relation type="one" fk-name="CASE_TYPE_STATUS" rel-entity-name="StatusItem">
             <key-map field-name="statusId" rel-field-name="statusId"/>
         </relation>
-        <index name="CASE_TYPE_STATUS_IDX">
+        <index name="CASE_TYPE_STS_IDX">
             <index-field name="statusId"/>
         </index>
     </entity>
@@ -68,7 +68,7 @@ under the License.
         <field name="description" type="description"></field>
         <prim-key field="caseTypeId"/>
         <prim-key field="attrName"/>
-        <relation type="one" fk-name="CASE_TYPE_ATTR_TYPE" rel-entity-name="CaseType">
+        <relation type="one" fk-name="CASE_ATTR_TYPE" rel-entity-name="CaseType">
             <key-map field-name="caseTypeId"/>
         </relation>
     </entity>
@@ -121,7 +121,7 @@ under the License.
         <relation type="one" fk-name="CASE_STEP_SLA" rel-entity-name="CaseSla">
             <key-map field-name="slaId" rel-field-name="slaId"/>
         </relation>
-        <relation type="one-nofk" fk-name="CASE_STEP_SUB_TYPE" rel-entity-name="CaseType">
+        <relation type="one-nofk" title="SubCase" fk-name="CASE_STEP_SUB_TYPE" rel-entity-name="CaseType">
             <key-map field-name="subCaseTypeId" rel-field-name="caseTypeId"/>
         </relation>
     </entity>
@@ -140,7 +140,7 @@ under the License.
         <prim-key field="definitionVersion"/>
         <prim-key field="stageSeq"/>
         <prim-key field="stepSeq"/>
-        <relation type="one" fk-name="CASE_STEP_WAIT_TYPE" rel-entity-name="CaseType">
+        <relation type="one" fk-name="CASE_WAIT_TYPE" rel-entity-name="CaseType">
             <key-map field-name="caseTypeId"/>
         </relation>
     </entity>
@@ -275,13 +275,13 @@ under the License.
         <prim-key field="queueId"/>
         <prim-key field="partyId"/>
         <prim-key field="fromDate"/>
-        <relation type="one" fk-name="CASE_QUEUE_MEMBER_QUEUE" rel-entity-name="CaseQueue">
+        <relation type="one" fk-name="CASE_QM_QUEUE" rel-entity-name="CaseQueue">
             <key-map field-name="queueId"/>
         </relation>
-        <relation type="one" fk-name="CASE_QUEUE_MEMBER_PARTY" rel-entity-name="Party">
+        <relation type="one" fk-name="CASE_QM_PARTY" rel-entity-name="Party">
             <key-map field-name="partyId" rel-field-name="partyId"/>
         </relation>
-        <index name="CASE_QUEUE_MEMBER_PARTY_IDX">
+        <index name="CASE_QM_PARTY_IDX">
             <index-field name="partyId"/>
         </index>
     </entity>
@@ -332,7 +332,7 @@ under the License.
         <prim-key field="stepSeq"/>
         <prim-key field="fieldSeq"/>
         <prim-key field="locale"/>
-        <relation type="one" fk-name="CASE_FLD_LABEL_TYPE" rel-entity-name="CaseType">
+        <relation type="one" fk-name="CASE_LABEL_TYPE" rel-entity-name="CaseType">
             <key-map field-name="caseTypeId"/>
         </relation>
     </entity>
@@ -371,7 +371,7 @@ under the License.
         <relation type="one" fk-name="CASE_ACC_RULE_ROLE" rel-entity-name="RoleType">
             <key-map field-name="partyRoleTypeId" rel-field-name="roleTypeId"/>
         </relation>
-        <relation type="one" fk-name="CASE_ACC_RULE_QUEUE" rel-entity-name="CaseQueue">
+        <relation type="one" fk-name="CASE_RULE_QUEUE" rel-entity-name="CaseQueue">
             <key-map field-name="queueId"/>
         </relation>
     </entity>
@@ -408,13 +408,13 @@ under the License.
         <relation type="one" fk-name="CASE_WE" rel-entity-name="WorkEffort">
             <key-map field-name="caseId" rel-field-name="workEffortId"/>
         </relation>
-        <relation type="one" fk-name="CASE_TYPE" rel-entity-name="CaseType">
+        <relation type="one" fk-name="CASE_TO_TYPE" rel-entity-name="CaseType">
             <key-map field-name="caseTypeId"/>
         </relation>
         <relation type="one" fk-name="CASE_OWNER" rel-entity-name="Party">
             <key-map field-name="ownerPartyId" rel-field-name="partyId"/>
         </relation>
-        <relation type="one" fk-name="CASE_CUSTOMER" rel-entity-name="Party">
+        <relation type="one" title="Customer" fk-name="CASE_CUSTOMER" rel-entity-name="Party">
             <key-map field-name="customerPartyId" rel-field-name="partyId"/>
         </relation>
         <relation type="one" fk-name="CASE_PARENT" rel-entity-name="Case">
@@ -456,13 +456,13 @@ under the License.
         <prim-key field="caseId"/>
         <prim-key field="stageSeq"/>
         <prim-key field="visitSeq"/>
-        <relation type="one" fk-name="CASE_STAGE_INST_CASE" rel-entity-name="Case">
+        <relation type="one" fk-name="CASE_STG_INST_CASE" rel-entity-name="Case">
             <key-map field-name="caseId"/>
         </relation>
-        <relation type="one" fk-name="CASE_STAGE_INST_STS" rel-entity-name="StatusItem">
+        <relation type="one" fk-name="CASE_STG_INST_STS" rel-entity-name="StatusItem">
             <key-map field-name="statusId" rel-field-name="statusId"/>
         </relation>
-        <index name="CASE_STAGE_INST_DATE_IDX">
+        <index name="CASE_STG_DT_IDX">
             <index-field name="completedDate"/>
         </index>
     </entity>
@@ -498,7 +498,7 @@ under the License.
         <relation type="one" fk-name="CASE_TASK_WE" rel-entity-name="WorkEffort">
             <key-map field-name="workEffortId" rel-field-name="workEffortId"/>
         </relation>
-        <relation type="one" fk-name="CASE_TASK_SUB_CASE" rel-entity-name="Case">
+        <relation type="one" title="Sub" fk-name="CASE_TASK_SUB_CASE" rel-entity-name="Case">
             <key-map field-name="subCaseId" rel-field-name="caseId"/>
         </relation>
         <relation type="one" fk-name="CASE_TASK_PARTY" rel-entity-name="Party">
@@ -513,13 +513,13 @@ under the License.
         <index name="CASE_TASK_CASE_IDX">
             <index-field name="caseId"/>
         </index>
-        <index name="CASE_TASK_STATUS_IDX">
+        <index name="CASE_TASK_STS_IDX">
             <index-field name="statusId"/>
         </index>
-        <index name="CASE_TASK_ASSIGNEE_IDX">
+        <index name="CASE_TASK_ASG_IDX">
             <index-field name="assignedPartyId"/>
         </index>
-        <index name="CASE_TASK_QUEUE_IDX">
+        <index name="CASE_TASK_Q_IDX">
             <index-field name="assignedQueueId"/>
         </index>
     </entity>
@@ -548,7 +548,7 @@ under the License.
         <relation type="one" fk-name="CASE_SLA_INST_SLA" rel-entity-name="CaseSla">
             <key-map field-name="slaId"/>
         </relation>
-        <index name="CASE_SLA_INST_STATE_IDX">
+        <index name="CASE_SLA_STATE_IDX">
             <index-field name="slaStateEnumId"/>
         </index>
     </entity>
@@ -578,16 +578,16 @@ under the License.
         <relation type="one" fk-name="CASE_EVENT_CASE" rel-entity-name="Case">
             <key-map field-name="caseId"/>
         </relation>
-        <index name="CASE_EVENT_CASE_IDX">
+        <index name="CASE_EVT_CASE_IDX">
             <index-field name="caseId"/>
         </index>
-        <index name="CASE_EVENT_DATE_IDX">
+        <index name="CASE_EVT_DATE_IDX">
             <index-field name="eventDate"/>
         </index>
-        <index name="CASE_EVENT_TYPE_IDX">
+        <index name="CASE_EVT_TYPE_IDX">
             <index-field name="eventTypeEnumId"/>
         </index>
-        <index name="CASE_EVENT_IDEM_IDX" unique="true">
+        <index name="CASE_EVT_IDEM_IDX" unique="true">
             <index-field name="idempotencyKey"/>
         </index>
     </entity>
@@ -680,7 +680,7 @@ under the License.
         <field name="description" type="description"></field>
         <prim-key field="caseTypeId"/>
         <prim-key field="definitionVersion"/>
-        <relation type="one" fk-name="CASE_START_FORM_TYPE" rel-entity-name="CaseType">
+        <relation type="one" fk-name="CASE_START_FORM" rel-entity-name="CaseType">
             <key-map field-name="caseTypeId"/>
         </relation>
     </entity>
@@ -700,7 +700,7 @@ under the License.
         <prim-key field="definitionVersion"/>
         <prim-key field="stageSeq"/>
         <prim-key field="stepSeq"/>
-        <relation type="one" fk-name="CASE_STEP_FORM_TYPE" rel-entity-name="CaseType">
+        <relation type="one" fk-name="CASE_FORM_TYPE" rel-entity-name="CaseType">
             <key-map field-name="caseTypeId"/>
         </relation>
     </entity>
@@ -722,7 +722,7 @@ under the License.
         <relation type="one" fk-name="CASE_CTX_ROLE" rel-entity-name="RoleType">
             <key-map field-name="roleTypeId" rel-field-name="roleTypeId"/>
         </relation>
-        <index name="CASE_CTX_ENTITY_IDX">
+        <index name="CASE_CTX_ENT_IDX">
             <index-field name="caseId"/>
             <index-field name="entityName"/>
         </index>

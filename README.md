@@ -643,6 +643,16 @@ gradlew.bat "ofbiz --load-data readers=seed,demo --load-data component=casemgmt-
 
 ケースタイプのサンプルや Enum、SLA、キュー、権限は、OFBiz の seed データとして投入されます。
 
+### 9.3 既存DBの識別子名更新
+
+既存の PostgreSQL データベースでは、ケース管理テーブルの外部キー名・インデックス名が旧名のまま残っている場合があります。起動時の `RelFKNameGT18` / `IndexNameGT18` 警告を解消する場合は、OFBiz を停止してから次を適用してください。
+
+```text
+data/migration/p3_identifier_names_postgres.sql
+```
+
+適用後、OFBiz を再起動してください。
+
 ---
 
 ## 10. テスト
