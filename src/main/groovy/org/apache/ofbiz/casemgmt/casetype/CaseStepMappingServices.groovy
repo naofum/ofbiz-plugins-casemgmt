@@ -194,7 +194,7 @@ private Map checkDraftStep(Map parameters) {
     if (caseType == null) {
         return [error: "Case type not found: ${parameters.caseTypeId}"]
     }
-    if (caseType.statusId != 'CASE_TYPE_DRAFT') {
+    if (!CaseTypeDraftHelper.hasEditableDraft(caseType)) {
         return [error: "Case type is not a draft: ${parameters.caseTypeId}"]
     }
     long version = (parameters.definitionVersion ?: caseType.definitionVersion ?: 1) as long

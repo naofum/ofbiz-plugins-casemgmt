@@ -106,7 +106,18 @@ final class CaseAccessHelper {
                     .from('CaseType')
                     .where('caseTypeId', caseValue.caseTypeId)
                     .queryOne()
-            policyId = caseType?.accessPolicyId
+            if (caseType != null) {
+                long version = (caseValue.definitionVersion ?: caseType.activeDefinitionVersion
+                        ?: caseType.definitionVersion ?: 1) as long
+                GenericValue versionLink = EntityQuery.use(delegator)
+                        .from('CaseTypeAccessPolicy')
+                        .where(EntityCondition.makeCondition([
+                                caseTypeId       : caseType.caseTypeId,
+                                definitionVersion: version
+                        ]))
+                        .queryOne()
+                policyId = versionLink?.accessPolicyId ?: caseType.accessPolicyId
+            }
         }
         if (!policyId) {
             return level

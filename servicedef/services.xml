@@ -223,6 +223,24 @@ under the License.
         <attribute name="accessPolicyId" type="String" mode="IN" optional="true"/>
     </service>
 
+    <service name="saveCaseTypeDefinitionDraft" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="saveCaseTypeDefinitionDraft" auth="true">
+        <description>Apply a complete visual editor document to a case type draft</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/>
+        </required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="IN" optional="false"/>
+        <attribute name="document" type="String" mode="IN" optional="false"/>
+        <attribute name="expectedRevision" type="String" mode="IN" optional="true"/>
+        <attribute name="revision" type="String" mode="OUT" optional="true"/>
+        <attribute name="saved" type="Boolean" mode="OUT" optional="true"/>
+        <attribute name="validationErrors" type="List" mode="OUT" optional="true"/>
+        <attribute name="errorType" type="String" mode="OUT" optional="true"/>
+        <attribute name="currentRevision" type="String" mode="OUT" optional="true"/>
+    </service>
+
     <service name="cloneCaseTypeDefinition" engine="groovy"
             location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
             invoke="cloneCaseTypeDefinition" auth="true">
@@ -256,7 +274,14 @@ under the License.
             <check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/>
         </required-permissions>
         <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
-        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="definitionVersion" type="Long" mode="INOUT" optional="true">
+            <description>When given, must be the draft version that is published.</description>
+        </attribute>
+        <attribute name="expectedRevision" type="String" mode="IN" optional="true">
+            <description>When given, the draft must still have this revision (no change since it was reviewed).</description>
+        </attribute>
+        <attribute name="errorType" type="String" mode="OUT" optional="true"/>
+        <attribute name="currentRevision" type="String" mode="OUT" optional="true"/>
     </service>
 
     <service name="retireCaseType" engine="groovy"
@@ -277,6 +302,18 @@ under the License.
             <check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/>
         </required-permissions>
         <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="discardCaseTypeDraft" engine="groovy"
+            location="component://casemgmt/src/main/groovy/org/apache/ofbiz/casemgmt/casetype/CaseTypeAdminServices.groovy"
+            invoke="discardCaseTypeDraft" auth="true">
+        <description>Discard a draft, restoring the active definition when one exists</description>
+        <required-permissions join-type="AND">
+            <check-permission permission="CASEMGMT_CASE_TYPE_EDIT"/>
+        </required-permissions>
+        <attribute name="caseTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="definitionVersion" type="Long" mode="OUT" optional="true"/>
+        <attribute name="discardedVersion" type="Long" mode="OUT" optional="true"/>
     </service>
 
     <service name="getCaseTypeDefinitionDiff" engine="groovy"
@@ -302,6 +339,8 @@ under the License.
         <attribute name="startFormChanges" type="List" mode="OUT" optional="true"/>
         <attribute name="stepFormChanges" type="List" mode="OUT" optional="true"/>
         <attribute name="waitChanges" type="List" mode="OUT" optional="true"/>
+        <attribute name="accessPolicyChanges" type="List" mode="OUT" optional="true"/>
+        <attribute name="accessRuleChanges" type="List" mode="OUT" optional="true"/>
     </service>
 
     <service name="deleteCaseStageDef" engine="groovy"

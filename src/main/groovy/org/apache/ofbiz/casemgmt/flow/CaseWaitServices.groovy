@@ -18,6 +18,7 @@
  */
 package org.apache.ofbiz.casemgmt.flow
 
+import org.apache.ofbiz.casemgmt.casetype.CaseTypeDraftHelper
 import java.sql.Timestamp
 
 import org.apache.ofbiz.base.util.Debug
@@ -211,7 +212,7 @@ private Map checkDraft(String caseTypeId, Object requestedVersion) {
     if (caseType == null) {
         return [error: "Case type not found: $caseTypeId".toString()]
     }
-    if (caseType.statusId != 'CASE_TYPE_DRAFT') {
+    if (!CaseTypeDraftHelper.hasEditableDraft(caseType)) {
         return [error: "Case type is not a draft: $caseTypeId".toString()]
     }
     long version = (requestedVersion ?: caseType.definitionVersion ?: 1) as long

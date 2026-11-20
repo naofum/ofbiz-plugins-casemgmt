@@ -184,6 +184,14 @@ Apache OFBiz の業務アプリケーションと標準フォームを活用し�
 | FR-009 | 開始フォームを定義バージョン単位で設定できる | 実装済み |
 | FR-010 | タスクフォームをステージ／ステップ単位で設定できる | 実装済み |
 
+補足:
+
+- ビジュアルエディタ向けに `saveCaseTypeDefinitionDraft` / `discardCaseTypeDraft` の一括保存・破棄サービスを提供する。
+- 一括保存で既存のアクセスポリシーを `caseTypeId` から見つけた場合、`CaseType.accessPolicyId` を新たに設定しない。新規ポリシーを作成した場合のみリンクする。無変更保存でケースタイプ行を変化させないため。
+- アクセスポリシーは `CaseTypeAccessPolicy` で定義バージョン単位に分離する。下書き複製時にポリシーとルールをコピーし、公開時に `CaseType.accessPolicyId` を公開版へ切り替える。
+- `getCaseTypeDefinitionDiff` は定義行に加え、アクセスポリシー説明とアクセスルールの変更も返す。アクセスルールの対象はステージ名／ステップ名で表示し、条件サービスは説明も表示する。
+- ステージ、ステップ、遷移、ステップフォームの移動は、内容が一意に特定できる場合に `MOVED` と移動先 seq を返す。
+
 ### 5.2 ケース開始
 
 | ID | 要件 | 状態 |
@@ -344,6 +352,28 @@ Apache OFBiz の業務アプリケーションと標準フォームを活用し�
 - `CaseDocument`
 
 ### 6.2 追加エンティティ
+
+#### `CaseTypeAccessPolicy`
+
+ケースタイプの定義バージョンとアクセスポリシーの対応を保持する。
+
+```text
+caseTypeId
+definitionVersion
+accessPolicyId
+```
+
+主キー:
+
+```text
+caseTypeId + definitionVersion
+```
+
+- 下書き複製時に、公開版のポリシーとルールをコピーした下書き専用ポリシーを作成し、このエンティティで対応付ける。
+- 下書き保存は下書きバージョンのポリシーのみを更新する。
+- 公開時に `CaseType.accessPolicyId` を公開バージョンのポリシーへ切り替える。
+- 下書き破棄時に下書きバージョンの対応付けと未使用ポリシーを削除する。
+- 既存データは対応付けがない場合、`CaseType.accessPolicyId` または `CaseAccessPolicy.caseTypeId` から解決する。
 
 #### `CaseTypeStartForm`
 

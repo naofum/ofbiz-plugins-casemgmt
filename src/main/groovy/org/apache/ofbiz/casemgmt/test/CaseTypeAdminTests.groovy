@@ -546,6 +546,24 @@ class CaseTypeAdminTests extends OFBizTestCase {
         ])
         ok(clone)
         assert (clone.definitionVersion as long) == 2L
+        // The published version keeps serving new cases while the next version is drafted.
+        GenericValue whileDrafting = from('CaseType').where('caseTypeId', caseTypeId).queryOne()
+        assert whileDrafting.statusId == 'CASE_TYPE_ACTIVE'
+        assert (whileDrafting.activeDefinitionVersion as long) == 1L
+        Map caseDuringDraft = dispatcher.runSync('createCase', [
+                userLogin : system(),
+                caseTypeId: caseTypeId
+        ])
+        ok(caseDuringDraft)
+        assert (from('Case').where('caseId', caseDuringDraft.caseId).queryOne().definitionVersion as long) == 1L
+        assert !ServiceUtil.isSuccess(dispatcher.runSync('cloneCaseTypeDefinition', [
+                userLogin : system(),
+                caseTypeId: caseTypeId
+        ]))
+        assert !ServiceUtil.isSuccess(dispatcher.runSync('retireCaseType', [
+                userLogin : system(),
+                caseTypeId: caseTypeId
+        ]))
         Map update = dispatcher.runSync('updateCaseStageDef', [
                 userLogin       : system(),
                 caseTypeId      : caseTypeId,

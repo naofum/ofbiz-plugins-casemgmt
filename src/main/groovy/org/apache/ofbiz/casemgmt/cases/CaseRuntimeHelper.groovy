@@ -72,7 +72,18 @@ final class CaseRuntimeHelper {
         }
         String childCaseId = delegator.getNextSeqId('WorkEffort')
         String childCaseNumber = 'CASE-' + childCaseId
-        long definitionVersion = (childType.definitionVersion ?: 1) as long
+        long definitionVersion = (childType.activeDefinitionVersion ?: childType.definitionVersion ?: 1) as long
+        String accessPolicyId = childType.accessPolicyId
+        GenericValue accessPolicyLink = EntityQuery.use(delegator)
+                .from('CaseTypeAccessPolicy')
+                .where(EntityCondition.makeCondition([
+                        caseTypeId       : childCaseTypeId,
+                        definitionVersion: definitionVersion
+                ]))
+                .queryOne()
+        if (accessPolicyLink != null) {
+            accessPolicyId = accessPolicyLink.accessPolicyId
+        }
 
         createCaseWorkEffort(delegator, childCaseId, childCaseNumber,
                 "Sub-case of $parentCaseId", 3D, userLoginId, now, parentCaseId)
@@ -87,7 +98,7 @@ final class CaseRuntimeHelper {
                 customerPartyId      : customerPartyId,
                 priority             : 3,
                 openedDate           : now,
-                accessPolicyId       : childType.accessPolicyId,
+                accessPolicyId       : accessPolicyId,
                 definitionVersion    : definitionVersion,
                 version              : 1,
                 parentCaseId         : parentCaseId,

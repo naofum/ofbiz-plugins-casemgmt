@@ -51,6 +51,17 @@ Map createCase() {
     String loginId = userLogin?.userLoginId ?: 'system'
     Double priority = parameters.priority as Double
     long definitionVersion = (caseType.activeDefinitionVersion ?: caseType.definitionVersion ?: 1) as long
+    String accessPolicyId = caseType.accessPolicyId
+    GenericValue accessPolicyLink = EntityQuery.use(delegator)
+            .from('CaseTypeAccessPolicy')
+            .where(EntityCondition.makeCondition([
+                    caseTypeId       : caseTypeId,
+                    definitionVersion: definitionVersion
+            ]))
+            .queryOne()
+    if (accessPolicyLink != null) {
+        accessPolicyId = accessPolicyLink.accessPolicyId
+    }
 
     CaseRuntimeHelper.createCaseWorkEffort(delegator, caseId, caseNumber,
             parameters.description, priority, loginId, now)
@@ -66,7 +77,7 @@ Map createCase() {
             priority              : priority ?: 3,
             channelEnumId         : parameters.channelEnumId,
             openedDate            : now,
-            accessPolicyId        : caseType.accessPolicyId,
+            accessPolicyId        : accessPolicyId,
             definitionVersion     : definitionVersion,
             version               : 1,
             description           : parameters.description

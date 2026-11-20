@@ -376,6 +376,21 @@ under the License.
         </relation>
     </entity>
 
+    <entity entity-name="CaseTypeAccessPolicy" package-name="org.apache.ofbiz.casemgmt.access"
+            title="Case Type Version Access Policy">
+        <field name="caseTypeId" type="id"></field>
+        <field name="definitionVersion" type="numeric"></field>
+        <field name="accessPolicyId" type="id"></field>
+        <prim-key field="caseTypeId"/>
+        <prim-key field="definitionVersion"/>
+        <relation type="one" fk-name="CASE_TP_AP_TYPE" rel-entity-name="CaseType">
+            <key-map field-name="caseTypeId"/>
+        </relation>
+        <relation type="one" fk-name="CASE_TP_AP_POL" rel-entity-name="CaseAccessPolicy">
+            <key-map field-name="accessPolicyId"/>
+        </relation>
+    </entity>
+
     <!-- ========================================================= -->
     <!-- Runtime                                                   -->
     <!-- ========================================================= -->
